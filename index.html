@@ -1,4 +1,4 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.6</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.7</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -378,7 +378,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V1.6 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V1.7 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1684,6 +1684,7 @@ function annexPages(g){const box=document.createElement('div');box.style.cssText
  box.innerHTML='<style>'+ACSS+'</style><div style="font-size:15px;font-weight:700;height:22px">별첨</div><div style="height:26px"></div>'+annexTable(listOf(g),nameFn());
  const pg=document.createElement('div');pg.style.cssText='position:absolute;left:-9999px;top:0;height:273mm;visibility:hidden';document.body.append(box,pg);
  const h=box.offsetHeight,ph=pg.offsetHeight-30;box.remove();pg.remove();return Math.max(1,Math.ceil(h/ph))}
+function curMon(){let v=3;try{v=Number(JSON.parse(localStorage.getItem('standardhub_v22_alert_months')||'3'))}catch(e){}return [1,3,6].includes(v)?v:3}
 function closeInsp(){const l=document.getElementById('inspLayer');if(l)l.remove()}
 window.closeInspection=closeInsp;
 window.inspFill=function(){const g=val('inG'),m=lf()[g]||{};document.getElementById('inCust').value=m.cust||defCust(g);document.getElementById('inTarget').value=m.target||defTarget(g);document.getElementById('inPages').value=annexPages(g)};
@@ -1694,9 +1695,9 @@ window.openInspection=function(){
  const ta=(id,l,ph)=>`<label>${l}<textarea id="${id}" rows="2" placeholder="${ph||'없으면 비워 두세요 (N/A로 표시)'}"></textarea></label>`;
  const l=document.createElement('div');l.id='inspLayer';l.className='account-overlay';
  l.innerHTML=`<div class="account-dialog" role="dialog" aria-modal="true"><div class="toolbar" style="justify-content:space-between"><h2 style="margin:0">표준품 정기점검 양식</h2><button onclick="closeInspection()">✕ 닫기</button></div>
- <p class="muted">유효기한(3개월 이내 · 만료), 폐기 대상(만료 · 재고 0), 이번 달 입고, 별첨 관리내역은 자동으로 채웁니다. 점검자 · 확인자 칸과 확인일은 Adobe 서명을 위해 비워 둡니다.</p>
+ <p class="muted">유효기한(임박 · 만료), 폐기 대상(만료 · 재고 0), 이번 달 입고, 별첨 관리내역은 자동으로 채웁니다. 점검자 · 확인자 칸과 확인일은 Adobe 서명을 위해 비워 둡니다.</p>
  <label>점검 대상<select id="inG" onchange="inspFill()">${gs.map(g=>`<option value="${esc(g)}">${esc(g)}${isB(g)?'':' (의뢰사)'}</option>`).join('')}</select></label>
- <label>고객사<input id="inCust"></label><label>점검대상 표준품<input id="inTarget"></label><label>점검일<input id="inDate" type="date" value="${today()}"></label><label>별첨 1 쪽수 <span class="muted small">(자동 계산 · 다르면 고쳐 주세요)</span><input id="inPages" type="number" min="1" max="50" style="width:90px"></label>
+ <label>고객사<input id="inCust"></label><label>점검대상 표준품<input id="inTarget"></label><label>점검일<input id="inDate" type="date" value="${today()}"></label><label>유효기한 임박 기준 <span class="muted small">(점검일부터)</span><select id="inMon" style="width:auto">${[1,3,6].map(v=>`<option value="${v}" ${v===curMon()?'selected':''}>${v}개월 이내</option>`).join('')}</select></label><label>별첨 1 쪽수 <span class="muted small">(자동 계산 · 다르면 고쳐 주세요)</span><input id="inPages" type="number" min="1" max="50" style="width:90px"></label>
  <div style="margin:12px 0 4px;font-weight:600">라벨상태</div><div style="display:flex;align-items:center;flex-wrap:wrap">${radio('inLab','정상','손상')}</div><div style="display:flex;align-items:center;flex-wrap:wrap;margin-top:8px"><span class="muted small" style="margin-right:12px;white-space:nowrap">손상 시 재출력</span>${radio('inLabRe','아니오','예')}</div>
  <div style="margin:12px 0 4px;font-weight:600">보관상태 (보관위치, 밀봉여부 등)</div><div style="display:flex;align-items:center;flex-wrap:wrap">${radio('inSto','정상','손상')}</div><div style="display:flex;align-items:center;flex-wrap:wrap;margin-top:8px"><span class="muted small" style="margin-right:12px;white-space:nowrap">손상 시 재출력</span>${radio('inStoRe','아니오','예')}</div>
  ${ta('inBuy','추가 구입 (요청) 필요 표준품')}${ta('inRetest','Re-test 필요 표준품')}${ta('inPlan','기타 · 입고 예정')}${ta('inEtc','기타 · 기타')}
@@ -1710,14 +1711,16 @@ window.makeInspection=function(){
  const ln=(s,x)=>'- '+esc(s.code)+(nm(s)==='-'?'':' : '+esc(nm(s)))+' (EXP. '+esc(s.exp||'-')+')'+(x||'');
  const blk=(t,arr,f)=>'['+t+']<br>'+(arr.length?arr.map(f).join('<br>'):'- N/A');
  const tx=v=>{v=String(v||'').trim();return v?v.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>(/^[-·•]/.test(x)?'':'- ')+esc(x)).join('<br>'):'- N/A'};
- const soon=list.filter(s=>expireState(s)==='3개월 이내'),exp=list.filter(s=>expireState(s)==='만료'),empty=list.filter(s=>Number(s.qty)===0);
+ const mon=[1,3,6].includes(Number(val('inMon')))?Number(val('inMon')):3,lim=new Date(date+'T00:00:00');lim.setMonth(lim.getMonth()+mon);const limS=lim.getFullYear()+'-'+String(lim.getMonth()+1).padStart(2,'0')+'-'+String(lim.getDate()).padStart(2,'0');
+ const okD=s=>/^\d{4}-\d{2}-\d{2}$/.test(s.exp||'');
+ const soon=list.filter(s=>okD(s)&&s.exp>=date&&s.exp<=limS).sort((a,b)=>a.exp.localeCompare(b.exp)),exp=list.filter(s=>okD(s)&&s.exp<date),empty=list.filter(s=>Number(s.qty)===0);
  const inM=list.filter(s=>iso((detailData[s.id]||{})['입고 일자']).slice(0,7)===ym);
  const ck=on=>on?'☑':'☐';
  const st=(bad,re)=>`${ck(!bad)} 정상<br>${ck(bad)} 손상 (재출력 여부 : ${ck(bad&&!re)} 아니오 &nbsp;${ck(bad&&re)} 예 <span style="display:inline-block;width:110px"></span>)`;
  const pages=Math.max(1,Math.round(Number(val('inPages')))||annexPages(g));
  const logo=(document.querySelector('img.kptr')||{}).src||'';
  const dot=d=>d.replace(/-/g,'.');
- const css='<style>body{margin:0}.f{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}.f td,.f th{border:1px solid #333;padding:7px 9px;vertical-align:middle;line-height:1.55}.f th{background:#e6e6e6;font-weight:600;text-align:center}.hd{display:flex;align-items:flex-end;margin-bottom:8px}.hd img{height:24px}.hd h1{flex:1;text-align:center;font-size:22px;margin:0;letter-spacing:.08em}.hd .pg{font-size:10px;width:120px;text-align:right}.doc{font-size:10px;margin-top:6px}.sec{text-align:center;letter-spacing:.6em}.big{height:44px}.annex{break-before:page;page-break-before:always}.a thead{display:table-header-group}.a tr{break-inside:avoid}'+ACSS+'</style>';
+ const css='<style>*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{margin:0}.f{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}.f td,.f th{border:1px solid #333;padding:7px 9px;vertical-align:middle;line-height:1.55}.f th{background:#e6e6e6;font-weight:600;text-align:center}.hd{display:flex;align-items:flex-end;margin-bottom:8px}.hd img{height:24px}.hd h1{flex:1;text-align:center;font-size:22px;margin:0;letter-spacing:.08em}.hd .pg{font-size:10px;width:120px;text-align:right}.doc{font-size:10px;margin-top:6px}.sec{text-align:center;letter-spacing:.6em}.big{height:44px}.annex{break-before:page;page-break-before:always}.a thead{display:table-header-group}.a tr{break-inside:avoid}'+ACSS+'</style>';
  const form=`<div class="hd">${logo?`<img src="${logo}" alt="KPTR 한국의약품시험연구원">`:'<b>KPTR 한국의약품시험연구원</b>'}<h1>표준품 정기점검</h1><span class="pg">page 1 of 1</span></div>
  <table class="f"><colgroup><col style="width:17%"><col style="width:16%"><col style="width:13%"><col style="width:19%"><col style="width:13%"><col style="width:22%"></colgroup>
  <tr><th>고객사</th><td style="text-align:center">${esc(cust)}</td><th>점검일</th><td style="text-align:center">${dot(date)}</td><th>점검자</th><td class="big"></td></tr>
