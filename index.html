@@ -1,4 +1,4 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.8</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.9</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -378,7 +378,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V2.8 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V2.9 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1703,9 +1703,15 @@ window.perUseSave=function(btn){const box=btn.closest('.peruse'),b=box.dataset.b
 /* ---- 별첨 1 표준품 관리내역 (가로 A4, S-P-GO011-F1-V04) ---- */
 const ACSS='.a{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed;font-family:Arial,"Malgun Gothic",sans-serif}.a td,.a th{border:1px solid #444;padding:4px 4px;text-align:center;vertical-align:middle;line-height:1.35;word-break:keep-all;overflow-wrap:anywhere}.a th{background:#e6e6e6;font-weight:600}.a td.l{text-align:left}.a td.n{white-space:nowrap;overflow-wrap:normal;word-break:normal}';
 const COLS=[['관리번호',8.6],['입고일',6.3],['회사명',4.4],['제품명',7.4],['표준품명',10.4],['규격',3.6],['입고수량',4.2],['제조사',6.2],['제조번호',6.6],['순도(%)',4.2],['보관조건(℃)',5.4],['보관장소',5.8],['유효기한',6.3],['1회 사용량',4.4],['재고량',5],['폐기일',4.2],['비고',7]];
+/* 제품명 줄이기: '스카이리치프리필드펜주150mg', '스카이리치 150mg', '스카이리치카트리지주' → '스카이리치'
+   1) 함량 숫자부터 뒤는 버림  2) 끝에 붙은 제형 말(프리필드시린지·펜·카트리지·피하주사·주·정 등)을 뗌. 결과가 비면 원래 이름 */
+const FORMS=['프리필드시린지','프리필드펜','프리필드','오토인젝터','카트리지','피하주사','정맥주사','근육주사','주사액','주사제','주사','시린지','바이알','서방정','필름코팅정','장용정','연질캡슐','경질캡슐','캡슐','점안액','주','정','펜'];
+function prodName(x){const o=String(x||'').trim();let t=o.replace(/\s*\(.*$/,'');const m=t.search(/\d/);if(m>0)t=t.slice(0,m);t=t.replace(/[\s\/\-_,.·]+$/,'');
+ let again=true;while(again){again=false;for(const f of FORMS){if(t.length>f.length+1&&t.endsWith(f)){t=t.slice(0,-f.length).replace(/[\s\/\-_,.·]+$/,'');again=true;break}}}
+ return t||o}
 function annexRows(g,cust){const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),NOTES=lj(LK,{}),client=!isB(g);
  return listOf(g).filter(s=>!SKIP[baseCode(s)]).map(s=>{const r=detailData[s.id]||{},base=baseCode(s);
-  let prod='N/A';if(client){const P=(UN[base]||{}).pur||{},set=new Set();Object.values(P).forEach(d=>Object.keys(d).forEach(k=>{const x=k.split('\t')[0];if(x&&x!=='-')set.add(x)}));if(set.size)prod=[...set].join(', ')}
+  let prod='N/A';if(client){const P=(UN[base]||{}).pur||{},set=new Set();Object.values(P).forEach(d=>Object.keys(d).forEach(k=>{const x=k.split('\t')[0];if(x&&x!=='-')set.add(prodName(x))}));if(set.size)prod=[...set].join(', ')}
   const pk=Number(gv(r,'패키지 수'))||1,ct=Number(gv(r,'패키지 별 용기 수'))||1,tv=gv(r,'전체 용량'),tu=gv(r,'전체 용량 단위'),iu0=gv(r,'입고 수량 단위');
   const tn=Number(String(tv).replace(/,/g,''));const spec=iu0;/* 규격 = 입고 단위만 (예: vial, 개, mg) */
   const NA=x=>/^(n\/?a|-|없음)?$/i.test(String(x||'').trim());const iq=gv(r,'입고 수량'),iu=gv(r,'입고 수량 단위'),pv=NA(gv(r,'함량'))?'':gv(r,'함량'),pu=NA(gv(r,'함량 단위'))?'':gv(r,'함량 단위');
