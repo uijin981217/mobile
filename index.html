@@ -1,4 +1,4 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.4</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -378,7 +378,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V2.3 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V2.4 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -775,7 +775,7 @@ const nav=document.querySelector('nav');
 nav.querySelector('[data-tab=dashboard]').insertAdjacentHTML('afterend','<button data-tab="overview" class="hidden" onclick="go(\'overview\')">현황 요약</button>');
 document.getElementById('dashboard').insertAdjacentHTML('afterend','<section id="overview" class="hidden"></section>');
 const _vt=visibleTabs;
-window.visibleTabs=function(u){u=u||user();const t=_vt(u);if(!t.includes('dashboard'))return t;const out=[...t];if(u.admin)out.splice(out.indexOf('dashboard')+1,0,'overview');return out};
+window.visibleTabs=function(u){u=u||user();const t=_vt(u);if(!t.includes('dashboard'))return t;const out=[...t];if(u.admin||u.status==='approved')out.splice(out.indexOf('dashboard')+1,0,'overview');return out};
 
 /* ---- 공통 계산 ---- */
 function stat(list){return{items:list.length,masters:new Set(list.map(baseCode)).size,expired:list.filter(s=>expireState(s)==='만료').length,soon:list.filter(s=>expireState(s)==='3개월 이내').length,zero:list.filter(s=>Number(s.qty)===0).length,checked:list.filter(s=>s.checked).length,diff:list.filter(s=>s.checked&&Number.isFinite(s.actualQty)&&s.actualQty!==Number(s.qty)).length}}
@@ -797,17 +797,17 @@ function urgentTable(list,limit,withOwner){
 
 /* ---- 현황 요약 (관리자) ---- */
 function overviewPage(){
- if(!user().admin)return '<p>관리자 전용 화면입니다.</p>';
+ const adm=!!user().admin;
  if(!stocks.length)return emptyState();
  const act=activeMine(),st=stat(act),n=months();
- const gaps=!hasStaff()?[]:groups.filter(g=>act.some(s=>s.group===g)&&!users.some(u=>u.status==='approved'&&!u.admin&&u.groups.includes(g)));
+ const gaps=!adm||!hasStaff()?[]:groups.filter(g=>act.some(s=>s.group===g)&&!users.some(u=>u.status==='approved'&&!u.admin&&u.groups.includes(g)));
  const kpi=(l,v,t)=>`<div class="kpi k-${t}${v?'':' zero'}"><span class="kl">${l}</span><b>${v}<small>${t==='grp'?'개':'건'}</small></b></div>`;
- const note=gaps.length?`<p class="kpi-note"><b class="danger">담당자가 없는 그룹</b> ${gaps.map(esc).join(', ')}</p>`:(hasStaff()?'':'<p class="kpi-note muted">담당자 계정이 아직 없습니다. 관리자가 직접 관리 중입니다.</p>');
- return `<div class="page-head"><h2>현황 요약</h2><button onclick="printOverview()">인쇄 / PDF 저장</button></div><div class="hint">관리 중인 전체 표준품의 한 장짜리 요약입니다. 참고용이며 공식 기준은 LIMS입니다. 데이터는 마지막으로 업로드한 Excel 기준입니다.</div>
+ const note=!adm?'':gaps.length?`<p class="kpi-note"><b class="danger">담당자가 없는 그룹</b> ${gaps.map(esc).join(', ')}</p>`:(hasStaff()?'':'<p class="kpi-note muted">담당자 계정이 아직 없습니다. 관리자가 직접 관리 중입니다.</p>');
+ return `<div class="page-head"><h2>현황 요약</h2><button onclick="printOverview()">인쇄 / PDF 저장</button></div><div class="hint">${adm?'관리 중인 전체 표준품':'내가 담당하는 표준품'}의 한 장짜리 요약입니다. 참고용이며 공식 기준은 LIMS입니다. 데이터는 마지막으로 업로드한 Excel 기준입니다.</div>
  <div class="kpis">${kpi('유효기한 만료',st.expired,'bad')}${kpi(n+'개월 이내',st.soon,'warn')}${kpi('재고 0 · 폐기 미완료',st.zero,'neutral')}${gaps.length?kpi('담당자 없는 그룹',gaps.length,'grp'):''}</div>${note}
- <div class="panel" style="margin-top:16px"><h3>그룹별 현황</h3><div class="tablewrap">${groupTable(act,true)}</div></div>
- <div class="panel"><h3>우선 확인 목록 (만료 · 30일 이내 · 재고 0 폐기 미완료)</h3><p class="muted">유효기한이 빠른 순으로 최대 20건을 보여 줍니다. 전체 목록은 표준품 목록 탭에서 확인하세요.</p><div class="tablewrap">${urgentTable(act,20,true)}</div></div>`}
-window.printOverview=function(){const act=activeMine(),st=stat(act);printDoc('표준품 현황 요약','<h1>표준품 현황 요약</h1><p class="m">출력 '+esc(nowStr())+' · 출력자 '+esc(user().name)+' · 참고용 (공식 기준: LIMS)</p><h2>요약</h2><p>만료 '+st.expired+'건 · '+months()+'개월 이내 '+st.soon+'건 · 재고 0 폐기 미완료 '+st.zero+'건</p><h2>그룹별 현황</h2>'+groupTable(act,true)+'<h2>우선 확인 목록</h2>'+urgentTable(act,20,true))};
+ <div class="panel" style="margin-top:16px"><h3>그룹별 현황</h3><div class="tablewrap">${groupTable(act,adm)}</div></div>
+ <div class="panel"><h3>우선 확인 목록 (만료 · 30일 이내 · 재고 0 폐기 미완료)</h3><p class="muted">유효기한이 빠른 순으로 최대 20건을 보여 줍니다. 전체 목록은 표준품 목록 탭에서 확인하세요.</p><div class="tablewrap">${urgentTable(act,20,adm)}</div></div>`}
+window.printOverview=function(){const act=activeMine(),st=stat(act);window.printDoc('표준품 현황 요약','<h1>표준품 현황 요약</h1><p class="m">출력 '+esc(nowStr())+' · 출력자 '+esc(user().name)+' · 참고용 (공식 기준: LIMS)</p><h2>요약</h2><p>만료 '+st.expired+'건 · '+months()+'개월 이내 '+st.soon+'건 · 재고 0 폐기 미완료 '+st.zero+'건</p><h2>그룹별 현황</h2>'+groupTable(act,!!user().admin)+'<h2>우선 확인 목록</h2>'+urgentTable(act,20,!!user().admin))};
 
 /* ---- 렌더 연결 ---- */
 const _r2=render;
