@@ -1,4 +1,4 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.7</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.8</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -378,7 +378,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V2.7 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V2.8 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1336,7 +1336,7 @@ function closePrint(){const l=document.getElementById('printLayer');if(l)l.remov
 window.printDoc=function(title,body){
   closePrint();
   /* 바깥 여백 0: 브라우저가 날짜·파일 이름·경로·쪽 번호(머리글·바닥글)를 찍지 못하게 함. 쪽마다 위아래 여백은 바깥 표의 머리·바닥 줄로 */
-  const own=/class="(fpage|annex)"/.test(body);
+  const own=/class="(fpage|apage)/.test(body);
   const wrapped=own?body:'<table class="pw0"><thead><tr><td></td></tr></thead><tfoot><tr><td></td></tr></tfoot><tbody><tr><td>'+body+'</td></tr></tbody></table>';
   const doc='<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>'+esc(title)+'</title><style>'+CSS+'.ck{}@page{margin:0}body{margin:0;padding:0 12mm}.pw0{width:100%;border-collapse:collapse}.pw0>thead>tr>td,.pw0>tfoot>tr>td{height:12mm;padding:0;border:0}.pw0>tbody>tr>td{padding:0;border:0}.pw0>thead{display:table-header-group}.pw0>tfoot{display:table-footer-group}</style></head><body>'+wrapped+'</body></html>';
   const l=document.createElement('div');l.id='printLayer';
@@ -1712,17 +1712,27 @@ function annexRows(g,cust){const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),NOTES
   const disp=gv(r,'폐기 일자')||gv(r,'폐기일')||gv(r,'폐기 일시')||gv(r,'폐기 일');
   const n=stdName(base,UN,SN);
   return [s.code,iso(gv(r,'입고 일자'))||gv(r,'입고 일자'),cust,prod,n,spec,iq?iq+(iu?' '+iu:''):'',gv(r,'제조 회사'),gv(r,'제조 번호'),pv&&Number(String(pv).replace(/,/g,''))!==0?pv+(pu&&pu!=='%'?' '+pu:''):'',gv(r,'보관 조건')||s.storage||'',getInventoryValue(s,'보관 장소')||'',s.exp||'',perUseText(base)||'N/A',(s.qty??'')+(s.unit?' '+s.unit:''),disp?(iso(disp)||disp):'',NOTES[s.code]||''/* 비고: 입고번호별 표준품 이슈(담당자 입력) — Excel 비고는 가져오지 않음 */]})}
-function annexTable(rows){return `<table class="a"><colgroup>${COLS.map(c=>`<col style="width:${c[1]}%">`).join('')}</colgroup><thead><tr>${COLS.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>`<td${[3,4,11,16].includes(i)?' class="l"':[0,1,12,15].includes(i)?' class="n"':''}>${String(v??'').trim()?esc(v):'N/A'}</td>`).join('')}</tr>`).join('')}</tbody></table>`}
-function annexHtml(g,o){const logo=(document.querySelector('img.kptr')||{}).src||'';
- return `<div class="annex"><table class="pw"><thead><tr><td></td></tr></thead><tfoot><tr><td></td></tr></tfoot><tbody><tr><td><div class="ahd">${logo?`<img src="${logo}" alt="KPTR 한국의약품시험연구원">`:'<b>KPTR 한국의약품시험연구원</b>'}</div><h1 class="at">표준품 관리내역</h1>
+const tdHtml=r=>r.map((v,i)=>`<td${[3,4,11,16].includes(i)?' class="l"':[0,1,12,15].includes(i)?' class="n"':''}>${String(v??'').trim()?esc(v):'N/A'}</td>`).join('');
+const headHtml=()=>`<colgroup>${COLS.map(c=>`<col style="width:${c[1]}%">`).join('')}</colgroup><thead><tr>${COLS.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead>`;
+function annexTable(rows){return `<table class="a">${headHtml()}<tbody>${rows.map(r=>`<tr>${tdHtml(r)}</tr>`).join('')}</tbody></table>`}
+const ANX='.apage{page:annex;box-sizing:border-box;width:297mm;height:210mm;padding:10mm 10mm 0;position:relative;overflow:hidden;break-after:page;font-family:Arial,"Malgun Gothic",sans-serif;color:#1a1a2b}.apage.last{break-after:auto}.apage.measure{height:auto;overflow:visible}.ahd{display:flex;align-items:flex-end}.ahd img{height:22px}.ahd .pg{margin-left:auto;font-size:10px}.at{text-align:center;font-size:20px;font-weight:500;margin:2px 0 8px}.meta{display:flex;justify-content:flex-end;gap:34px;font-size:11px;margin:0 6px 5px 0}.meta span{min-width:70px}.adoc{position:absolute;left:10mm;bottom:6mm;font-size:10px}.apage.measure .adoc{position:static;margin-top:4px}@page annex{size:A4 landscape;margin:0}';
+/* 별첨 1: 쪽마다 머리(로고·제목·쪽 번호·부서명 줄)·표 제목 줄·문서번호가 나오도록 직접 쪽을 나눔.
+   인쇄 화면과 같은 CSS로 숨은 iframe에 그려 각 줄 높이를 재고, 가로 A4 한 쪽에 들어가는 만큼씩 담음 */
+function annexBuild(g,o){const logo=(document.querySelector('img.kptr')||{}).src||'',rows=annexRows(g,o.cust);
+ const page=(i,n,body,cls)=>`<div class="apage${cls||''}"><div class="ahd">${logo?`<img src="${logo}" alt="KPTR 한국의약품시험연구원">`:'<b>KPTR 한국의약품시험연구원</b>'}<span class="pg">page ${i} of ${n}</span></div><h1 class="at">표준품 관리내역</h1>
  <div class="meta"><span>부서명 : ${esc(o.dept)}</span><span>작성일 : ${dot(o.date)}</span><span>작성자 :</span><span>확인일 : ${dot(o.date)}</span><span>확인자 :</span></div>
- ${annexTable(annexRows(g,o.cust))}<div class="doc">S-P-GO011-F1-V04</div></td></tr></tbody></table></div>`}
-const ANX='.annex{page:annex}.annex+.annex,.f~.annex{break-before:page}.annex{padding:0 10mm}.pw{width:100%;border-collapse:collapse}.pw>thead>tr>td,.pw>tfoot>tr>td{height:10mm;padding:0;border:0}.pw>tbody>tr>td{padding:0;border:0}.pw>thead{display:table-header-group}.pw>tfoot{display:table-footer-group}.ahd img{height:22px}.at{text-align:center;font-size:20px;font-weight:500;margin:4px 0 8px}.meta{display:flex;justify-content:flex-end;gap:34px;font-size:11px;margin:0 6px 5px 0}.meta span{min-width:70px}.a thead{display:table-header-group}.a tr{break-inside:avoid}@page annex{size:A4 landscape;margin:0}';
-/* 별첨 쪽수: 가로 A4(여백 10mm) 폭으로 실제 그려 보고 높이로 계산 */
-function annexPages(html){const box=document.createElement('div');box.style.cssText='position:absolute;left:-9999px;top:0;width:297mm;visibility:hidden';
- box.innerHTML='<style>'+ACSS+ANX.replace(/@page[^}]*}/,'')+'</style>'+html;const pg=document.createElement('div');pg.style.cssText='position:absolute;left:-9999px;top:0;height:210mm;visibility:hidden';
- const sp=document.createElement('div');sp.style.cssText='position:absolute;left:-9999px;top:0;height:20mm;visibility:hidden';document.body.append(box,pg,sp);const s2=sp.offsetHeight,h=box.offsetHeight-s2,ph=pg.offsetHeight-s2-6;box.remove();pg.remove();sp.remove();return Math.max(1,Math.ceil(h/ph))}
-
+ <table class="a">${headHtml()}<tbody>${body}</tbody></table><div class="adoc">S-P-GO011-F1-V04</div></div>`;
+ const trs=rows.map(r=>`<tr>${tdHtml(r)}</tr>`);
+ const f=document.createElement('iframe');f.style.cssText='position:absolute;left:-10000px;top:0;width:297mm;height:400mm;visibility:hidden;border:0';document.body.appendChild(f);
+ let chunks=[trs];
+ try{const d=f.contentDocument;d.open();d.write('<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:Arial,"Malgun Gothic",sans-serif;margin:0}table{border-collapse:collapse;width:100%;font-size:12px}th,td{border:1px solid #c5cad8;padding:6px 8px;text-align:left;vertical-align:top}th{background:#eceff6}'+ACSS+ANX+'</style></head><body>'+page(1,1,trs.join(''),' measure')+'<div id="mm" style="height:210mm"></div></body></html>');d.close();
+  const pg=d.querySelector('.apage'),tb=pg.querySelector('tbody'),mm=d.getElementById('mm').offsetHeight/210;
+  const top=tb.getBoundingClientRect().top-pg.getBoundingClientRect().top,avail=210*mm-top-14*mm;
+  const hs=[...tb.rows].map(r=>r.getBoundingClientRect().height);
+  if(hs.length){chunks=[];let cur=[],used=0;hs.forEach((h,i)=>{if(cur.length&&used+h>avail){chunks.push(cur);cur=[];used=0}cur.push(trs[i]);used+=h});chunks.push(cur)}}catch(e){}
+ f.remove();const n=chunks.length;
+ return {pages:n,html:chunks.map((c,i)=>page(i+1,n,c.join(''),i===n-1?' last':'')).join('')}}
+function annexHtml(g,o){return annexBuild(g,o).html}
 /* ---- 입력 창 ---- */
 function closeInsp(){const l=document.getElementById('inspLayer');if(l)l.remove()}
 window.closeInspection=closeInsp;
@@ -1763,7 +1773,7 @@ window.makeInspection=function(mode){
  const SKIP=lj(SK,{});document.querySelectorAll('#inspLayer .in-skip').forEach(i=>{if(i.checked)SKIP[i.dataset.base]=1;else delete SKIP[i.dataset.base]});try{localStorage.setItem(SK,JSON.stringify(SKIP))}catch(e){}
  const all=lf(),prev=all[g]||{};all[g]=Object.assign(prev,{cust,dept},mode==='annex'?{}:{target:val('inTarget').trim()});sf(all);
  const css0='<style>*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{margin:0;padding:0}.doc{font-size:10px;margin-top:6px}.fpage{padding:12mm 12mm 0}@page{size:A4 portrait;margin:0}'+ACSS+ANX+'</style>';
- const annex=annexHtml(g,{cust,dept,date});
+ const AB=annexBuild(g,{cust,dept,date}),annex=AB.html;
  if(mode==='annex'){closeInsp();return printDoc('표준품관리내역_'+g+'_'+ym,css0+annex)}
  const withAnnex=!!(document.getElementById('inAnnex')||{}).checked,target=all[g].target||'';
  const rv=n=>(document.querySelector(`input[name="${n}"]:checked`)||{}).value==='1';
@@ -1779,7 +1789,7 @@ window.makeInspection=function(mode){
  const st=(bad,re)=>`${ck(!bad)} 정상<br>${ck(bad)} 손상 (재출력 여부 : ${ck(bad&&!re)} 아니오 &nbsp;${ck(bad&&re)} 예 <span style="display:inline-block;width:110px"></span>)`;
  const logo=(document.querySelector('img.kptr')||{}).src||'';
  const css='<style>.f{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}.f td,.f th{border:1px solid #333;padding:7px 9px;vertical-align:middle;line-height:1.55}.f th{background:#e6e6e6;font-weight:600;text-align:center}.hd{display:flex;align-items:flex-end;margin-bottom:8px}.hd img{height:24px}.hd h1{flex:1;text-align:center;font-size:22px;margin:0;letter-spacing:.08em}.hd .pg{font-size:10px;width:120px;text-align:right}.sec{text-align:center;letter-spacing:.6em}.big{height:44px}</style>';
- const pages=withAnnex?annexPages(annex):0;
+ const pages=withAnnex?AB.pages:0;
  const form=`<div class="fpage"><div class="hd">${logo?`<img src="${logo}" alt="KPTR 한국의약품시험연구원">`:'<b>KPTR 한국의약품시험연구원</b>'}<h1>표준품 정기점검</h1><span class="pg">page 1 of 1</span></div>
  <table class="f"><colgroup><col style="width:17%"><col style="width:16%"><col style="width:13%"><col style="width:19%"><col style="width:13%"><col style="width:22%"></colgroup>
  <tr><th>고객사</th><td style="text-align:center">${esc(cust)}</td><th>점검일</th><td style="text-align:center">${dot(date)}</td><th>점검자</th><td class="big"></td></tr>
