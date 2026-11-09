@@ -1,4 +1,4 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.9</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.0</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -378,7 +378,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V2.9 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V3.0 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -644,7 +644,7 @@ async function unzipXlsx(buffer){const bytes=new Uint8Array(buffer),dv=new DataV
 function xmlDoc(s){let d=new DOMParser().parseFromString(s,'application/xml');if(d.querySelector('parsererror'))throw Error('Excel XML을 해석할 수 없습니다.');return d}
 function xmlChildren(el,name){return [...el.children].filter(x=>x.localName===name)}
 function excelSerial(v){let n=Number(v);if(!Number.isFinite(n)||n<20000||n>90000)return String(v||'');return new Date(Date.UTC(1899,11,30)+n*86400000).toISOString().slice(0,10)}
-async function readExcelRows(file){if(!file||!file.name.toLowerCase().endsWith('.xlsx'))throw Error('.xlsx 파일을 선택해 주세요.');if(file.size>20*1024*1024)throw Error('테스트 버전에서는 20MB 이하 파일을 사용해 주세요.');let zip=await unzipXlsx(await file.arrayBuffer());let shared=[];if(zip['xl/sharedStrings.xml']){let d=xmlDoc(zip['xl/sharedStrings.xml']);shared=[...d.getElementsByTagName('*')].filter(x=>x.localName==='si').map(si=>[...si.getElementsByTagName('*')].filter(x=>x.localName==='t').map(x=>x.textContent).join(''))}let sheetName=Object.keys(zip).filter(x=>/^xl\/worksheets\/sheet\d+\.xml$/.test(x)).sort((a,b)=>Number(a.match(/\d+/)[0])-Number(b.match(/\d+/)[0]))[0];if(!sheetName)throw Error('Excel 시트를 찾지 못했습니다.');let doc=xmlDoc(zip[sheetName]),raw=[];for(let row of [...doc.getElementsByTagName('*')].filter(x=>x.localName==='row')){let cols={};for(let c of xmlChildren(row,'c')){let ref=c.getAttribute('r')||'',letters=ref.match(/^[A-Z]+/i)?.[0]||'',index=0;for(let ch of letters.toUpperCase())index=index*26+ch.charCodeAt(0)-64;index--;let v=xmlChildren(c,'v')[0]?.textContent??'',type=c.getAttribute('t');if(type==='s')v=shared[Number(v)]??'';else if(type==='inlineStr')v=[...c.getElementsByTagName('*')].filter(x=>x.localName==='t').map(x=>x.textContent).join('');if(index>=0)cols[index]=v}raw.push(cols)}let headerIndex=raw.findIndex(r=>Object.values(r).some(v=>String(v).trim()==='관리 번호'));if(headerIndex<0)throw Error("'관리 번호' 열을 찾지 못했습니다. Excel 양식을 확인해 주세요.");let headers=raw[headerIndex];return raw.slice(headerIndex+1).map(r=>Object.fromEntries(Object.entries(headers).map(([i,k])=>[String(k).trim(),r[i]??'']))).filter(r=>String(r['관리 번호']||'').trim())}
+async function readExcelRows(file){if(!file||!file.name.toLowerCase().endsWith('.xlsx'))throw Error('.xlsx 파일을 선택해 주세요.');if(file.size>20*1024*1024)throw Error('테스트 버전에서는 20MB 이하 파일을 사용해 주세요.');let zip=await unzipXlsx(await file.arrayBuffer());let shared=[];if(zip['xl/sharedStrings.xml']){let d=xmlDoc(zip['xl/sharedStrings.xml']);shared=[...d.getElementsByTagName('*')].filter(x=>x.localName==='si').map(si=>[...si.getElementsByTagName('*')].filter(x=>x.localName==='t').map(x=>x.textContent).join(''))}let sheetName=Object.keys(zip).filter(x=>/^xl\/worksheets\/sheet\d+\.xml$/.test(x)).sort((a,b)=>Number(a.match(/\d+/)[0])-Number(b.match(/\d+/)[0]))[0];if(!sheetName)throw Error('Excel 시트를 찾지 못했습니다.');let doc=xmlDoc(zip[sheetName]),raw=[];for(let row of [...doc.getElementsByTagName('*')].filter(x=>x.localName==='row')){let cols={};for(let c of xmlChildren(row,'c')){let ref=c.getAttribute('r')||'',letters=ref.match(/^[A-Z]+/i)?.[0]||'',index=0;for(let ch of letters.toUpperCase())index=index*26+ch.charCodeAt(0)-64;index--;let v=xmlChildren(c,'v')[0]?.textContent??'',type=c.getAttribute('t');if(type==='s')v=shared[Number(v)]??'';else if(type==='inlineStr')v=[...c.getElementsByTagName('*')].filter(x=>x.localName==='t').map(x=>x.textContent).join('');if(index>=0)cols[index]=v}raw.push(cols)}let headerIndex=raw.findIndex(r=>Object.values(r).some(v=>String(v).trim()==='관리 번호'));if(headerIndex<0)headerIndex=raw.findIndex(r=>Object.values(r).some(v=>String(v).trim()==='라벨 번호'));if(headerIndex<0)throw Error("'관리 번호' 열을 찾지 못했습니다. Excel 양식을 확인해 주세요.");let headers=raw[headerIndex];return raw.slice(headerIndex+1).map(r=>Object.fromEntries(Object.entries(headers).map(([i,k])=>[String(k).trim(),r[i]??'']))).filter(r=>String(r['관리 번호']||r['라벨 번호']||'').trim())}
 function excelStorage(row){let t=String(row['보관 조건']||'');return /냉동|freez/i.test(t)?'냉동':/냉장|refrig/i.test(t)?'냉장':/실온|상온|room/i.test(t)?'실온':'기타'}
 function excelGroup(row){let code=String(row['관리 번호']||'').trim(),m=code.match(/^PB\.([^.]+)\./i);let category=(m?.[1]||'기타').toUpperCase();return category==='BPT'?'BPT-'+excelStorage(row):category}
 function previewUploadMarkup(){if(!uploadPreview)return '';let p=uploadPreview;return `<div class="upload-preview"><h3>업로드 미리보기</h3><p class="muted">${esc(p.file)} · ${p.rows.length}건 · 신규 ${p.added}건 · 갱신 ${p.updated}건</p>${p.errors.length?`<p class="danger">확인 필요: ${p.errors.slice(0,5).map(esc).join(' / ')}${p.errors.length>5?' 외 '+(p.errors.length-5)+'건':''}</p>`:''}<div class="tablewrap"><table style="min-width:650px"><thead><tr><th>관리번호</th><th>보관 조건</th><th>보관 장소</th><th>실재고</th><th>유효기한</th><th>반영 방식</th></tr></thead><tbody>${p.rows.slice(0,15).map(r=>`<tr><td>${esc(r['관리 번호'])}</td><td>${esc(excelStorage(r))}</td><td>${esc(r['상세 보관 장소']||r['보관 장소']||'미등록')}</td><td>${esc(r['재고량']||'0')} ${esc(r['전체 용량 단위']||'')}</td><td>${esc(r['개봉 이전 유효 기한 일자']||'미등록')}</td><td>${stocks.some(s=>s.code===r['관리 번호'])?'갱신':'신규'}</td></tr>`).join('')}</tbody></table></div>${p.rows.length>15?`<p class="muted">앞의 15건만 미리 표시합니다.</p>`:''}<div class="toolbar"><button class="primary" onclick="applyExcelUpload()" ${p.errors.length?'disabled':''}>${p.rows.length}건 데이터 반영</button><button onclick="uploadPreview=null;render()">취소</button></div><p class="muted">미리보기 단계에서는 기존 데이터가 변경되지 않습니다. 반영 후에도 폐기 완료 판정은 Excel의 라벨 수량을 기준으로 자동 처리됩니다.</p></div>`}
@@ -1172,17 +1172,17 @@ function splitRows(text,d){const rows=[];let row=[],cur='',q=false;
   return rows.filter(r=>r.some(v=>String(v).trim()!==''))}
 function parseTable(text){
   text=String(text||'').replace(/^﻿/,'');
-  const first=text.split(/\r?\n/).find(l=>/관리\s*번호/.test(l))||text.split(/\r?\n/)[0]||'';
+  const first=text.split(/\r?\n/).find(l=>/관리\s*번호|라벨\s*번호/.test(l))||text.split(/\r?\n/)[0]||'';
   const d=first.includes('\t')?'\t':',';
   const raw=splitRows(text,d);
-  const hi=raw.findIndex(r=>r.some(v=>String(v).replace(/\s/g,'')==='관리번호'));
+  let hi=raw.findIndex(r=>r.some(v=>String(v).replace(/\s/g,'')==='관리번호'));if(hi<0)hi=raw.findIndex(r=>r.some(v=>String(v).replace(/\s/g,'')==='라벨번호'));
   if(hi<0)throw Error("'관리 번호' 열을 찾지 못했습니다. Excel에서 제목(머리글) 행까지 포함해 복사해 주세요.");
-  const heads=raw[hi].map(h=>{h=String(h).trim();return h.replace(/\s/g,'')==='관리번호'?'관리 번호':h});
+  const heads=raw[hi].map(h=>{h=String(h).trim();const c=h.replace(/\s/g,'');return c==='관리번호'?'관리 번호':c==='라벨번호'?'라벨 번호':h});
   const DK='개봉 이전 유효 기한 일자';
   return raw.slice(hi+1).map(r=>{const o={};heads.forEach((k,i)=>{if(k)o[k]=String(r[i]??'').trim()});
     if(o['재고량'])o['재고량']=o['재고량'].replace(/,/g,'');
     if(o[DK]){const m=o[DK].match(/^(\d{4})[.\-\/]\s*(\d{1,2})[.\-\/]\s*(\d{1,2})/);if(m)o[DK]=m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0')}
-    return o}).filter(r=>String(r['관리 번호']||'').trim());
+    return o}).filter(r=>String(r['관리 번호']||r['라벨 번호']||'').trim());
 }
 async function decode(file){const buf=await file.arrayBuffer();try{return new TextDecoder('utf-8',{fatal:true}).decode(buf)}catch(e){return new TextDecoder('euc-kr').decode(buf)}}
 const _read=window.readExcelRows;
@@ -1683,7 +1683,7 @@ function gv(r,k){if(r[k]!=null&&r[k]!=='')return String(r[k]).trim();const t=k.r
 function listOf(g){return activeMine().filter(s=>s.group===g).sort((a,b)=>a.code.localeCompare(b.code,undefined,{numeric:true}))}
 const usage=()=>(lj('standardhub_v22_usage',{})||{}).data||{};
 const savedNames=()=>lj(NK,{});
-function stdName(base,UN,SN){return ((UN||usage())[base]||{}).name||(SN||savedNames())[base]||''}
+function stdName(base,UN,SN){return (window.labelName&&labelName(base))||((UN||usage())[base]||{}).name||(SN||savedNames())[base]||''}
 function nameFn(){const UN=usage(),SN=savedNames();return s=>{const u=stdName(baseCode(s),UN,SN);if(u)return u;return s.name&&s.name!==s.code?s.name:'-'}}
 function curMon(){let v=Number(lj('standardhub_v22_alert_months',3));return [1,3,6].includes(v)?v:3}
 
@@ -1710,7 +1710,7 @@ function prodName(x){const o=String(x||'').trim();let t=o.replace(/\s*\(.*$/,'')
  let again=true;while(again){again=false;for(const f of FORMS){if(t.length>f.length+1&&t.endsWith(f)){t=t.slice(0,-f.length).replace(/[\s\/\-_,.·]+$/,'');again=true;break}}}
  return t||o}
 function annexRows(g,cust){const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),NOTES=lj(LK,{}),client=!isB(g);
- return listOf(g).filter(s=>!SKIP[baseCode(s)]).map(s=>{const r=detailData[s.id]||{},base=baseCode(s);
+ return listOf(g).filter(s=>!SKIP[baseCode(s)]&&!(window.labelGone&&labelGone(s.code))).map(s=>{const r=detailData[s.id]||{},base=baseCode(s);
   let prod='N/A';if(client){const P=(UN[base]||{}).pur||{},set=new Set();Object.values(P).forEach(d=>Object.keys(d).forEach(k=>{const x=k.split('\t')[0];if(x&&x!=='-')set.add(prodName(x))}));if(set.size)prod=[...set].join(', ')}
   const pk=Number(gv(r,'패키지 수'))||1,ct=Number(gv(r,'패키지 별 용기 수'))||1,tv=gv(r,'전체 용량'),tu=gv(r,'전체 용량 단위'),iu0=gv(r,'입고 수량 단위');
   const tn=Number(String(tv).replace(/,/g,''));const spec=iu0;/* 규격 = 입고 단위만 (예: vial, 개, mg) */
@@ -1748,7 +1748,7 @@ function notesBox(){const g=val('inG'),box=document.getElementById('inNotes');if
 window.noteSet=function(code,v){const N=lj(LK,{});v=String(v||'').trim();if(v)N[code]=v;else delete N[code];try{localStorage.setItem(LK,JSON.stringify(N))}catch(e){return alert('이 브라우저에서는 저장할 수 없습니다.')}notesBox()};
 window.noteAdd=function(){const c=val('ntCode'),t=val('ntText').trim();if(!t)return alert('비고 내용을 입력해 주세요.');noteSet(c,t)};
 window.inspFill=function(){notesBox();const g=val('inG'),m=lf()[g]||{};document.getElementById('inCust').value=m.cust||defCust(g);document.getElementById('inTarget').value=m.target||defTarget(g);document.getElementById('inDept').value=m.dept||'';
- const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),miss=[...new Set(listOf(g).map(baseCode))].filter(b=>!(UN[b]||{}).name),box=document.getElementById('inNames');if(!box)return;
+ const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),miss=[...new Set(listOf(g).map(baseCode))].filter(b=>!(UN[b]||{}).name&&!(window.labelName&&labelName(b))),box=document.getElementById('inNames');if(!box)return;
  box.innerHTML=miss.length?`<div style="margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)"><b>표준품명이 없는 표준품 ${miss.length}종</b><p class="muted small" style="margin:4px 0 8px">사용기록이 없어 표준품명을 모릅니다. 쓰는 표준품이면 이름을 입력하고(비우면 N/A), 지금 안 쓰는 표준품이면 '관리내역에서 빼기'를 체크하세요. 선택은 다음에도 기억합니다.</p>${miss.map(b=>`<div style="display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap"><span style="min-width:110px;font-family:var(--mono,monospace)">${esc(b)}</span><input class="in-nm" data-base="${esc(b)}" value="${esc(SN[b]||'')}" placeholder="비우면 N/A" style="margin:0;flex:1;min-width:140px"><label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-weight:400;white-space:nowrap"><input class="in-skip" data-base="${esc(b)}" type="checkbox" ${SKIP[b]?'checked':''} style="width:auto;margin:0">관리내역에서 빼기</label></div>`).join('')}</div>`:''};
 window.openInspection=function(mode){
  const annexOnly=mode==='annex',gs=targets();if(!gs.length)return alert('출력할 표준품이 없습니다. 먼저 Excel을 올려 주세요.');
@@ -1783,9 +1783,10 @@ window.makeInspection=function(mode){
  if(mode==='annex'){closeInsp();return printDoc('표준품관리내역_'+g+'_'+ym,css0+annex)}
  const withAnnex=!!(document.getElementById('inAnnex')||{}).checked,target=all[g].target||'';
  const rv=n=>(document.querySelector(`input[name="${n}"]:checked`)||{}).value==='1';
- const list=listOf(g),nm=nameFn();
+ const DL=window.labelDisposed?labelDisposed(g,ym):[],dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!dset.has(s.code)),nm=nameFn();
  const ln=(s,x)=>'- '+esc(s.code)+(nm(s)==='-'?'':' : '+esc(nm(s)))+' (EXP. '+esc(s.exp||'-')+')'+(x||'');
- const blk=(t,arr,f)=>'['+t+']<br>'+(arr.length?arr.map(f).join('<br>'):'- N/A');
+ const blk=(t,arr,f)=>'['+t+']<br>'+(arr.length?arr.map(f).join('<br>'):'- N/A'),blk2=(t,lines)=>'['+t+']<br>'+(lines.length?lines.join('<br>'):'- N/A');
+ const dl=x=>'- '+esc(x.code)+(x.name?' : '+esc(x.name):'')+' (EXP. '+esc(x.exp||'-')+') · 폐기 '+dot(x.date);
  const tx=v=>{v=String(v||'').trim();return v?v.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>(/^[-·•]/.test(x)?'':'- ')+esc(x)).join('<br>'):'- N/A'};
  const mon=[1,3,6].includes(Number(val('inMon')))?Number(val('inMon')):3,lim=new Date(date+'T00:00:00');lim.setMonth(lim.getMonth()+mon);const limS=lim.getFullYear()+'-'+String(lim.getMonth()+1).padStart(2,'0')+'-'+String(lim.getDate()).padStart(2,'0');
  const okD=s=>/^\d{4}-\d{2}-\d{2}$/.test(s.exp||'');
@@ -1806,11 +1807,57 @@ window.makeInspection=function(mode){
  <tr><th>보관상태<br>(보관위치,<br>밀봉여부 등)</th><td colspan="5">${st(rv('inSto'),rv('inStoRe'))}</td></tr>
  <tr><th>추가 구입<br>(요청)<br>필요 표준품</th><td colspan="5">${tx(val('inBuy'))}</td></tr>
  <tr><th>Re-test 필요<br>표준품</th><td colspan="5">${tx(val('inRetest'))}</td></tr>
- <tr><th>폐기 표준품</th><td colspan="5" style="height:100px">${blk('유효기한 만료',exp,s=>ln(s))}<br><br>${blk('소진',empty,s=>ln(s,' · 재고 0'))}</td></tr>
+ <tr><th>폐기 표준품</th><td colspan="5" style="height:100px">${blk2('유효기한 만료',[...exp.map(s=>ln(s)),...DL.filter(x=>x.expired).map(dl)])}<br><br>${blk2('소진',[...empty.map(s=>ln(s,' · 재고 0')),...DL.filter(x=>!x.expired).map(dl)])}</td></tr>
  <tr><th>기타<br>특이사항</th><td colspan="5" style="height:120px">[입고 예정]<br>${tx(val('inPlan'))}<br><br>${blk('입고',inM,s=>ln(s,' · 입고 '+dot(iso((detailData[s.id]||{})['입고 일자']))))}<br><br>[기타]<br>${tx(val('inEtc'))}</td></tr>
  <tr><th>확인일</th><td colspan="2" class="big" style="text-align:center">${dot(date)}</td><th>확인자</th><td colspan="2" class="big"></td></tr></table>
  <div class="doc">S-P-GO011-F4-V03</div></div>`;
  closeInsp();printDoc('표준품정기점검_'+g+'_'+ym,css0+css+form+(withAnnex?annex:''))};
 const _r=window.render;window.render=function(){_r();try{if(active!=='overview')return;const b=document.querySelector('#overview button[onclick="printOverview()"]');if(b&&!document.getElementById('inspBtn')){const w=document.createElement('span');w.style.cssText='display:inline-flex;gap:8px;flex-wrap:wrap';b.replaceWith(w);w.append(b);w.insertAdjacentHTML('beforeend','<button id="inspBtn" onclick="openInspection()">정기점검 양식</button><button id="annexBtn" onclick="openInspection(\'annex\')">관리내역</button>')}}catch(e){}};
+})();
+
+/* ===== 라벨 정보 (LIMS 라벨별 Excel: 시험 자원 명·라벨 번호·재고 진행 상황·폐기 일자 …) =====
+   표준품명과 '그 달에 폐기 완료된 입고번호'에 씁니다. 개봉자·폐기자 같은 사람 이름은 저장하지 않습니다. */
+(function(){
+const LBK='standardhub_v22_label_info';
+const lj=()=>{try{return JSON.parse(localStorage.getItem(LBK)||'null')}catch(e){return null}};
+function iso(v){v=String(v||'').trim();const m=v.match(/(\d{4})[.\-\/]\s*(\d{1,2})[.\-\/]\s*(\d{1,2})/);if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+ if(/^\d{5}(\.\d+)?$/.test(v))return new Date(Date.UTC(1899,11,30)+Math.floor(Number(v))*86400000).toISOString().slice(0,10);return ''}
+const isLabelRows=rows=>rows.length&&!rows.some(r=>String(r['관리 번호']||'').trim())&&rows.some(r=>String(r['라벨 번호']||'').trim());
+function analyze(rows){const lots={};let bad=0;
+ rows.forEach(r=>{const lab=String(r['라벨 번호']||'').trim(),code=lab.replace(/-\d+$/,'');if(!/^PB\.[A-Z0-9]+\.[A-Z0-9]+-\d+$/i.test(code)){bad++;return}
+  const L=lots[code]=lots[code]||{name:'',labels:0,disposed:0,date:'',exp:'',group:excelGroup({'관리 번호':code,'보관 조건':r['보관 조건']||''})};
+  L.labels++;const nm=String(r['시험 자원 명']||'').trim();if(nm&&!L.name)L.name=nm;
+  const e=iso(r['개봉 이전 유효 기한 일자']);if(e&&(!L.exp||e<L.exp))L.exp=e;
+  const d=iso(r['폐기 일자']);if(/폐기/.test(String(r['재고 진행 상황']||''))||d){L.disposed++;if(d&&d>L.date)L.date=d}});
+ return {lots,bad,labels:rows.length}}
+let pending=null;
+window.labelGone=function(code){const o=lj(),L=o&&o.lots[code];return !!(L&&L.labels>0&&L.disposed===L.labels)};
+window.labelName=function(base){const o=lj();if(!o)return '';for(const c in o.lots)if(c.replace(/-\d+$/,'')===base&&o.lots[c].name)return o.lots[c].name;return ''};
+/* 그 달(ym)에 라벨이 모두 폐기된 입고번호. 폐기일이 유효기한 이후면 '유효기한 만료', 아니면 '소진' */
+window.labelDisposed=function(g,ym){const o=lj();if(!o)return [];const u=user();
+ return Object.entries(o.lots).filter(([c,L])=>L.group===g&&L.labels>0&&L.disposed===L.labels&&L.date.slice(0,7)===ym&&(u.admin||u.groups.includes(g)||stocks.some(s=>s.code===c&&accessible(s,u))))
+  .map(([c,L])=>({code:c,name:L.name,exp:L.exp,date:L.date,expired:!!(L.exp&&L.exp<=L.date)})).sort((a,b)=>a.date.localeCompare(b.date)||a.code.localeCompare(b.code))};
+async function preview(src){const out=document.getElementById('labelResult');if(!out)return;
+ try{const rows=await readExcelRows(src);if(!isLabelRows(rows)){out.innerHTML='<p class="danger">라벨 Excel이 아닌 것 같습니다. \'라벨 번호\' 열이 있는 파일을 올려 주세요.</p>';return}
+  pending=analyze(rows);const ls=Object.values(pending.lots),done=ls.filter(L=>L.disposed===L.labels).length,ym=new Date().toISOString().slice(0,7),thisM=ls.filter(L=>L.disposed===L.labels&&L.date.slice(0,7)===ym).length;
+  out.innerHTML=`<div class="upload-preview"><h3>확인</h3><p>라벨 <b>${pending.labels.toLocaleString()}</b>개 · 입고번호 <b>${ls.length}</b>개 · 표준품명 있음 ${ls.filter(L=>L.name).length}개</p><p>모든 라벨이 폐기된 입고번호 <b>${done}</b>개 (이번 달 폐기 ${thisM}개)${pending.bad?` · 라벨 번호를 읽지 못한 줄 ${pending.bad}개 제외`:''}</p>
+  <p class="muted">시험 자원 명, 라벨 번호, 재고 진행 상황, 개봉 이전 유효 기한, 폐기 일자만 저장합니다. 개봉자 · 폐기자 이름은 저장하지 않습니다. 새로 올리면 이전 라벨 정보는 새 내용으로 바뀝니다.</p>
+  <div class="toolbar"><button class="primary" onclick="labelApply()">반영하기</button><button onclick="labelCancel()">취소</button></div></div>`}
+ catch(e){out.innerHTML='<p class="danger">'+esc(e.message||String(e))+'</p>'}}
+window.labelFile=function(inp){const f=inp.files&&inp.files[0];if(f)preview(f);inp.value=''};
+window.labelPaste=function(){const t=(document.getElementById('labelPasteBox')||{}).value||'';if(!t.trim()){document.getElementById('labelResult').innerHTML='<p class="danger">붙여넣은 내용이 없습니다.</p>';return}preview({name:'붙여넣기',pasted:t})};
+window.labelCancel=function(){pending=null;const o=document.getElementById('labelResult');if(o)o.innerHTML=''};
+window.labelApply=function(){if(!pending)return;try{localStorage.setItem(LBK,JSON.stringify({saved:new Date().toLocaleString('ko-KR'),lots:pending.lots}))}catch(e){return alert('브라우저 저장 공간이 부족해 저장하지 못했습니다.')}
+ const n=Object.keys(pending.lots).length;pending=null;alert('라벨 정보 '+n+'개 입고번호를 반영했습니다.');render()};
+/* 재고 업로드 칸에 라벨 Excel을 올린 경우 안내 */
+const _pe=window.previewExcel;
+window.previewExcel=async function(f){try{const rows=await readExcelRows(f);if(isLabelRows(rows)){const r=document.getElementById('uploadResult');if(r)r.innerHTML='<p class="danger">라벨 Excel입니다. 아래 \'라벨 정보 올리기\' 칸에 올려 주세요.</p>';return}}catch(e){}return _pe.apply(this,arguments)};
+const _r=window.render;window.render=function(){_r();try{if(active!=='upload'||document.getElementById('labelPanel'))return;const sec=document.getElementById('upload');if(!sec)return;const o=lj();
+ sec.insertAdjacentHTML('beforeend',`<div class="panel" id="labelPanel" style="margin-top:16px"><h3>라벨 정보 올리기 (선택)</h3>
+ <p class="muted">LIMS의 라벨별 Excel(시험 자원 명 · 라벨 번호 · 재고 진행 상황 · 폐기 일자 열)을 올리면 <b>표준품명</b>이 채워지고, 정기점검 양식에 <b>그 달에 폐기한 입고번호</b>가 폐기일과 함께 들어갑니다. 재고 Excel은 위에서 따로 올려 주세요.</p>
+ ${o?`<p class="small muted">마지막 반영: ${esc(o.saved)} · 입고번호 ${Object.keys(o.lots).length}개</p>`:''}
+ <div class="toolbar"><label class="primary" style="display:inline-block;padding:8px 14px;border-radius:8px;cursor:pointer;background:var(--brand);color:var(--on-brand);font-weight:600">파일 선택<input type="file" accept=".xlsx,.csv,.tsv,.txt" style="display:none" onchange="labelFile(this)"></label></div>
+ <textarea id="labelPasteBox" rows="3" spellcheck="false" placeholder="또는 제목 행을 포함해 붙여넣기 (시험 자원 명, 라벨 번호, 재고 진행 상황 …)" style="width:100%;margin-top:10px"></textarea>
+ <div class="toolbar"><button onclick="labelPaste()">붙여넣은 내용 확인</button></div><div id="labelResult"></div></div>`)}catch(e){}};
 })();
 </script></body></html>
