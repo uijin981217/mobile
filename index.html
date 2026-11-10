@@ -1,4 +1,4 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.1</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.2</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -378,7 +378,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V3.1 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V3.2 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1595,14 +1595,15 @@ function listHtml(){
 window.usageToggle=function(b){openBase=openBase===b?null:b;const el=document.getElementById('usageList');if(el)el.innerHTML=listHtml()};
 window.usageGroup=function(g){gf=g;openBase=null;render()};
 window.usageFilter=function(){q=document.getElementById('usageQ').value;jf=document.getElementById('usageJ').value;sf=document.getElementById('usageS').value;const el=document.getElementById('usageList');if(el)el.innerHTML=listHtml()};
+window.usageUploadPanel=()=>`<div class="panel" id="usagePanel" style="margin-top:16px"><h3>사용기록 올리기</h3>
+   <p class="muted">LIMS에서 내보낸 사용기록 Excel을 올려 주세요. BPT 전체가 들어 있어도 괜찮습니다. <b>내 표준품만 자동으로 골라</b> 반영합니다. 파일 선택이 막혀 있으면 아래 칸에 표를 복사해 붙여넣을 수 있습니다.</p>
+   <div class="toolbar"><label class="primary" style="display:inline-block;padding:8px 14px;border-radius:8px;cursor:pointer;background:var(--brand);color:var(--on-brand);font-weight:600">파일 선택<input type="file" accept=".xlsx,.csv,.tsv,.txt" style="display:none" onchange="usageFile(this)"></label>${load()?'<button class="danger-outline" onclick="usageClear()">사용기록 지우기</button>':''}</div>
+   <textarea id="usagePasteBox" rows="4" spellcheck="false" placeholder="제목 행을 포함해 붙여넣기 (관리 번호, 사용 량, 사용 량 단위, 사용 시작 일시 …)" style="width:100%;margin-top:10px"></textarea>
+   <div class="toolbar"><button onclick="usagePaste()">붙여넣은 내용 확인</button></div><div id="usageResult"></div></div>`;
 window.usagePage=function(){
   if(!stocks.length)return emptyState();
   const U=load(),act=activeMine();
-  const input=`<div class="panel"><h3>사용기록 올리기</h3>
-   <p class="muted">LIMS에서 내보낸 사용기록 Excel을 올려 주세요. BPT 전체가 들어 있어도 괜찮습니다. <b>내 표준품만 자동으로 골라</b> 반영합니다. 파일 선택이 막혀 있으면 아래 칸에 표를 복사해 붙여넣을 수 있습니다.</p>
-   <div class="toolbar"><label class="primary" style="display:inline-block;padding:8px 14px;border-radius:8px;cursor:pointer;background:var(--brand);color:var(--on-brand);font-weight:600">파일 선택<input type="file" accept=".xlsx,.csv,.tsv,.txt" style="display:none" onchange="usageFile(this)"></label>${U?'<button class="danger-outline" onclick="usageClear()">사용기록 지우기</button>':''}</div>
-   <textarea id="usagePasteBox" rows="4" spellcheck="false" placeholder="제목 행을 포함해 붙여넣기 (관리 번호, 사용 량, 사용 량 단위, 사용 시작 일시 …)" style="width:100%;margin-top:10px"></textarea>
-   <div class="toolbar"><button onclick="usagePaste()">붙여넣은 내용 확인</button></div><div id="usageResult"></div></div>`;
+  const input=`<p class="muted small" style="margin-top:14px">사용기록 Excel은 <a href="#" onclick="go('upload');return false">Excel 업로드</a> 탭에서 올립니다.</p>`;
   if(!U)return `<div class="page-head"><h2>사용 추이</h2></div><div class="hint">표준품을 얼마나, 어떤 속도로 쓰는지 보고 <b>언제쯤 다 쓸지</b>, 유효기한 안에 다 쓸 수 있는지 가늠해 보는 화면입니다. 참고용이며 공식 기준은 LIMS입니다.</div>${input}`;
   const{list}=rowsFor();
   const cnt=j=>list.filter(r=>r.j===j).length;
@@ -1651,20 +1652,7 @@ const _r=window.render;window.render=function(){_r();decorate()};
 })();
 
 
-/* ===== V1.5 첫 로그인 시 관리자 비밀번호 변경 필수 ===== */
-(function(){
-let forced=false;
-const _lg=window.loginDemo;
-window.loginDemo=function(){const r=_lg.apply(this,arguments);
- try{const u=user();if(u&&u.admin&&u.id==='admin'&&adminCfg().isDefault){forced=true;openAdminSetup();
-  document.getElementById('accountTitle').textContent='관리자 비밀번호 변경 (처음 한 번)';
-  document.getElementById('accountContent').insertAdjacentHTML('afterbegin','<p class="danger" style="margin-top:0">처음 비밀번호(admin)는 누구나 알 수 있어 위험합니다. 계속 쓰려면 새 아이디와 비밀번호를 정해 주세요. 바꾸지 않고 닫으면 로그아웃됩니다.</p>')}}catch(e){}
- return r};
-const _close=closeAccountDialog;
-window.closeAccountDialog=function(){_close();if(forced){forced=false;if(adminCfg().isDefault){logoutDemo();alert('관리자 비밀번호를 바꾸지 않아 로그아웃했습니다.')}}};
-const _save=window.saveAdminSetup;
-window.saveAdminSetup=function(){const pw=(document.getElementById('admPw')||{}).value;if(pw==='admin'){document.getElementById('admMsg').textContent='처음 비밀번호(admin)와 다른 비밀번호를 입력해 주세요.';return}return _save.apply(this,arguments)};
-})();
+/* (V1.5의 '첫 로그인 시 관리자 비밀번호 변경 필수'는 V3.2에서 없앰 — admin/admin을 공용 계정으로 사용. 비밀번호 변경은 '내 계정'에서 선택) */
 
 /* ===== 정기점검 양식 + 별첨 1 표준품 관리내역 (BPT는 그룹별, 의뢰사는 의뢰사별) ===== */
 (function(){
@@ -1853,6 +1841,7 @@ window.labelApply=function(){if(!pending)return;try{localStorage.setItem(LBK,JSO
 const _pe=window.previewExcel;
 window.previewExcel=async function(f){try{const rows=await readExcelRows(f);if(isLabelRows(rows)){const r=document.getElementById('uploadResult');if(r)r.innerHTML='<p class="danger">라벨 Excel입니다. 아래 \'라벨 정보 올리기\' 칸에 올려 주세요.</p>';return}}catch(e){}return _pe.apply(this,arguments)};
 const _r=window.render;window.render=function(){_r();try{if(active!=='upload'||document.getElementById('labelPanel'))return;const sec=document.getElementById('upload');if(!sec)return;const o=lj();
+ if(window.usageUploadPanel&&!document.getElementById('usagePanel'))sec.insertAdjacentHTML('beforeend',usageUploadPanel());
  sec.insertAdjacentHTML('beforeend',`<div class="panel" id="labelPanel" style="margin-top:16px"><h3>라벨 정보 올리기 (선택)</h3>
  <p class="muted">LIMS의 라벨별 Excel(시험 자원 명 · 라벨 번호 · 재고 진행 상황 · 폐기 일자 열)을 올리면 <b>표준품명</b>이 채워지고, 정기점검 양식에 <b>그 달에 폐기한 입고번호</b>가 폐기일과 함께 들어갑니다. 재고 Excel은 위에서 따로 올려 주세요.</p>
  ${o?`<p class="small muted">마지막 반영: ${esc(o.saved)} · 입고번호 ${Object.keys(o.lots).length}개</p>`:''}
@@ -1867,4 +1856,31 @@ document.addEventListener('keydown',function(e){
  if(['loginId','loginPass','modalLoginId','modalLoginPass'].includes(t.id)){e.preventDefault();loginDemo();return}
  if(['admId','admName','admPw','admPw2'].includes(t.id)&&window.saveAdminSetup){e.preventDefault();saveAdminSetup()}
 });
+
+/* ===== 공유용 HTML 저장 (데이터 포함) =====
+   지금 브라우저의 표준품 데이터를 HTML 파일 안에 넣어 내려받음. 받은 사람이 그 파일을 열면 데이터가 들어가고 admin/admin으로 로그인.
+   관리자 계정 설정·담당자 계정(비밀번호 포함)은 넣지 않음. 서버로 보내는 것은 없음(파일로만 저장). */
+(function(){
+const SKIP=['standardhub_v22_admin_account','standardhub_v2_demo_accounts_20261030','standardhub_v22_seed_id'];
+function snapshot(){const d={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/^standardhub_/.test(k)&&!SKIP.includes(k))d[k]=localStorage.getItem(k)}return d}
+function build(src){if(!/표준품 통합관리/.test(src)||src.indexOf('<head>')<0)throw Error('표준품 통합관리 HTML 파일이 아닌 것 같습니다.');
+ const O='<'+'!--SH-SEED-->',C='<'+'!--/SH-SEED-->';const a0=src.indexOf(O),b0=src.indexOf(C);if(a0>=0&&b0>a0)src=src.slice(0,a0)+src.slice(b0+C.length);
+ const S={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),made:new Date().toLocaleString('ko-KR'),keep:SKIP,data:snapshot()};
+ const js='(function(){var S='+JSON.stringify(S).replace(/</g,'\\u003c')+';try{if(localStorage.getItem("standardhub_v22_seed_id")!==S.id){var ks=[];for(var i=0;i<localStorage.length;i++)ks.push(localStorage.key(i));ks.forEach(function(k){if(/^standardhub_/.test(k)&&S.keep.indexOf(k)<0)localStorage.removeItem(k)});for(var k in S.data)localStorage.setItem(k,S.data[k]);localStorage.setItem("standardhub_v22_seed_id",S.id)}}catch(e){}})();';
+ return src.replace('<head>','<head>'+O+'<scr'+'ipt>'+js+'</scr'+'ipt>'+C)}
+function download(html){const d=new Date(),n='KPTR_standard_share_'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'.html';
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));a.download=n;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);alert('공유용 파일을 저장했습니다: '+n)}
+window.shareExport=async function(){try{const r=await fetch(location.href,{cache:'no-store'});if(!r.ok)throw 0;download(build(await r.text()))}
+ catch(e){const box=document.getElementById('shareResult');if(box)box.innerHTML='<p class="muted">이 화면에서는 원본 파일을 바로 읽을 수 없습니다. 지금 열어 둔 <b>표준품 통합관리 HTML 파일</b>을 한 번 골라 주세요.</p><div class="toolbar"><label class="primary" style="display:inline-block;padding:8px 14px;border-radius:8px;cursor:pointer;background:var(--brand);color:var(--on-brand);font-weight:600">HTML 파일 선택<input id="shareSrc" type="file" accept=".html,.htm" style="display:none" onchange="shareFromFile(this)"></label></div>'}};
+window.shareFromFile=async function(inp){const f=inp.files&&inp.files[0];inp.value='';if(!f)return;try{download(build(await f.text()));const b=document.getElementById('shareResult');if(b)b.innerHTML=''}catch(e){alert(e.message||String(e))}};
+const _r=window.render;window.render=function(){_r();try{if(active!=='upload'||!user().admin||document.getElementById('sharePanel'))return;const sec=document.getElementById('upload');if(!sec)return;
+ sec.insertAdjacentHTML('beforeend',`<div class="panel" id="sharePanel" style="margin-top:16px"><h3>공유용 HTML 저장 (데이터 포함)</h3>
+ <p class="muted">지금 이 브라우저에 있는 재고 · 사용기록 · 라벨 정보 · 입력해 둔 내용을 넣은 HTML 파일을 내려받습니다. 받은 사람이 그 파일을 열고 <b>admin / admin</b>으로 로그인하면 같은 내용이 보입니다.</p>
+ <p class="danger small">파일 안에 표준품 데이터가 그대로 들어 있습니다. 회사 규정에 맞는 사람·경로로만 보내 주세요. 받은 사람 브라우저에 있던 기존 표준품 데이터는 이 파일 내용으로 바뀝니다(처음 열 때 한 번). 담당자 계정과 내 관리자 비밀번호는 넣지 않습니다.</p>
+ <div class="toolbar"><button class="primary" onclick="shareExport()">공유용 HTML 저장</button></div><div id="shareResult"></div></div>`)}catch(e){}};
+})();
+
+/* Excel 업로드 탭: '업로드 내역' 칸은 맨 아래로 */
+(function(){const _r=window.render;window.render=function(){_r();try{if(active!=='upload')return;const sec=document.getElementById('upload');if(!sec)return;
+ const h=[...sec.querySelectorAll('.panel > h3')].find(x=>x.textContent.trim()==='업로드 내역');if(h&&h.parentElement!==sec.lastElementChild)sec.appendChild(h.parentElement)}catch(e){}}})();
 </script></body></html>
