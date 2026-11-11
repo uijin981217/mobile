@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.5</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.6</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -387,7 +387,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V3.5 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V3.6 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1900,11 +1900,40 @@ window.clearDemoData=function(){askConfirm({title:'테스트 데이터 삭제',m
  location.reload()}})};
 function place(){try{const on=localStorage.getItem(K)==='demo';let b=document.getElementById('demoClearBtn');const land=document.getElementById('loginLanding');
  if(!on){if(b)b.remove();const x=document.getElementById('demoClearBtn2');if(x)x.remove();return}
- if(!b){const lo=[...document.querySelectorAll('header button')].find(x=>/로그아웃/.test(x.textContent));if(lo){b=document.createElement('button');b.id='demoClearBtn';b.className='danger-outline';b.textContent='테스트 데이터 삭제';b.title='시연용 예시 데이터를 지우고 처음 설치한 상태로 바꿉니다';b.onclick=clearDemoData;lo.parentElement.insertBefore(b,lo)}}
+ if(!b){const lo=[...document.querySelectorAll('header .toolbar button')].find(x=>/로그아웃/.test(x.textContent));if(lo){b=document.createElement('button');b.id='demoClearBtn';b.className='danger-outline';b.textContent='테스트 데이터 삭제';b.title='시연용 예시 데이터를 지우고 처음 설치한 상태로 바꿉니다';b.onclick=clearDemoData;lo.parentElement.insertBefore(b,lo)}}
  let b2=document.getElementById('demoClearBtn2');const showLand=land&&!land.classList.contains('hidden');
  if(showLand&&!b2){b2=document.createElement('button');b2.id='demoClearBtn2';b2.className='danger-outline';b2.textContent='테스트 데이터 삭제';b2.onclick=clearDemoData;b2.style.cssText='position:fixed;top:14px;right:16px;z-index:200';document.body.appendChild(b2)}
  if(!showLand&&b2)b2.remove()}catch(e){}}
 const _r=window.render;window.render=function(){_r();place()};place();
 })();
 
+
+/* ===== 머리 영역을 회사 다른 사이트(시험법 노트)와 같은 모양으로
+   1줄: 로고·제목(누르면 홈) + 검색 / 2줄: 아이콘 메뉴 / 3줄: 오른쪽에 사용자·버튼 ===== */
+(function(){
+const ICO={home:'<path d="M4 6h16M4 12h10M4 18h7"/><path d="m15 16 2 2 4-4"/>',std:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6A2 2 0 0 0 19 18l-5-9V3"/><path d="M7.5 14h9"/>',data:'<path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/>',admin:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',acct:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'};
+const css=`header.hdr3{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand search" "nav nav" "tools tools";align-items:center;gap:0;padding:16px 28px 0}
+header.hdr3>div:first-child{grid-area:brand;min-width:0}
+header.hdr3 .brand{cursor:pointer;gap:14px}header.hdr3 .brand .kptr{height:30px}header.hdr3 .brand-sep{display:none}header.hdr3 .brand-name{font-size:23px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+header.hdr3>.hsearch{grid-area:search;position:relative}header.hdr3>.hsearch input{width:350px;max-width:100%;margin:0!important;padding:10px 14px 10px 38px!important;border:0!important;border-radius:10px!important;background:var(--surface-2)!important;font-size:15px;box-shadow:none!important}
+header.hdr3>.hsearch:before{content:"\\2315";position:absolute;left:14px;top:50%;transform:translateY(-52%);color:var(--muted);font-size:16px;pointer-events:none}
+header.hdr3>nav{grid-area:nav;margin:14px 0 0;padding:0;border-bottom:1px solid var(--line);gap:18px}
+header.hdr3>nav button{display:inline-flex;align-items:center;gap:8px;padding:12px 2px 13px;font-size:16px}
+header.hdr3>nav button svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+header.hdr3>.toolbar{grid-area:tools;justify-content:flex-end;gap:8px;padding:12px 0;margin:0;flex-wrap:wrap}
+header.hdr3>.toolbar #sessionName{font-weight:400!important;color:var(--muted);font-size:14px;margin-right:4px}header.hdr3>.toolbar #roleTag{display:none}
+header.hdr3>.toolbar button{border-radius:10px;padding:9px 16px}
+@media (max-width:720px){header.hdr3{grid-template-columns:1fr;grid-template-areas:"brand" "search" "nav" "tools";padding:12px 16px 0}header.hdr3>.hsearch{margin-top:10px}header.hdr3>.hsearch input{width:100%}header.hdr3 .brand-name{font-size:19px}header.hdr3>nav{gap:10px}}`;
+function setup(){const h=document.querySelector('header'),nav=document.querySelector('nav');if(!h||!nav)return;
+ if(!document.getElementById('hdr3css')){const st=document.createElement('style');st.id='hdr3css';st.textContent=css;document.head.appendChild(st)}
+ h.classList.add('hdr3');
+ if(nav.parentElement!==h)h.appendChild(nav);
+ if(!h.querySelector('.hsearch')){const d=document.createElement('div');d.className='hsearch';d.innerHTML='<input id="hdrSearch" type="search" placeholder="표준품 검색 (관리번호 · Cat No. · 제조사)" autocomplete="off">';h.insertBefore(d,nav);
+  d.querySelector('input').addEventListener('keydown',e=>{if(e.key!=='Enter')return;e.preventDefault();const v=e.target.value.trim();if(!visibleTabs().includes('inventory'))return;go('inventory');setTimeout(()=>{const q=document.getElementById('masterQuery');if(q){q.value=v;try{drawMasters()}catch(x){}q.scrollIntoView({block:'center'})}},30)})}
+ const br=h.querySelector('.brand');if(br&&!br.dataset.home){br.dataset.home='1';br.title='홈(대시보드)으로';br.addEventListener('click',()=>{if(visibleTabs().includes('dashboard'))goGroup('home')})}
+ nav.querySelectorAll('button[data-grp]').forEach(b=>{if(b.dataset.ico)return;const k=ICO[b.dataset.grp];if(!k)return;b.dataset.ico='1';b.insertAdjacentHTML('afterbegin','<svg viewBox="0 0 24 24" aria-hidden="true">'+k+'</svg>')});
+ const sn=document.getElementById('sessionName'),u=user();if(sn&&u&&u.status!=='guest'){const c=window.adminCfg?adminCfg():null;sn.textContent=u.admin&&c?c.name+' ('+c.id+')':u.name+' ('+u.id+')'}
+ const hs=h.querySelector('.hsearch');if(hs)hs.style.visibility=(u&&u.status!=='guest')?'visible':'hidden'}
+const _r=window.render;window.render=function(){_r();try{setup()}catch(e){}};try{setup()}catch(e){}
+})();
 </script></body></html>
