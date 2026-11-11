@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.9</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V5.0</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -387,7 +387,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.9 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V5.0 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1841,9 +1841,15 @@ window.makeInspection=function(mode){
  const withAnnex=!!(document.getElementById('inAnnex')||{}).checked,target=all[g].target||'';
  const rv=n=>(document.querySelector(`input[name="${n}"]:checked`)||{}).value==='1';
  const DL=window.labelDisposed?labelDisposed(g,ym):[],dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!dset.has(s.code)),nm=nameFn();
- const ln=(s,x)=>'- '+esc(s.code)+(nm(s)==='-'?'':' : '+esc(nm(s)))+' (EXP. '+esc(s.exp||'-')+')'+(x||'');
- const blk=(t,arr,f)=>'['+t+']<br>'+(arr.length?arr.map(f).join('<br>'):'- N/A'),blk2=(t,lines)=>'['+t+']<br>'+(lines.length?lines.join('<br>'):'- N/A');
- const dl=x=>'- '+esc(x.code)+(x.name?' : '+esc(x.name):'')+' (EXP. '+esc(x.exp||'-')+') · 폐기 '+dot(x.date);
+ /* V5.0: 같은 표준품(기본번호·이름·유효기한·뒤 내용이 같음)은 한 줄로 — PB.MEC.003-005~007 */
+ const ln=(s,x)=>({code:s.code,name:nm(s)==='-'?'':nm(s),exp:s.exp||'-',tail:x||''});
+ const dl=x=>({code:x.code,name:x.name||'',exp:x.exp||'-',tail:' · 폐기 '+dot(x.date)});
+ const codesTxt=cs=>{const base=masterOf(cs[0]);const lots=cs.map(c=>{const m=c.slice(base.length).match(/^(-|\.W)(\d+)$/i);return m?{sep:m[1],n:Number(m[2]),t:m[2]}:null});
+  if(cs.length===1||lots.some(x=>!x))return cs.join(', ');lots.sort((a,b)=>a.n-b.n);const runs=[];lots.forEach(l=>{const r=runs[runs.length-1];if(r&&r.sep===l.sep&&l.n===r.e.n+1)r.e=l;else runs.push({sep:l.sep,s:l,e:l})});
+  return base+runs.map((r,i)=>(i?', ':'')+r.sep+r.s.t+(r.e!==r.s?'~'+r.e.t:'')).join('')};
+ const grpL=items=>{const m=new Map();items.forEach(o=>{const k=[masterOf(o.code),o.name,o.exp,o.tail].join('\u0001');if(!m.has(k))m.set(k,{...o,codes:[]});m.get(k).codes.push(o.code)});
+  return [...m.values()].map(o=>'- '+esc(codesTxt(o.codes))+(o.name?' : '+esc(o.name):'')+' (EXP. '+esc(o.exp)+')'+o.tail)};
+ const blk=(t,arr,f)=>'['+t+']<br>'+(arr.length?grpL(arr.map(f)).join('<br>'):'- N/A'),blk2=(t,items)=>'['+t+']<br>'+(items.length?grpL(items).join('<br>'):'- N/A');
  const tx=v=>{v=String(v||'').trim();return v?v.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>(/^[-·•]/.test(x)?'':'- ')+esc(x)).join('<br>'):'- N/A'};
  const mon=(m=>Number.isInteger(m)&&m>=1&&m<=24?m:3)(Math.round(Number(val('inMon')))),lim=new Date(date+'T00:00:00');lim.setMonth(lim.getMonth()+mon);const limS=lim.getFullYear()+'-'+String(lim.getMonth()+1).padStart(2,'0')+'-'+String(lim.getDate()).padStart(2,'0');
  const okD=s=>/^\d{4}-\d{2}-\d{2}$/.test(s.exp||'');
