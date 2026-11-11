@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V5.2</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V5.3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -387,7 +387,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V5.2 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V5.3 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1481,7 +1481,11 @@ window.reduceName=reduceName;
 /* 검체 자리에 들어간 시험항목 찾기: '10. 역가시험', '26PA-01234/10.역가시험 2) Difi 역가시험' → 시험항목 글자, 아니면 '' */
 function testInSample(raw){const segs=String(raw||'').replace(/\s*\(.*$/,'').split('/').map(x=>x.trim()).filter(Boolean);const i=segs.findIndex(x=>/^\d+\s*\.+\s*[가-힣A-Za-z]/.test(x));return i<0?'':segs.slice(i).join('/')}
 window.testInSample=testInSample;
-function normSample(raw){if(testInSample(raw)&&!/[가-힣]/.test(String(raw).replace(/\s*\(.*$/,'').split('/').filter(x=>!/^\s*\d+\s*\.+/.test(x)).join('/')))return '-';let t=String(raw||'').replace(/\s*\(.*$/,'').trim();if(!t||t==='-')return '-';
+/* 제품이 아닌 말(이상발생·일탈·OOS·재시험 등)이 검체 자리에 있으면 검체 미기재로 보고, 그 말은 시험항목 앞에 [ ]로 붙임 */
+const NONP=/(이상\s*발생|일탈|OOS|OOT|재시험|재\s*분석|조사|밸리데이션|validation|시스템\s*적합성|교육|기기\s*점검|교정)/i;
+function nonProd(raw){const t=String(raw||'').replace(/\s*\(.*$/,'');const m=t.match(NONP);return m&&!/[가-힣]{2,}(주|정|펜|캡슐|시린지)/.test(t.slice(0,m.index))?m[1].replace(/\s+/g,''):''}
+window.nonProd=nonProd;
+function normSample(raw){if(nonProd(raw))return '-';if(testInSample(raw)&&!/[가-힣]/.test(String(raw).replace(/\s*\(.*$/,'').split('/').filter(x=>!/^\s*\d+\s*\.+/.test(x)).join('/')))return '-';let t=String(raw||'').replace(/\s*\(.*$/,'').trim();if(!t||t==='-')return '-';
  const isRc=x=>/^\d{2}[A-Z]{1,3}-\d{3,}$/i.test(x),isLot=x=>!/[가-힣]/.test(x)&&/^[A-Z0-9][A-Z0-9.\-]*$/.test(x)&&/\d{3,}/.test(x),isStr=x=>/^[\d.,]+\s*[A-Za-zµμ%]*$/.test(x);
  const segs=t.split('/').map(x=>x.trim()).flatMap(x=>x.split(/\s+(?=\d{2}[A-Z]{1,3}-\d)/)).map(x=>x.trim()).filter(Boolean);
  if(segs.length===1&&!isRc(segs[0])&&!isLot(segs[0]))return reduceName(segs[0]);
@@ -1507,8 +1511,8 @@ function splitByNum(t){t=String(t||'');let d=0;for(let k=1;k<t.length;k++){const
  else if(d===0&&/\s/.test(c)&&/^\s+\d+\s*\.+\s*[가-힣A-Za-z]/.test(t.slice(k))&&/[가-힣A-Za-z]/.test(t.slice(0,k)))return [t.slice(0,k).trim(),t.slice(k).trim()]}return null}
 function parsePurpose(t){t=String(t||'').replace(/\s+/g,' ').trim();if(!t)return null;
   let [smp,tst]=splitPurpose(t);{const ti=testInSample(smp);if(ti&&normSample(smp)==='-'){tst=ti;smp=''}}
-  const raw=smp.replace(/\s*\(.*$/,'').trim();smp=normSample(smp);
-  return {s:smp||'-',x:cleanTest(raw,tst)}}
+  const raw=smp.replace(/\s*\(.*$/,'').trim(),np=nonProd(smp);smp=normSample(smp);
+  return {s:smp||'-',x:(np?'['+np+'] ':'')+cleanTest(np?'':raw,tst)}}
 function cleanTest(smp,tst){tst=String(tst||'').replace(/^\s*\d+\s*\.+\s*/,'').replace(/\s*\([^()]*_[^()]*\)?\s*$/,'').trim();
   if(smp&&smp!=='-'){const i=tst.indexOf(' '+smp+'(');if(i>0)tst=tst.slice(0,i).trim()}
   return tst||'-'}
@@ -1635,7 +1639,7 @@ function purposeHtml(r,U){
   const ru=unitInfo(r.unit),agg={};
   const add=(a,e,d)=>{a.n+=e.n;if(d>a.last)a.last=d;Object.keys(e.q).forEach(un=>{const ui=unitInfo(un);if(ui.fam===ru.fam)a.t+=e.q[un]*ui.f/ru.f;else a.raw[ui.label]=(a.raw[ui.label]||0)+e.q[un]})};
   const blank=()=>({t:0,raw:{},n:0,last:''});
-  Object.keys(P).forEach(d=>Object.keys(P[d]).forEach(k=>{const e=P[d][k],[s1,t1]=k.split('\t'),rs=(!s1||s1==='-')?splitLoose(String(t1||'')):null,s0=rs?rs[0]:s1,t0=rs?rs[1]:t1,fx=String(s0).match(TNUM),ti=testInSample(s0),smp=normSample(fx?String(s0).slice(0,fx.index):s0),tst=fx?cleanTest('',fx[1]):(ti&&smp==='-')?cleanTest('',ti):cleanTest(s0,t0),a=agg[smp]=agg[smp]||Object.assign(blank(),{tests:{}});
+  Object.keys(P).forEach(d=>Object.keys(P[d]).forEach(k=>{const e=P[d][k],[s1,t1]=k.split('\t'),rs=(!s1||s1==='-')?splitLoose(String(t1||'')):null,s0=rs?rs[0]:s1,t0=rs?rs[1]:t1,fx=String(s0).match(TNUM),ti=testInSample(s0),smp=normSample(fx?String(s0).slice(0,fx.index):s0),np=nonProd(s0),tst=(np&&!String(t0||'').startsWith('['+np)?'['+np+'] ':'')+(fx?cleanTest('',fx[1]):(ti&&smp==='-')?cleanTest('',ti):cleanTest(np?'':s0,t0)),a=agg[smp]=agg[smp]||Object.assign(blank(),{tests:{}});
     add(a,e,d);add(a.tests[tst]=a.tests[tst]||blank(),e,d)}));
   const keys=Object.keys(agg).sort((a,b)=>agg[b].t-agg[a].t||agg[b].n-agg[a].n);
   const sum=keys.reduce((x,k)=>x+agg[k].t,0),MAX=10,shown=keys.slice(0,MAX);
