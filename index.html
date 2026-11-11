@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V6.2</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V6.3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -387,7 +387,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V6.2 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V6.3 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -653,7 +653,19 @@ const uploadStoreKey='standardhub_v2_excel_upload_records_v1';
 function uploadPage(){
  return `<h2>Excel 데이터 관리</h2><div class="panel"><h3>담당자 표준품 Excel 업로드</h3><p class="muted">담당자별 Excel(.xlsx)을 업로드하면 관리번호를 기준으로 신규 입고번호는 추가하고 기존 입고번호는 갱신합니다. 다른 담당자의 표준품은 삭제하지 않습니다. 보관 장소는 Excel에 적힌 실제 설비 번호를 반영합니다.</p><div class="upload-zone"><svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true" style="color:var(--muted)"><path d="M9 3.5h10l6 6V27a1.5 1.5 0 0 1-1.5 1.5h-14A1.5 1.5 0 0 1 8 27V5A1.5 1.5 0 0 1 9 3.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M19 3.5V10h6M12.5 17h7M12.5 21.5h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>표준품 Excel 파일 선택</b><p class="muted" style="margin:5px 0 14px">.xlsx 형식 · 첫 번째 시트에서 '관리 번호' 열을 찾아 읽습니다.</p><input id="excelFile" type="file" accept=".xlsx" onchange="previewExcel(this.files[0])" style="max-width:100%"></div><div id="uploadResult">${uploadPreview?previewUploadMarkup():''}</div></div><div class="panel"><h3>업로드 내역</h3><p class="muted">이 HTML은 서버 없이 브라우저에서 작동하는 테스트 버전입니다. 업로드 데이터는 이 브라우저의 로컬 저장소에 저장되며 다른 담당자의 컴퓨터와 공유되지 않습니다. 원본 Excel 파일 자체는 저장하지 않고 필요한 행 데이터만 저장합니다.</p><div id="uploadHistory">${renderUploadHistory()}</div><button onclick="clearUploadDemo()" style="margin-top:12px">업로드 데이터 초기화</button></div>`;
 }
-function renderUploadHistory(){let h=loadUploadState();return h&&h.history&&h.history.length?`<div class="tablewrap"><table style="min-width:480px"><thead><tr><th>업로드 일시</th><th>담당 계정</th><th>신규 / 갱신</th></tr></thead><tbody>${h.history.slice().reverse().map(x=>`<tr><td>${esc(x.time)}</td><td>${esc(x.owner)}</td><td>${x.added} / ${x.updated}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">아직 업로드 내역이 없습니다.</p>'}
+/* V6.3: 업로드 내역 — 재고 Excel(업로드 상태의 history) + 사용기록·라벨 정보(standardhub_v22_upload_log)를 종류와 함께 한 표로 */
+const ULOG='standardhub_v22_upload_log';
+window.logUpload=function(kind,detail){try{const a=JSON.parse(localStorage.getItem(ULOG)||'[]');a.push({ts:Date.now(),time:new Date().toLocaleString('ko-KR'),kind,owner:(user()||{}).id||'',detail});localStorage.setItem(ULOG,JSON.stringify(a.slice(-300)))}catch(e){}};
+function koTs(t){const m=String(t||'').match(/(\d{4})\.\s*(\d+)\.\s*(\d+)\.?\s*(오전|오후)?\s*(\d+):(\d+)(?::(\d+))?/);if(!m)return 0;let h=+m[5];if(m[4]==='오후'&&h<12)h+=12;if(m[4]==='오전'&&h===12)h=0;return new Date(+m[1],m[2]-1,+m[3],h,+m[6],+(m[7]||0)).getTime()}
+function renderUploadHistory(){const h=loadUploadState(),rows=[];
+ ((h&&h.history)||[]).forEach(x=>rows.push({ts:x.ts||koTs(x.time),time:x.time,kind:'재고 Excel',owner:x.owner,detail:'신규 '+x.added+' · 갱신 '+x.updated}));
+ let log=[];try{log=JSON.parse(localStorage.getItem(ULOG)||'[]')}catch(e){}log.forEach(x=>rows.push(x));
+ /* 기록을 남기기 전에 올린 사용기록·라벨 정보도 마지막 저장 시각으로 한 줄씩 */
+ try{const u=JSON.parse(localStorage.getItem('standardhub_v22_usage')||'null');if(u&&u.saved&&!log.some(x=>x.kind==='사용기록'))rows.push({ts:u.saved,time:new Date(u.saved).toLocaleString('ko-KR'),kind:'사용기록',owner:'-',detail:'기간 '+(u.from||'?')+' ~ '+(u.to||'?')+' (이전 업로드)'})}catch(e){}
+ try{const l=JSON.parse(localStorage.getItem('standardhub_v22_label_info')||'null');if(l&&l.saved&&!log.some(x=>x.kind==='라벨 정보'))rows.push({ts:koTs(l.saved),time:l.saved,kind:'라벨 정보',owner:'-',detail:'입고번호 '+Object.keys(l.lots||{}).length+'개 (이전 업로드)'})}catch(e){}
+ rows.sort((a,b)=>(b.ts||0)-(a.ts||0));
+ const tag=k=>'<span class="tag'+(k==='재고 Excel'?' gold':'')+'" style="white-space:nowrap">'+esc(k)+'</span>';
+ return rows.length?`<div class="tablewrap"><table style="min-width:560px"><thead><tr><th>업로드 일시</th><th>종류</th><th>담당 계정</th><th>내용</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${esc(x.time)}</td><td>${tag(x.kind)}</td><td>${esc(x.owner)}</td><td>${esc(x.detail)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">아직 업로드 내역이 없습니다.</p>'}
 function loadUploadState(){try{return JSON.parse(localStorage.getItem(uploadStoreKey)||'null')}catch(e){return null}}
 function persistUploadState(history){try{localStorage.setItem(uploadStoreKey,JSON.stringify({stocks:stocks.filter(s=>s.uploaded),rows:Object.fromEntries(stocks.filter(s=>s.uploaded).map(s=>[s.code,detailData[s.id]])),history}));return true}catch(e){alert('브라우저 저장 공간이 부족하거나 차단되어 있습니다. 이번 화면에만 반영됩니다.');return false}}
 function restoreUploadedRows(){const state=loadUploadState();if(!state)return;for(const x of state.stocks||[]){const idx=stocks.findIndex(s=>s.code===x.code);let record={...x,checked:false};if(idx>=0){const old=stocks[idx];record.id=old.id;stocks[idx]=record}else{record.id='uploaded_'+stocks.length+'_'+Math.random().toString(36).slice(2,8);stocks.push(record)}detailData[record.id]=state.rows?.[x.code]||{};} }
@@ -1595,7 +1607,7 @@ window.usageApply=function(){
     Object.keys(src.lots).forEach(c=>{const L=dst.lots[c]=dst.lots[c]||{};Object.keys(src.lots[c]).forEach(un=>{L[un]=Object.assign(L[un]||{},src.lots[c][un])})})});
   old.from=old.from<p.from?old.from:p.from;old.to=old.to>p.to?old.to:p.to;old.saved=Date.now();
   const ok=save(old);pending=null;
-  if(ok)alert('사용기록 '+p.ok.toLocaleString()+'건을 반영했습니다.');else alert('저장하지 못했습니다. 브라우저 저장 공간을 확인해 주세요.');
+  if(ok){alert('사용기록 '+p.ok.toLocaleString()+'건을 반영했습니다.');window.logUpload&&logUpload('사용기록',p.ok.toLocaleString()+'건 · 기간 '+p.from+' ~ '+p.to)}else alert('저장하지 못했습니다. 브라우저 저장 공간을 확인해 주세요.');
   render()};
 window.usageClear=function(){askConfirm({title:'사용기록 지우기',message:'저장된 사용기록을 모두 지웁니다. 표준품 재고 정보는 그대로입니다. 계속할까요?',ok:'지우기',danger:true,onOk:function(){save(null);pending=null;alert('사용기록을 지웠습니다.');render()}})};
 
@@ -1967,7 +1979,7 @@ window.labelFile=function(inp){const f=inp.files&&inp.files[0];if(f)preview(f);i
 window.labelPaste=function(){const t=(document.getElementById('labelPasteBox')||{}).value||'';if(!t.trim()){document.getElementById('labelResult').innerHTML='<p class="danger">붙여넣은 내용이 없습니다.</p>';return}preview({name:'붙여넣기',pasted:t})};
 window.labelCancel=function(){pending=null;const o=document.getElementById('labelResult');if(o)o.innerHTML=''};
 window.labelApply=function(){if(!pending)return;try{localStorage.setItem(LBK,JSON.stringify({saved:new Date().toLocaleString('ko-KR'),lots:pending.lots}))}catch(e){return alert('브라우저 저장 공간이 부족해 저장하지 못했습니다.')}
- const n=Object.keys(pending.lots).length;pending=null;alert('라벨 정보 '+n+'개 입고번호를 반영했습니다.');render()};
+ const n=Object.keys(pending.lots).length;window.logUpload&&logUpload('라벨 정보','라벨 '+(pending.labels||0).toLocaleString()+'개 · 입고번호 '+n+'개');pending=null;alert('라벨 정보 '+n+'개 입고번호를 반영했습니다.');render()};
 /* 재고 업로드 칸에 라벨 Excel을 올린 경우 안내 */
 const _pe=window.previewExcel;
 window.previewExcel=async function(f){try{const rows=await readExcelRows(f);if(isLabelRows(rows)){const r=document.getElementById('uploadResult');if(r)r.innerHTML='<p class="danger">라벨 Excel입니다. 아래 \'라벨 정보 올리기\' 칸에 올려 주세요.</p>';return}}catch(e){}return _pe.apply(this,arguments)};
