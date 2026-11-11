@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V6.0</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V6.1</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -387,7 +387,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V6.0 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V6.1 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1176,6 +1176,19 @@ window.drawAssign=function(){_da.apply(this,arguments);
   const n=ls.filter(l=>l.querySelector('input').checked).length;c.querySelector('h3').insertAdjacentHTML('beforeend',' <small class="muted">배정 '+n+' / '+ls.length+'</small>')};
 const _r9=window.render;
 window.render=function(){_r9();decorate()};
+/* V6.1: 담당자 배정 — 이름(또는 아이디)을 치면 맞는 담당자만 목록에 남고 바로 고름 */
+const _r10=window.render;
+window.render=function(){_r10();try{const sel=document.getElementById('target');if(!sel||document.getElementById('tgtQ'))return;
+ const opts=[...sel.options];if(opts.length<2)return;
+ const q=document.createElement('input');q.id='tgtQ';q.type='search';q.placeholder='담당자 이름 검색';q.autocomplete='off';q.style.cssText='margin:0;max-width:200px';
+ const msg=document.createElement('span');msg.className='muted small';
+ const run=()=>{const k=q.value.trim().toLowerCase();let first=null,n=0;opts.forEach(o=>{const hit=!k||o.textContent.toLowerCase().includes(k)||o.value.toLowerCase().includes(k);o.hidden=!hit;o.disabled=!hit;if(hit){n++;if(!first)first=o}});
+  window._tgtQ=q.value;msg.textContent=k?(n?n+'명':'찾는 담당자가 없습니다'):'';const cur=sel.selectedOptions[0];if(first&&(!cur||cur.hidden)){sel.value=first.value;window._tgtSel=sel.value;drawAssign()}};
+ q.oninput=run;q.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();run();const g=document.getElementById('asQ');if(g)g.focus()}};
+ sel.addEventListener('change',()=>{window._tgtSel=sel.value});
+ /* 그룹을 체크하면 화면이 다시 그려짐 → 고른 담당자·검색어 유지 */
+ if(window._tgtSel&&opts.some(o=>o.value===window._tgtSel)&&sel.value!==window._tgtSel){sel.value=window._tgtSel;drawAssign()}
+ sel.before(q);sel.after(msg);if(window._tgtQ){q.value=window._tgtQ;run()}}catch(e){}};
 })();
 
 /* patch10: Excel 파일 없이 붙여넣기 / CSV 입력 */
