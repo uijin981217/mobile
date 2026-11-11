@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.4</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.5</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -387,7 +387,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V3.4 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V3.5 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1907,13 +1907,4 @@ function place(){try{const on=localStorage.getItem(K)==='demo';let b=document.ge
 const _r=window.render;window.render=function(){_r();place()};place();
 })();
 
-/* ===== 오른쪽 위 [공유 파일 만들기] — 관리자 로그인 시. 내 기록을 넣은 HTML을 바로 내려받음(Excel 업로드 탭의 '공유용 HTML 저장'과 같음) ===== */
-(function(){
-window.quickShare=function(){if(window.shareExport){go('upload');setTimeout(()=>{shareExport();const el=document.getElementById('sharePanel');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})},50)}};
-function place(){try{const u=user(),on=u&&u.admin;let b=document.getElementById('quickShareBtn');
- if(!on){if(b)b.remove();return}
- if(!b){const lo=[...document.querySelectorAll('header button')].find(x=>/로그아웃/.test(x.textContent));if(!lo)return;
-  b=document.createElement('button');b.id='quickShareBtn';b.className='primary';b.textContent='공유 파일 만들기';b.title='내가 넣은 기록을 담은 HTML 파일을 내려받습니다. 이 파일을 보내면 받은 사람도 Admin / Admin으로 같은 기록을 봅니다.';b.onclick=quickShare;lo.parentElement.insertBefore(b,lo)}}catch(e){}}
-const _r=window.render;window.render=function(){_r();place()};place();
-})();
 </script></body></html>
