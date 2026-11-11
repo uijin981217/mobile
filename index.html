@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.6</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.7</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -387,7 +387,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V3.6 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V3.7 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1756,16 +1756,17 @@ window.openInspection=function(mode){
  const l=document.createElement('div');l.id='inspLayer';l.className='account-overlay';
  l.innerHTML=`<div class="account-dialog" role="dialog" aria-modal="true"><div class="toolbar" style="justify-content:space-between"><h2 style="margin:0">${annexOnly?'표준품 관리내역':'표준품 정기점검 양식'}</h2><button onclick="closeInspection()">✕ 닫기</button></div>
  <p class="muted">${annexOnly?'관리내역(가로 A4)만 출력합니다. 확인일은 작성일과 같은 날짜로 들어가고, 작성자 · 확인자는 Adobe 서명을 위해 비워 둡니다.':'유효기한(임박 · 만료), 폐기 대상(만료 · 재고 0), 이번 달 입고는 자동으로 채웁니다. 점검자 · 확인자 칸은 Adobe 서명을 위해 비워 두고, 확인일은 점검일과 같은 날짜로 들어갑니다.'}</p>
+ <div class="in-grid">
  <label>${annexOnly?'대상':'점검 대상'}<select id="inG" onchange="inspFill()">${gs.map(g=>`<option value="${esc(g)}">${esc(g)}${isB(g)?'':' (의뢰사)'}</option>`).join('')}</select></label>
  <label>${annexOnly?'회사명':'고객사 (= 관리내역 회사명)'}<input id="inCust"></label><label>부서명 <span class="muted small">(관리내역 위쪽)</span><input id="inDept" placeholder="예: 바이오의약1실"></label>
  <div${ins}><label>점검대상 표준품<input id="inTarget"></label></div>
- <div id="inNames"></div><div id="inNotes"></div>
  <label>${annexOnly?'작성일':'점검일 (= 관리내역 작성일)'}<input id="inDate" type="date" value="${today()}"></label>
- <div${ins}><label>유효기한 임박 기준 <span class="muted small">(점검일부터)</span><select id="inMon" style="width:auto">${[1,3,6].map(v=>`<option value="${v}" ${v===curMon()?'selected':''}>${v}개월 이내</option>`).join('')}</select></label>
- <div style="margin:12px 0 4px;font-weight:600">라벨상태</div><div style="display:flex;align-items:center;flex-wrap:wrap">${radio('inLab','정상','손상')}</div><div style="display:flex;align-items:center;flex-wrap:wrap;margin-top:8px"><span class="muted small" style="margin-right:12px;white-space:nowrap">손상 시 재출력</span>${radio('inLabRe','아니오','예')}</div>
- <div style="margin:12px 0 4px;font-weight:600">보관상태 (보관위치, 밀봉여부 등)</div><div style="display:flex;align-items:center;flex-wrap:wrap">${radio('inSto','정상','손상')}</div><div style="display:flex;align-items:center;flex-wrap:wrap;margin-top:8px"><span class="muted small" style="margin-right:12px;white-space:nowrap">손상 시 재출력</span>${radio('inStoRe','아니오','예')}</div>
- ${ta('inBuy','추가 구입 (요청) 필요 표준품')}${ta('inRetest','Re-test 필요 표준품')}${ta('inPlan','기타 · 입고 예정')}${ta('inEtc','기타 · 기타')}
- <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-weight:400"><input id="inAnnex" type="checkbox" checked style="width:auto;margin:0">별첨 1 표준품 관리내역 함께 출력</label></div>
+ <div${ins}><label>유효기한 임박 기준 <span class="muted small">(점검일부터)</span><select id="inMon" style="width:auto">${[1,3,6].map(v=>`<option value="${v}" ${v===curMon()?'selected':''}>${v}개월 이내</option>`).join('')}</select></label></div>
+ </div>
+ <div class="in-grid"${ins}><div><div style="margin:12px 0 4px;font-weight:600">라벨상태</div><div style="display:flex;align-items:center;flex-wrap:wrap">${radio('inLab','정상','손상')}</div><div style="display:flex;align-items:center;flex-wrap:wrap;margin-top:8px"><span class="muted small" style="margin-right:12px;white-space:nowrap">손상 시 재출력</span>${radio('inLabRe','아니오','예')}</div></div><div><div style="margin:12px 0 4px;font-weight:600">보관상태 (보관위치, 밀봉여부 등)</div><div style="display:flex;align-items:center;flex-wrap:wrap">${radio('inSto','정상','손상')}</div><div style="display:flex;align-items:center;flex-wrap:wrap;margin-top:8px"><span class="muted small" style="margin-right:12px;white-space:nowrap">손상 시 재출력</span>${radio('inStoRe','아니오','예')}</div></div></div>
+ <div class="in-grid in-ta"${ins}>${ta('inBuy','추가 구입 (요청) 필요 표준품')}${ta('inRetest','Re-test 필요 표준품')}${ta('inPlan','기타 · 입고 예정')}${ta('inEtc','기타 · 기타')}</div>
+ <div id="inNames"></div><div id="inNotes"></div>
+ <div${ins}><label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-weight:400"><input id="inAnnex" type="checkbox" checked style="width:auto;margin:0">별첨 1 표준품 관리내역 함께 출력</label></div>
  <div class="toolbar" style="margin-top:14px"><button class="primary" onclick="makeInspection('${annexOnly?'annex':'form'}')">${annexOnly?'관리내역 만들기':'양식 만들기'}</button><button onclick="closeInspection()">취소</button></div></div>`;
  document.body.appendChild(l);l.addEventListener('click',e=>{if(e.target===l)closeInsp()});inspFill()};
 
@@ -1936,4 +1937,7 @@ function setup(){const h=document.querySelector('header'),nav=document.querySele
  const hs=h.querySelector('.hsearch');if(hs)hs.style.visibility=(u&&u.status!=='guest')?'visible':'hidden'}
 const _r=window.render;window.render=function(){_r();try{setup()}catch(e){}};try{setup()}catch(e){}
 })();
+
+/* 정기점검·관리내역 입력 창: PC에서는 넓게(두 칸), 핸드폰에서는 한 칸 */
+(function(){const st=document.createElement('style');st.textContent='#inspLayer .account-dialog{width:min(1100px,94vw)!important;max-width:none!important;max-height:92vh;padding:26px 32px}#inspLayer .in-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:28px;align-items:start}#inspLayer .in-grid>label,#inspLayer .in-grid>div{min-width:0}#inspLayer .in-ta textarea{min-height:64px}@media (max-width:760px){#inspLayer .account-dialog{padding:20px 18px}#inspLayer .in-grid{grid-template-columns:1fr}}';document.head.appendChild(st)})();
 </script></body></html>
