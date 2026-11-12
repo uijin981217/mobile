@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V8.7</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V8.8</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -393,6 +393,7 @@ header.hdr3 .brand-name{font:600 19px/1.4 -apple-system,BlinkMacSystemFont,"Sego
 
 /* V8.6: 머리 전체(로고 줄·메뉴 줄·버튼 줄)를 '분석용 컬럼 관리'와 같은 규격으로 — 사이트를 오가도 위치가 안 흔들리게.
    로고 줄 36px(검색 칸도 36px) → 12px 띄고 메뉴 줄 48px(글자 14px, 간격 20px, 아이콘 17px, 선택 밑줄 2px) → 8px 띄고 구분선 → 버튼 줄(높이 38px, 13px) → 아래 16px, 머리 아래 선 1px. 전체 184px */
+table.u-list>tbody>tr.u-row>td:first-child{overflow-wrap:anywhere}
 header.hdr3{padding:16px 24px!important;row-gap:0!important;background:var(--surface)!important;border-bottom:1px solid #dfe3e9!important;box-shadow:none!important}
 header.hdr3>.hsearch input{height:36px!important;padding-top:0!important;padding-bottom:0!important;font:400 14px/36px -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif!important}
 header.hdr3>.hsearch{align-self:start}
@@ -425,7 +426,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V8.7 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V8.8 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1815,7 +1816,9 @@ function listHtml(){
      <td>${Number.isFinite(r.remain)?'약 '+fmt(r.remain)+'개월':'-'}</td>
      ${PC?`<td>${purchaseCell(r.base)}</td>`:''}
      <td><span class="tag ${TAGS[r.j]||''}">${esc(r.j)}</span></td></tr>${o?`<tr><td colspan="${NC}" class="u-detail">${detail(r,U)}</td></tr>`:''}`}).join('');
-  return `<div class="tablewrap"><table><thead><tr><th>표준품</th><th>월평균 사용</th><th>사용 횟수</th><th>현재 재고</th><th>다 쓰는 데</th>${PC?'<th>최근 구매가</th>':''}<th>상태</th></tr></thead><tbody>${body||'<tr><td colspan="'+NC+'">해당하는 표준품이 없습니다.</td></tr>'}</tbody></table></div><p class="muted small">줄을 누르면 월별 사용량 그래프가 열립니다.</p>`}
+  /* V8.8: 열 너비 고정 — 그룹을 바꿔도 열 위치가 그대로(전에는 표준품 이름 길이에 따라 열이 움직임) */
+  const CW=PC?[34,11,9,11,11,12,12]:[38,12,10,12,12,16];
+  return `<div class="tablewrap"><table class="u-list" style="table-layout:fixed;width:100%;min-width:760px"><colgroup>${CW.map(w=>`<col style="width:${w}%">`).join('')}</colgroup><thead><tr><th>표준품</th><th>월평균 사용</th><th>사용 횟수</th><th>현재 재고</th><th>다 쓰는 데</th>${PC?'<th>최근 구매가</th>':''}<th>상태</th></tr></thead><tbody>${body||'<tr><td colspan="'+NC+'">해당하는 표준품이 없습니다.</td></tr>'}</tbody></table></div><p class="muted small">줄을 누르면 월별 사용량 그래프가 열립니다.</p>`}
 window.usageToggle=function(b){openBase=openBase===b?null:b;const el=document.getElementById('usageList');if(el)el.innerHTML=listHtml()};
 window.usageGroup=function(g){gf=g;openBase=null;render()};
 window.usageFilter=function(){q=document.getElementById('usageQ').value;jf=document.getElementById('usageJ').value;sf=document.getElementById('usageS').value;const el=document.getElementById('usageList');if(el)el.innerHTML=listHtml()};
