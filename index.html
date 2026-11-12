@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V7.1</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V7.2</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -387,7 +387,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V7.1 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V7.2 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1440,6 +1440,7 @@ window.adminSetDept=function(id,sel){const u=users.find(x=>x.id===id);if(!u)retu
   if(sel.value!=='__etc')return save(sel.value);
   const box=document.createElement('span');box.style.cssText='display:inline-flex;gap:4px;margin-left:6px';box.innerHTML='<input maxlength="40" placeholder="실 이름" style="margin:0;width:120px"><button>저장</button>';
   sel.after(box);const i=box.querySelector('input');i.focus();box.querySelector('button').onclick=()=>save(i.value);i.onkeydown=e=>{if(e.key==='Enter')save(i.value)}};
+window.adminSetPrice=function(id,on){const u=users.find(x=>x.id===id);if(!u)return;if(on)u.priceView=true;else delete u.priceView;saveDemoAccounts();alert(u.name+': 단가 보기 '+(on?'허용':'해제'))};
 const _del=window.adminDeleteUser;
 window.adminDeleteUser=function(id){
   if(user().id===id)return alert('로그인 중인 본인 계정은 삭제할 수 없습니다.');
@@ -1454,15 +1455,15 @@ function decorate(){
   const tbl=[...root.querySelectorAll('table')].find(t=>/그룹 배정/.test(t.tHead?.textContent||''));if(!tbl||tbl.dataset.rebuilt)return;
   tbl.dataset.rebuilt='1';
   const list=users.filter(x=>x.id!=='admin'&&x.status!=='guest');
-  tbl.tHead.rows[0].innerHTML='<th>계정</th><th>소속 실</th><th>구분</th><th>상태</th><th>그룹 배정</th><th>접근 품목 수</th><th>관리</th>';
+  tbl.tHead.rows[0].innerHTML='<th>계정</th><th>소속 실</th><th>구분</th><th>상태</th><th>그룹 배정</th><th>접근 품목 수</th><th>단가 보기</th><th>관리</th>';
   tbl.tBodies[0].innerHTML=list.map(u=>{
     const adm=!!u.admin,st=u.status==='approved'?'승인':u.status==='pending'?'대기':'반려';
     const n=adm?'전체':stocks.filter(s=>accessible(s,u)).length;
     const role=adm?'<button onclick="adminSetRole(\''+u.id+'\',false)">담당자로 변경</button>':(u.status==='approved'?'<button onclick="adminSetRole(\''+u.id+'\',true)">관리자로 지정</button>':'');
     const dl=[...new Set([...DEPTS,...(u.dept&&!DEPTS.includes(u.dept)?[u.dept]:[])])],dsel='<select class="acct-dept" onchange="adminSetDept(\''+u.id+'\',this)" style="margin:0;min-width:130px"><option value="">미지정</option>'+dl.map(d=>'<option'+(d===u.dept?' selected':'')+'>'+esc(d)+'</option>').join('')+'<option value="__etc">직접 입력…</option></select>';
-    return '<tr><td>'+esc(u.name)+' <span class="muted">('+esc(u.id)+')</span></td><td>'+dsel+'</td><td>'+(adm?'<span class="tag gold">관리자</span>':'담당자')+'</td><td>'+st+'</td><td>'+(adm?'전체':esc((u.groups||[]).join(', ')||'-'))+'</td><td>'+n+'</td><td class="acct-act"><div class="toolbar" style="gap:6px">'+role+'<button onclick="adminResetPw(\''+u.id+'\')">비밀번호 변경</button><button class="danger-outline" onclick="adminDeleteUser(\''+u.id+'\')">삭제</button></div></td></tr>';
-  }).join('')||'<tr><td colspan="7" class="muted">등록된 담당자 계정이 없습니다.</td></tr>';
-  const note=document.createElement('p');note.className='muted';note.textContent='관리자로 지정하면 모든 표준품을 보고, 계정 승인 · 권한 배정 · Excel 업로드를 함께 관리할 수 있습니다.';
+    return '<tr><td>'+esc(u.name)+' <span class="muted">('+esc(u.id)+')</span></td><td>'+dsel+'</td><td>'+(adm?'<span class="tag gold">관리자</span>':'담당자')+'</td><td>'+st+'</td><td>'+(adm?'전체':esc((u.groups||[]).join(', ')||'-'))+'</td><td>'+n+'</td><td>'+(adm?'<span class="muted small">관리자</span>':u.status==='approved'?'<label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-weight:400;white-space:nowrap"><input type="checkbox" style="width:auto;margin:0" '+(u.priceView?'checked':'')+' onchange="adminSetPrice(\''+u.id+'\',this.checked)">허용</label>':'-')+'</td><td class="acct-act"><div class="toolbar" style="gap:6px">'+role+'<button onclick="adminResetPw(\''+u.id+'\')">비밀번호 변경</button><button class="danger-outline" onclick="adminDeleteUser(\''+u.id+'\')">삭제</button></div></td></tr>';
+  }).join('')||'<tr><td colspan="8" class="muted">등록된 담당자 계정이 없습니다.</td></tr>';
+  const note=document.createElement('p');note.className='muted';note.textContent='관리자로 지정하면 모든 표준품을 보고, 계정 승인 · 권한 배정 · Excel 업로드를 함께 관리할 수 있습니다. \'단가 보기\'를 허용하면 그 담당자도 사용 추이에서 구매 단가를 볼 수 있습니다(자기 담당 표준품만).';
   tbl.closest('.tablewrap').before(note);
 }
 const _r=window.render;window.render=function(){_r();decorate()};
@@ -2050,7 +2051,9 @@ async function readRaw(src){
 /* 표준품(기본번호) → Cat No. 정규화 값들 */
 function catMap(){const m={};(typeof stocks!=='undefined'?stocks:[]).forEach(s=>{const r=detailData[s.id]||{};let c=String(r['Cat No.']||r['Cat No']||r['CatNo']||'').trim();if(!c||c==='-')return;const b=masterOf(s.code);(m[b]=m[b]||new Set());pnKeys(c).forEach(k=>m[b].add(k))});return m}
 function matchBase(pn,CM){const ks=pnKeys(pn);if(!ks.length)return [];return Object.keys(CM).filter(b=>ks.some(k=>CM[b].has(k)))}
-window.purchaseFor=function(base){const o=ld();if(!o)return [];const CM=catMap(),set=CM[base];if(!set)return [];
+/* V7.2: 단가는 관리자, 그리고 관리자가 '단가 보기'를 허용한 담당자만 */
+window.canSeePrice=function(){const u=user();return !!u&&(!!u.admin||u.status==='approved'&&!!u.priceView)};
+window.purchaseFor=function(base){if(!canSeePrice())return [];const o=ld();if(!o)return [];const CM=catMap(),set=CM[base];if(!set)return [];
  return o.items.filter(x=>pnKeys(x.pn).some(k=>set.has(k))).sort((a,b)=>(b.order||b.reg).localeCompare(a.order||a.reg))};
 const won=n=>Number.isFinite(n)?Math.round(n).toLocaleString('ko-KR')+'원':'-';
 const days=(a,b)=>a&&b?Math.round((new Date(b)-new Date(a))/864e5):NaN;
@@ -2081,9 +2084,9 @@ window.purApply=function(){if(!pend)return;const o=ld()||{items:[]},M=new Map(o.
  try{localStorage.setItem(PK2,JSON.stringify({saved:new Date().toLocaleString('ko-KR'),items:[...M.values()]}))}catch(e){return alert('브라우저 저장 공간이 부족해 저장하지 못했습니다.')}
  window.logUpload&&logUpload('구매 정보','표준품 구매 '+pend.length+'건 (누적 '+M.size+'건)');alert('구매 정보 '+pend.length+'건을 반영했습니다.');pend=null;render()};
 window.purClear=function(){askConfirm({title:'구매 정보 지우기',message:'저장된 구매 정보를 모두 지웁니다. 계속할까요?',ok:'지우기',danger:true,onOk:()=>{try{localStorage.removeItem(PK2)}catch(e){}alert('구매 정보를 지웠습니다.');render()}})};
-const _r=window.render;window.render=function(){_r();try{if(active!=='upload'||document.getElementById('purPanel'))return;const sec=document.getElementById('upload');if(!sec||!user().admin&&user().status!=='approved')return;const o=ld();
+const _r=window.render;window.render=function(){_r();try{if(active!=='upload'||document.getElementById('purPanel'))return;const sec=document.getElementById('upload');if(!sec||!user().admin)return;const o=ld();
  const html=`<div class="panel" id="purPanel" style="margin-top:16px"><h3>구매 정보 올리기 (선택)</h3>
- <p class="muted">구매 담당 팀의 발주 목록 Excel을 올리면 <b>비고가 '표준품'인 줄만</b> 골라, 약칭(P/N)이 재고의 Cat No.와 같은 표준품에 <b>최근 구매가</b>를 붙입니다. 사용 추이에서 볼 수 있습니다.</p>
+ <p class="muted">구매 담당 팀의 발주 목록 Excel을 올리면 <b>비고가 '표준품'인 줄만</b> 골라, 약칭(P/N)이 재고의 Cat No.와 같은 표준품에 <b>최근 구매가</b>를 붙입니다. 사용 추이에서 볼 수 있습니다. <b>단가는 관리자와, 승인·권한에서 '단가 보기'를 허용한 담당자만</b> 봅니다.</p>
  ${o?`<p class="small muted">마지막 반영: ${esc(o.saved)} · 표준품 구매 ${o.items.length}건</p>`:''}
  <div class="toolbar"><label class="primary" style="display:inline-block;padding:8px 14px;border-radius:8px;cursor:pointer;background:var(--brand);color:var(--on-brand);font-weight:600">파일 선택<input type="file" accept=".xlsx" style="display:none" onchange="purFile(this)"></label>${o?'<button class="danger-outline" onclick="purClear()">구매 정보 지우기</button>':''}</div>
  <textarea id="purPasteBox" rows="3" spellcheck="false" placeholder="또는 제목 행을 포함해 붙여넣기 (구매의뢰번호, 품목명, 제조사, 약칭(P/N), 규격, 발주단가, 비고, 발주처, 발주일, 납품일 …)" style="width:100%;margin-top:10px"></textarea>
