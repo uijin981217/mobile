@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V7.0</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V7.1</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -387,7 +387,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V7.0 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V7.1 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2017,7 +2017,9 @@ document.addEventListener('keydown',function(e){
 const PK2='standardhub_v22_purchase';
 const ld=()=>{try{return JSON.parse(localStorage.getItem(PK2)||'null')}catch(e){return null}};
 const norm=x=>String(x||'').toLowerCase().replace(/[^a-z0-9]/g,'');
-const num=x=>{const n=Number(String(x??'').replace(/[,\s원₩]/g,''));return Number.isFinite(n)?n:NaN};
+const num=x=>{const t=String(x??'').replace(/[,\s원₩]/g,''),m=t.match(/^\d+(\.\d+)?/);return m?Number(m[0]):NaN};
+/* P/N 비교용 여러 모양: 전체, 괄호·⇒·띄어쓰기 앞, 끝의 -100ML 같은 포장 단위 뗀 것 */
+const pnKeys=x=>{const s0=String(x||''),a=[s0,s0.split(/[\s(⇒→]/)[0]];a.slice().forEach(v=>a.push(v.replace(/-\d+(\.\d+)?\s*(ml|l|g|mg|ug|µg|μg|ul|µl|μl|kg|ea|t)$/i,'')));return [...new Set(a.map(norm).filter(v=>v.length>=3))]};
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 /* 날짜: Excel 숫자(46296), 2026-10-01, 2026.10.01, '10월 02일', '11/3(1)' — 연도가 없으면 기준일(등록일) 연도, 기준일보다 앞선 달이면 다음 해 */
 function pdate(v,base){const s=String(v??'').trim();if(!s)return '';
@@ -2025,31 +2027,31 @@ function pdate(v,base){const s=String(v??'').trim();if(!s)return '';
  let m=s.match(/(\d{4})\s*[.\-\/년]\s*(\d{1,2})\s*[.\-\/월]\s*(\d{1,2})/);if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
  m=s.match(/^(\d{1,2})\s*(?:월|\/|\.)\s*(\d{1,2})/);if(m){const by=base?Number(base.slice(0,4)):new Date().getFullYear(),bm=base?Number(base.slice(5,7)):13;let y=by;if(base&&Number(m[1])<bm-6)y++;return y+'-'+m[1].padStart(2,'0')+'-'+m[2].padStart(2,'0')}
  return ''}
-const H={id:/구매의뢰번호/,reg:/^등록일/,name:/품목명|품명/,maker:/제조사/,pn:/약칭|P\/?N|카탈로그|Cat/i,spec:/^규격/,unit:/발주단위/,qty:/발주수량|수량/,price:/발주단가|단가/,amount:/발주금액|금액/,kind:/^비고|구분/,vendor:/발주처|업체/,order:/발주일/,deliv:/납품일|입고일/};
+const H={id:/구매의뢰번호/,reg:/^등록일/,name:/품목명|품명/,maker:/제조사/,pn:/약칭|P\/?N|카탈로그|Cat/i,spec:/^규격/,unit:/발주단위/,qty:/발주수량|수량/,price:/발주단가|단가/,amount:/발주금액|금액/,kind:/^비고|구분/,cat:/^분류$|^품목구분$/,vendor:/발주처|구입처|업체/,order:/발주일/,deliv:/납품일|입고일/};
 function mapHead(row){const m={};row.forEach((h,i)=>{h=String(h||'').replace(/\s/g,'');for(const k in H)if(m[k]==null&&H[k].test(h)){m[k]=i;break}});return m}
 function toItems(raw){const hi=raw.findIndex(r=>r.some(v=>/약칭|P\/N/i.test(String(v)))&&r.some(v=>/단가/.test(String(v))));
  if(hi<0)throw Error("'약칭(P/N)'과 '발주단가' 열이 있는 머리글을 찾지 못했습니다. 제목 행까지 포함해 올려 주세요.");
  const M=mapHead(raw[hi]),g=(r,k)=>M[k]==null?'':String(r[M[k]]??'').trim();let skip=0;const items=[];
  raw.slice(hi+1).forEach(r=>{const pn=g(r,'pn'),price=num(g(r,'price'));if(!pn&&!g(r,'name'))return;
-  if(!/표준품/.test(g(r,'kind'))){skip++;return}if(!pn||!Number.isFinite(price))return;
+  if(!/^\s*표준품/.test(g(r,'kind'))&&!/표준품/.test(g(r,'cat'))&&!r.some((v,i)=>String(v??'').trim()==='표준품')){skip++;return}if(!pn||!Number.isFinite(price))return;
   const reg=pdate(g(r,'reg')),order=pdate(g(r,'order'),reg)||reg,deliv=pdate(g(r,'deliv'),order||reg);
   items.push({id:[g(r,'id'),norm(pn),order,price].join('|'),pn,name:g(r,'name'),maker:g(r,'maker'),spec:g(r,'spec'),qty:num(g(r,'qty'))||1,price,amount:num(g(r,'amount')),vendor:g(r,'vendor'),reg,order,deliv})});
  return {items,skip}}
 async function readRaw(src){
- if(src.pasted!=null){return String(src.pasted).replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l=>l.split('\t'))}
+ if(src.pasted!=null){return [String(src.pasted).replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l=>l.split('\t'))]}
  if(!/\.xlsx$/i.test(src.name||''))throw Error('.xlsx 파일을 선택해 주세요.');
  const zip=await unzipXlsx(await src.arrayBuffer());let shared=[];
  if(zip['xl/sharedStrings.xml']){const d=xmlDoc(zip['xl/sharedStrings.xml']);shared=[...d.getElementsByTagName('*')].filter(x=>x.localName==='si').map(si=>[...si.getElementsByTagName('*')].filter(x=>x.localName==='t').map(x=>x.textContent).join(''))}
  const sn=Object.keys(zip).filter(x=>/^xl\/worksheets\/sheet\d+\.xml$/.test(x)).sort((a,b)=>Number(a.match(/\d+/)[0])-Number(b.match(/\d+/)[0]));const out=[];
  for(const name of sn){const doc=xmlDoc(zip[name]),rows=[];
   for(const row of [...doc.getElementsByTagName('*')].filter(x=>x.localName==='row')){const cols=[];for(const c of xmlChildren(row,'c')){const ref=c.getAttribute('r')||'',L=(ref.match(/^[A-Z]+/i)||[''])[0];let i=0;for(const ch of L.toUpperCase())i=i*26+ch.charCodeAt(0)-64;i--;let v=(xmlChildren(c,'v')[0]||{}).textContent??'';const t=c.getAttribute('t');if(t==='s')v=shared[Number(v)]??'';else if(t==='inlineStr')v=[...c.getElementsByTagName('*')].filter(x=>x.localName==='t').map(x=>x.textContent).join('');if(i>=0)cols[i]=v}rows.push(cols)}
-  if(rows.some(r=>r.some(v=>/약칭|P\/N/i.test(String(v)))))return rows;out.push(rows)}
- return out[0]||[]}
+  if(rows.some(r=>r.some(v=>/약칭|P\/N/i.test(String(v)))))out.push(rows)}
+ if(!out.length)throw Error("'약칭(P/N)'과 '단가' 열이 있는 시트를 찾지 못했습니다.");return out}
 /* 표준품(기본번호) → Cat No. 정규화 값들 */
-function catMap(){const m={};(typeof stocks!=='undefined'?stocks:[]).forEach(s=>{const r=detailData[s.id]||{};let c=String(r['Cat No.']||r['Cat No']||r['CatNo']||'').trim();if(!c||c==='-')return;const b=masterOf(s.code);(m[b]=m[b]||new Set());m[b].add(norm(c));const f=c.split(/[\s(]/)[0];if(f)m[b].add(norm(f))});return m}
-function matchBase(pn,CM){const k=norm(pn);if(!k)return [];return Object.keys(CM).filter(b=>CM[b].has(k))}
+function catMap(){const m={};(typeof stocks!=='undefined'?stocks:[]).forEach(s=>{const r=detailData[s.id]||{};let c=String(r['Cat No.']||r['Cat No']||r['CatNo']||'').trim();if(!c||c==='-')return;const b=masterOf(s.code);(m[b]=m[b]||new Set());pnKeys(c).forEach(k=>m[b].add(k))});return m}
+function matchBase(pn,CM){const ks=pnKeys(pn);if(!ks.length)return [];return Object.keys(CM).filter(b=>ks.some(k=>CM[b].has(k)))}
 window.purchaseFor=function(base){const o=ld();if(!o)return [];const CM=catMap(),set=CM[base];if(!set)return [];
- return o.items.filter(x=>set.has(norm(x.pn))).sort((a,b)=>(b.order||b.reg).localeCompare(a.order||a.reg))};
+ return o.items.filter(x=>pnKeys(x.pn).some(k=>set.has(k))).sort((a,b)=>(b.order||b.reg).localeCompare(a.order||a.reg))};
 const won=n=>Number.isFinite(n)?Math.round(n).toLocaleString('ko-KR')+'원':'-';
 const days=(a,b)=>a&&b?Math.round((new Date(b)-new Date(a))/864e5):NaN;
 window.purchaseCell=function(base){const L=purchaseFor(base);if(!L.length)return '-';const x=L[0];return `<b>${won(x.price)}</b><div class="small muted">${esc(x.spec||'')}${x.order?' · '+esc(x.order.slice(2).replace(/-/g,'.')):''}</div>`};
@@ -2065,9 +2067,9 @@ window.purchaseHtml=function(r){const L=purchaseFor(r.base);
  <div class="tablewrap"><table><thead><tr><th>발주일</th><th>발주처</th><th>규격</th><th>수량</th><th>단가</th><th>납품일</th><th>걸린 기간</th></tr></thead><tbody>${rows}</tbody></table></div>${L.length>5?`<p class="muted small">최근 5건만 표시 (전체 ${L.length}건)</p>`:''}</div>`};
 let pend=null;
 async function prev(src){const out=document.getElementById('purResult');if(!out)return;
- try{const {items,skip}=toItems(await readRaw(src));if(!items.length){out.innerHTML='<p class="danger">비고가 \'표준품\'인 줄을 찾지 못했습니다.</p>';return}
+ try{let items=[],skip=0,sheets=0;for(const sh of await readRaw(src)){try{const t=toItems(sh);items=items.concat(t.items);skip+=t.skip;sheets++}catch(e){}}if(!sheets)throw Error("'약칭(P/N)'과 '단가' 열이 있는 머리글을 찾지 못했습니다. 제목 행까지 포함해 올려 주세요.");if(!items.length){out.innerHTML='<p class="danger">비고가 \'표준품\'인 줄을 찾지 못했습니다.</p>';return}
   const CM=catMap(),un=items.filter(x=>!matchBase(x.pn,CM).length),mt=items.length-un.length;pend=items;
-  out.innerHTML=`<div class="upload-preview"><h3>확인</h3><p>표준품 구매 <b>${items.length}</b>건 (시약·소모품 등 ${skip}건은 뺌) · 우리 표준품과 연결 <b>${mt}</b>건</p>
+  out.innerHTML=`<div class="upload-preview"><h3>확인</h3><p>${sheets>1?'시트 '+sheets+'개 · ':''}표준품 구매 <b>${items.length}</b>건 (시약·소모품 등 ${skip}건은 뺌) · 우리 표준품과 연결 <b>${mt}</b>건</p>
   ${un.length?`<details><summary class="muted small" style="cursor:pointer">Cat No.가 같은 표준품이 없어 연결 안 된 ${un.length}건 보기</summary><div class="tablewrap"><table><thead><tr><th>품목명</th><th>제조사</th><th>P/N</th><th>단가</th></tr></thead><tbody>${un.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.maker)}</td><td>${esc(x.pn)}</td><td>${won(x.price)}</td></tr>`).join('')}</tbody></table></div><p class="muted small">재고 Excel의 Cat No.와 구매 목록의 약칭(P/N)이 같아야 연결됩니다. 연결 안 된 것도 저장해 두면 나중에 그 표준품이 입고될 때 자동으로 연결됩니다.</p></details>`:''}
   <p class="muted">품목명·제조사·P/N·규격·수량·단가·발주처·등록일·발주일·납품일만 저장합니다. 신청자·소속은 저장하지 않습니다. 같은 발주는 새 내용으로 바뀌고, 다른 발주는 계속 쌓입니다.</p>
   <div class="toolbar"><button class="primary" onclick="purApply()">반영하기</button><button onclick="purCancel()">취소</button></div></div>`}
