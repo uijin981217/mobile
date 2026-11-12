@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V8.3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V8.4</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -397,7 +397,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V8.3 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V8.4 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2159,6 +2159,26 @@ window.editClientAlert=function(base){document.querySelectorAll('tr.ca-edit').fo
 /* Excel 업로드 탭: '업로드 내역' 칸은 맨 아래로 */
 (function(){const _r=window.render;window.render=function(){_r();try{if(active!=='upload')return;const sec=document.getElementById('upload');if(!sec)return;
  const h=[...sec.querySelectorAll('.panel > h3')].find(x=>x.textContent.trim()==='업로드 내역');if(h&&h.parentElement!==sec.lastElementChild)sec.appendChild(h.parentElement)}catch(e){}}})();
+/* V8.4: Excel 업로드 탭을 짧게 — 올리기 칸 4개(재고·사용기록·라벨·구매)를 PC에서 두 칸씩, 큰 파일 선택 상자는 한 줄로,
+   '붙여넣기' 입력 칸은 접어 둠(펼쳐서 사용). 확인 표가 나온 칸은 넓게(두 칸 차지) */
+(function(){const ST=document.createElement('style');ST.textContent=`
+.upl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start;margin-bottom:16px}
+.upl-grid>.panel{margin:0!important}
+.upl-grid>.panel:has(.upload-preview),.upl-grid>.panel:has(#uploadResult :is(table,.danger)){grid-column:1/-1}
+@media (max-width:999px){.upl-grid{grid-template-columns:1fr}}
+.upl-grid .upload-zone{padding:12px 16px!important;display:flex!important;flex-direction:row!important;flex-wrap:wrap;align-items:center;gap:6px 12px;text-align:left!important;min-height:0!important}
+.upl-grid .upload-zone svg{display:none}.upl-grid .upload-zone>p{margin:0;flex:1 1 220px}
+.upl-grid .paste-box{margin-top:10px!important;padding-top:0!important;border-top:0!important}
+.upl-paste{margin-top:10px}.upl-paste>summary{cursor:pointer;color:var(--muted);font-size:13px}
+.upl-paste[open]>summary{margin-bottom:6px}
+.upl-grid .panel>p.muted{font-size:13px;margin:4px 0 10px}`;document.head.appendChild(ST);
+const _r=window.render;window.render=function(){_r();try{if(active!=='upload')return;const sec=document.getElementById('upload');if(!sec||sec.querySelector('.upl-grid'))return;
+ const inv=sec.querySelector('.panel:has(#pasteBox)'),ps=[inv,...['usagePanel','labelPanel','purPanel'].map(id=>document.getElementById(id))].filter(Boolean);if(ps.length<2)return;
+ const g=document.createElement('div');g.className='upl-grid';ps[0].before(g);ps.forEach(x=>g.appendChild(x));
+ const fold=(nodes,label,open)=>{if(!nodes[0])return;const d=document.createElement('details');d.className='upl-paste';if(open)d.open=true;d.innerHTML='<summary>'+label+'</summary>';nodes[0].before(d);nodes.forEach(n=>n&&d.appendChild(n))};
+ const pb=inv&&inv.querySelector('.paste-box');if(pb){const h=pb.querySelector('h3');if(h)h.remove();fold([...pb.children],'파일 선택이 막혀 있으면 · 표 붙여넣기',!!(document.getElementById('pasteBox')||{}).value)}
+ ['usagePasteBox','labelPasteBox','purPasteBox'].forEach(id=>{const t=document.getElementById(id);if(!t)return;const tb=t.nextElementSibling&&t.nextElementSibling.classList.contains('toolbar')?t.nextElementSibling:null;fold([t,tb],'파일 선택이 막혀 있으면 · 표 붙여넣기',!!t.value)});
+}catch(e){}}})();
 
 /* ===== 오른쪽 위 [테스트 데이터 삭제] — 시연용 예시 데이터가 들어 있을 때만 보임 ===== */
 (function(){const K='standardhub_v22_demo_state';
