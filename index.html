@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V8.6</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V8.7</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -425,7 +425,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V8.6 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V8.7 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1236,6 +1236,19 @@ window.deleteEmptyGroups=function(){
   askConfirm({title:'재고 없는 그룹 삭제',message:'아래 '+empty.length+'개 그룹을 삭제합니다. 배정된 담당자에게서도 빠집니다.\n'+empty.join(', '),ok:'삭제',danger:true,onOk:function(){
     const r=removed();empty.forEach(name=>{const i=groups.indexOf(name);if(i>=0)groups.splice(i,1);users.forEach(u=>{if(u.groups)u.groups=u.groups.filter(g=>g!==name)});if(!r.includes(name))r.push(name)});
     try{localStorage.setItem(RK,JSON.stringify(r))}catch(e){}saveG();saveDemoAccounts();alert(empty.length+'개 그룹을 삭제했습니다.');render()}})};
+/* V8.7: 그룹 하나 삭제·나누기(버튼은 있었는데 동작이 빠져 있었음). 삭제한 그룹은 회원가입·그룹 배정 목록에서도 사라짐 */
+window.deleteGroup=function(name){if(!groups.includes(name))return;const n=cnt(name);
+  if(n)return alert(name+' 그룹에는 재고가 '+n+'건 있어 삭제할 수 없습니다. 재고가 없는 그룹만 삭제할 수 있어요.');
+  const who=users.filter(u=>(u.groups||[]).includes(name)).map(u=>u.name);
+  askConfirm({title:name+' 그룹 삭제',message:name+' 그룹을 삭제합니다. 회원가입·그룹 배정 목록에서도 사라집니다.'+(who.length?'\n배정된 담당자에게서도 빠집니다: '+who.join(', '):''),ok:'삭제',danger:true,onOk:function(){
+    const r=removed(),i=groups.indexOf(name);if(i>=0)groups.splice(i,1);users.forEach(u=>{if(u.groups)u.groups=u.groups.filter(g=>g!==name)});if(!r.includes(name))r.push(name);
+    try{localStorage.setItem(RK,JSON.stringify(r))}catch(e){}saveG();saveDemoAccounts();alert(name+' 그룹을 삭제했습니다.');render()}})};
+window.splitGroup=function(name){const ps=parts(name);if(ps.length<2||!groups.includes(name))return;
+  askConfirm({title:'그룹 나누기',message:"'"+name+"'을(를) "+ps.length+'개 그룹('+ps.join(', ')+')으로 나눕니다. 이 그룹이 배정된 담당자는 나눈 그룹 모두를 받습니다.',ok:'나누기',onOk:function(){
+    const i=groups.indexOf(name);if(i>=0)groups.splice(i,1);ps.forEach(g=>{if(!groups.includes(g))groups.push(g)});
+    users.forEach(u=>{if((u.groups||[]).includes(name))u.groups=[...new Set([...u.groups.filter(g=>g!==name),...ps])]});
+    const r=removed().filter(x=>!ps.includes(x));if(!r.includes(name))r.push(name);try{localStorage.setItem(RK,JSON.stringify(r))}catch(e){}
+    saveG();saveDemoAccounts();alert(ps.length+'개 그룹으로 나눴습니다.');render()}})};
 /* 담당자 배정: 그룹이 많을 때 촘촘한 칸 + 검색 */
 const _da=window.drawAssign;
 window.drawAssign=function(){_da.apply(this,arguments);
