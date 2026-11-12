@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V8.0</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V8.1</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -397,7 +397,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V8.0 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V8.1 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1557,9 +1557,15 @@ const PD=(function(){const nz=t=>String(t||'').toLowerCase().replace(/[^가-힣a
   const pk=nz(p);RK[pk]=p;
   ts.forEach(t=>{t.split(/\s+\/\s+/).forEach(t1=>{const rk=nz(reduceBase(t1));if(rk&&!(rk in RK))RK[rk]=p;add(nz(t1),4);add(nz(t1.replace(/\s*[\(\[].*$/,'')),4);
    if(!/[가-힣]/.test(t1)){const w=[];for(const x of t1.split(/\s+/)){if(STOP.test(x))break;w.push(x)}add(nz(w.join(' ')),4)}})})});
- PRE.sort((a,b)=>b[0].length-a[0].length);return {nz,RK,PRE}})();
+ PRE.sort((a,b)=>b[0].length-a[0].length);
+ /* 글 속 어디에 있어도 찾을 이름: 한글 3자 이상·영문 4자 이상 검색어와 제품명 */
+ const FIND=[...PRE,...PRODUCT_DICT.map(([p])=>[nz(p),p])].filter(([k])=>/[가-힣]/.test(k)?k.length>=3:k.length>=4).sort((a,b)=>b[0].length-a[0].length);
+ return {nz,RK,PRE,FIND}})();
 function dictProduct(x){const n=PD.nz(String(x||''));if(!n)return '';for(const [k,p] of PD.PRE)if(n.startsWith(k))return p;const r=PD.nz(reduceBase(x));return PD.RK[r]||''}
-if(typeof window!=="undefined")window.dictProduct=dictProduct;
+/* 시험항목 글에서 검체(제품) 이름 낱말은 뺌: '디티부스터 역가시험'→'역가시험', '역가시험(바벤시오)'→'역가시험' */
+function stripProd(t,p){const w=String(t||'').split(/(\s+|[()\[\]])/);const out=w.filter(x=>!(x&&/\S/.test(x)&&!/^[()\[\]]$/.test(x)&&dictProduct(x)===p));return out.join('').replace(/\(\s*\)|\[\s*\]/g,'').replace(/\s+/g,' ').trim()||t}
+function dictFind(t){const n=PD.nz(t);if(!n)return '';for(const [k,p] of PD.FIND)if(n.includes(k))return p;return ''}
+if(typeof window!=="undefined"){window.dictProduct=dictProduct;window.dictFind=dictFind;window.stripProd=stripProd}
 function reduceName(x){const o=String(x||'').trim();if(!o||o==='-')return o||'-';return dictProduct(o)||reduceBase(o)}
 window.reduceName=reduceName;
 /* 검체 자리에 들어간 시험항목 찾기: '10. 역가시험', '26PA-01234/10.역가시험 2) Difi 역가시험' → 시험항목 글자, 아니면 '' */
@@ -1610,7 +1616,9 @@ function splitByNum(t){t=String(t||'');let d=0;for(let k=1;k<t.length;k++){const
 function parsePurpose(t){t=String(t||'').replace(/\s+/g,' ').trim();if(!t)return null;
   let [smp,tst]=splitPurpose(t);{const ti=testInSample(smp);if(ti&&normSample(smp)==='-'){tst=ti;smp=''}}
   const raw=smp.replace(/\s*\(.*$/,'').trim(),np=nonProd(smp);smp=normSample(smp);
-  return {s:smp||'-',x:(np?'['+np+'] ':'')+cleanTest(np?'':raw,tst)}}
+  /* V8.1: 검체를 못 찾았어도 글 속에 사전 제품 이름이 있으면 그 제품을 검체로 */
+  let fp='';if(!smp||smp==='-'){fp=window.dictFind&&dictFind(t)||'';if(fp)smp=fp}
+  const xt=(np?'['+np+'] ':'')+cleanTest(np?'':raw,tst);return {s:smp||'-',x:fp?stripProd(xt,fp):xt}}
 function cleanTest(smp,tst){tst=String(tst||'').replace(/^\s*\d+\s*\.+\s*/,'').replace(/\s*\([^()]*_[^()]*\)?\s*$/,'').trim();
   if(smp&&smp!=='-'){const i=tst.indexOf(' '+smp+'(');if(i>0)tst=tst.slice(0,i).trim()}
   return tst||'-'}
@@ -1738,7 +1746,7 @@ function purposeHtml(r,U){
   const ru=unitInfo(r.unit),agg={};
   const add=(a,e,d)=>{a.n+=e.n;if(d>a.last)a.last=d;Object.keys(e.q).forEach(un=>{const ui=unitInfo(un);if(ui.fam===ru.fam)a.t+=e.q[un]*ui.f/ru.f;else a.raw[ui.label]=(a.raw[ui.label]||0)+e.q[un]})};
   const blank=()=>({t:0,raw:{},n:0,last:''});
-  Object.keys(P).forEach(d=>Object.keys(P[d]).forEach(k=>{const e=P[d][k],[s1,t1]=k.split('\t'),rs=(!s1||s1==='-')?splitLoose(String(t1||'')):null,s0=rs?rs[0]:s1,t0=rs?rs[1]:t1,fx=String(s0).match(TNUM),ti=testInSample(s0),smp=normSample(fx?String(s0).slice(0,fx.index):s0),np=nonProd(s0),tst=(np&&!String(t0||'').startsWith('['+np)?'['+np+'] ':'')+(fx?cleanTest('',fx[1]):(ti&&smp==='-')?cleanTest('',ti):cleanTest(np?'':s0,t0)),a=agg[smp]=agg[smp]||Object.assign(blank(),{tests:{}});
+  Object.keys(P).forEach(d=>Object.keys(P[d]).forEach(k=>{const e=P[d][k],[s1,t1]=k.split('\t'),rs=(!s1||s1==='-')?splitLoose(String(t1||'')):null,s0=rs?rs[0]:s1,t0=rs?rs[1]:t1,fx=String(s0).match(TNUM),ti=testInSample(s0),smp0=normSample(fx?String(s0).slice(0,fx.index):s0),smp=smp0!=='-'?smp0:((window.dictFind&&dictFind(k.replace('\t',' ')))||'-'),np=nonProd(s0),tst=(X=>smp!==smp0?stripProd(X,smp):X)((np&&!String(t0||'').startsWith('['+np)?'['+np+'] ':'')+(fx?cleanTest('',fx[1]):(ti&&smp0==='-')?cleanTest('',ti):cleanTest(np?'':s0,t0))),a=agg[smp]=agg[smp]||Object.assign(blank(),{tests:{}});
     add(a,e,d);add(a.tests[tst]=a.tests[tst]||blank(),e,d)}));
   const keys=Object.keys(agg).sort((a,b)=>agg[b].t-agg[a].t||agg[b].n-agg[a].n);
   const sum=keys.reduce((x,k)=>x+agg[k].t,0),MAX=10,shown=keys.slice(0,MAX);
@@ -1872,7 +1880,7 @@ function prodName(x){if(window.reduceName)return reduceName(x);const o=String(x|
  return t||o}
 /* 관리내역 제품명: 담당자가 입력한 이름(standardhub_v22_prod_names) > 사용기록 검체명 */
 const PNK='standardhub_v22_prod_names';
-function autoProd(base,UN){const P=(UN[base]||{}).pur||{},set=new Set();Object.values(P).forEach(d=>Object.keys(d).forEach(k=>{const kk=k.split('\t'),rs0=(!kk[0]||kk[0]==='-')&&window.splitByNum?splitByNum(kk[1]||''):null,x0=rs0?rs0[0]:kk[0],x=window.normSample?normSample(String(x0).replace(/\/\s*\d+\s*\.+\s*[가-힣A-Za-z].*$/,'')):x0;if(x&&x!=='-')set.add(prodName(x))}));return [...set].join(', ')}
+function autoProd(base,UN){const P=(UN[base]||{}).pur||{},set=new Set();Object.values(P).forEach(d=>Object.keys(d).forEach(k=>{const kk=k.split('\t'),rs0=(!kk[0]||kk[0]==='-')&&window.splitByNum?splitByNum(kk[1]||''):null,x0=rs0?rs0[0]:kk[0],x=window.normSample?normSample(String(x0).replace(/\/\s*\d+\s*\.+\s*[가-힣A-Za-z].*$/,'')):x0;if(x&&x!=='-')set.add(prodName(x));else{const f=window.dictFind&&dictFind(k.replace('\t',' '));if(f)set.add(f)}}));return [...set].join(', ')}
 function annexRows(g,cust){const PN=lj(PNK,{}),UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),NOTES=lj(LK,{}),client=!isB(g);
  return listOf(g).filter(s=>!SKIP[baseCode(s)]&&!(window.labelGone&&labelGone(s.code))).map(s=>{const r=detailData[s.id]||{},base=baseCode(s);
   let prod=client?(PN[base]||autoProd(base,UN)||'N/A'):'KPTR';
