@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V6.8</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V6.9</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -387,7 +387,7 @@ header .brand,.landing-bar .brand{gap:12px}
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V6.8 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V6.9 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1685,6 +1685,7 @@ function detail(r,U){
     lines.push(purposeHtml(r,U))
   }else lines.push('<p class="muted">이 기간에는 이 표준품의 사용기록이 없습니다.</p>');
   if(window.perUseHtml)lines.push(perUseHtml(r));
+  if(window.purchaseHtml)lines.push(purchaseHtml(r));
   return lines.join('')}
 function purposeHtml(r,U){
   const P=(U.data[r.base]||{}).pur;
@@ -1716,8 +1717,9 @@ function listHtml(){
      <td>${r.total>0?fmt(r.avg)+' '+esc(r.unit):'-'}</td><td>${r.uses||'-'}</td>
      <td>${r.stock>0||!r.mism?fmt(r.stock)+' '+esc(r.unit):'-'}</td>
      <td>${Number.isFinite(r.remain)?'약 '+fmt(r.remain)+'개월':'-'}</td>
-     <td><span class="tag ${TAGS[r.j]||''}">${esc(r.j)}</span></td></tr>${o?`<tr><td colspan="6" class="u-detail">${detail(r,U)}</td></tr>`:''}`}).join('');
-  return `<div class="tablewrap"><table><thead><tr><th>표준품</th><th>월평균 사용</th><th>사용 횟수</th><th>현재 재고</th><th>다 쓰는 데</th><th>상태</th></tr></thead><tbody>${body||'<tr><td colspan="6">해당하는 표준품이 없습니다.</td></tr>'}</tbody></table></div><p class="muted small">줄을 누르면 월별 사용량 그래프가 열립니다.</p>`}
+     <td>${window.purchaseCell?purchaseCell(r.base):'-'}</td>
+     <td><span class="tag ${TAGS[r.j]||''}">${esc(r.j)}</span></td></tr>${o?`<tr><td colspan="7" class="u-detail">${detail(r,U)}</td></tr>`:''}`}).join('');
+  return `<div class="tablewrap"><table><thead><tr><th>표준품</th><th>월평균 사용</th><th>사용 횟수</th><th>현재 재고</th><th>다 쓰는 데</th><th>최근 구매가</th><th>상태</th></tr></thead><tbody>${body||'<tr><td colspan="7">해당하는 표준품이 없습니다.</td></tr>'}</tbody></table></div><p class="muted small">줄을 누르면 월별 사용량 그래프가 열립니다.</p>`}
 window.usageToggle=function(b){openBase=openBase===b?null:b;const el=document.getElementById('usageList');if(el)el.innerHTML=listHtml()};
 window.usageGroup=function(g){gf=g;openBase=null;render()};
 window.usageFilter=function(){q=document.getElementById('usageQ').value;jf=document.getElementById('usageJ').value;sf=document.getElementById('usageS').value;const el=document.getElementById('usageList');if(el)el.innerHTML=listHtml()};
@@ -2006,6 +2008,85 @@ document.addEventListener('keydown',function(e){
  if(['admId','admName','admPw','admPw2'].includes(t.id)&&window.saveAdminSetup){e.preventDefault();saveAdminSetup()}
 });
 
+
+/* ===== V6.9: 구매 정보(구매 담당 팀 발주 목록) — 비고가 '표준품'인 줄만, 약칭(P/N) = 재고 Cat No.로 표준품과 연결 =====
+   저장: standardhub_v22_purchase {saved, items:[{id,pn,name,maker,spec,qty,price,amount,vendor,reg,order,deliv}]} — 신청자·소속 이름은 저장 안 함.
+   새로 올리면 같은 발주(구매의뢰번호+P/N+발주일+단가)는 바꾸고 나머지는 쌓음. */
+(function(){
+const PK2='standardhub_v22_purchase';
+const ld=()=>{try{return JSON.parse(localStorage.getItem(PK2)||'null')}catch(e){return null}};
+const norm=x=>String(x||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const num=x=>{const n=Number(String(x??'').replace(/[,\s원₩]/g,''));return Number.isFinite(n)?n:NaN};
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+/* 날짜: Excel 숫자(46296), 2026-10-01, 2026.10.01, '10월 02일', '11/3(1)' — 연도가 없으면 기준일(등록일) 연도, 기준일보다 앞선 달이면 다음 해 */
+function pdate(v,base){const s=String(v??'').trim();if(!s)return '';
+ if(/^\d{5}(\.\d+)?$/.test(s)){const d=new Date(Date.UTC(1899,11,30)+Math.round(Number(s))*864e5);return d.toISOString().slice(0,10)}
+ let m=s.match(/(\d{4})\s*[.\-\/년]\s*(\d{1,2})\s*[.\-\/월]\s*(\d{1,2})/);if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+ m=s.match(/^(\d{1,2})\s*(?:월|\/|\.)\s*(\d{1,2})/);if(m){const by=base?Number(base.slice(0,4)):new Date().getFullYear(),bm=base?Number(base.slice(5,7)):13;let y=by;if(base&&Number(m[1])<bm-6)y++;return y+'-'+m[1].padStart(2,'0')+'-'+m[2].padStart(2,'0')}
+ return ''}
+const H={id:/구매의뢰번호/,reg:/^등록일/,name:/품목명|품명/,maker:/제조사/,pn:/약칭|P\/?N|카탈로그|Cat/i,spec:/^규격/,unit:/발주단위/,qty:/발주수량|수량/,price:/발주단가|단가/,amount:/발주금액|금액/,kind:/^비고|구분/,vendor:/발주처|업체/,order:/발주일/,deliv:/납품일|입고일/};
+function mapHead(row){const m={};row.forEach((h,i)=>{h=String(h||'').replace(/\s/g,'');for(const k in H)if(m[k]==null&&H[k].test(h)){m[k]=i;break}});return m}
+function toItems(raw){const hi=raw.findIndex(r=>r.some(v=>/약칭|P\/N/i.test(String(v)))&&r.some(v=>/단가/.test(String(v))));
+ if(hi<0)throw Error("'약칭(P/N)'과 '발주단가' 열이 있는 머리글을 찾지 못했습니다. 제목 행까지 포함해 올려 주세요.");
+ const M=mapHead(raw[hi]),g=(r,k)=>M[k]==null?'':String(r[M[k]]??'').trim();let skip=0;const items=[];
+ raw.slice(hi+1).forEach(r=>{const pn=g(r,'pn'),price=num(g(r,'price'));if(!pn&&!g(r,'name'))return;
+  if(!/표준품/.test(g(r,'kind'))){skip++;return}if(!pn||!Number.isFinite(price))return;
+  const reg=pdate(g(r,'reg')),order=pdate(g(r,'order'),reg)||reg,deliv=pdate(g(r,'deliv'),order||reg);
+  items.push({id:[g(r,'id'),norm(pn),order,price].join('|'),pn,name:g(r,'name'),maker:g(r,'maker'),spec:g(r,'spec'),qty:num(g(r,'qty'))||1,price,amount:num(g(r,'amount')),vendor:g(r,'vendor'),reg,order,deliv})});
+ return {items,skip}}
+async function readRaw(src){
+ if(src.pasted!=null){return String(src.pasted).replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l=>l.split('\t'))}
+ if(!/\.xlsx$/i.test(src.name||''))throw Error('.xlsx 파일을 선택해 주세요.');
+ const zip=await unzipXlsx(await src.arrayBuffer());let shared=[];
+ if(zip['xl/sharedStrings.xml']){const d=xmlDoc(zip['xl/sharedStrings.xml']);shared=[...d.getElementsByTagName('*')].filter(x=>x.localName==='si').map(si=>[...si.getElementsByTagName('*')].filter(x=>x.localName==='t').map(x=>x.textContent).join(''))}
+ const sn=Object.keys(zip).filter(x=>/^xl\/worksheets\/sheet\d+\.xml$/.test(x)).sort((a,b)=>Number(a.match(/\d+/)[0])-Number(b.match(/\d+/)[0]));const out=[];
+ for(const name of sn){const doc=xmlDoc(zip[name]),rows=[];
+  for(const row of [...doc.getElementsByTagName('*')].filter(x=>x.localName==='row')){const cols=[];for(const c of xmlChildren(row,'c')){const ref=c.getAttribute('r')||'',L=(ref.match(/^[A-Z]+/i)||[''])[0];let i=0;for(const ch of L.toUpperCase())i=i*26+ch.charCodeAt(0)-64;i--;let v=(xmlChildren(c,'v')[0]||{}).textContent??'';const t=c.getAttribute('t');if(t==='s')v=shared[Number(v)]??'';else if(t==='inlineStr')v=[...c.getElementsByTagName('*')].filter(x=>x.localName==='t').map(x=>x.textContent).join('');if(i>=0)cols[i]=v}rows.push(cols)}
+  if(rows.some(r=>r.some(v=>/약칭|P\/N/i.test(String(v)))))return rows;out.push(rows)}
+ return out[0]||[]}
+/* 표준품(기본번호) → Cat No. 정규화 값들 */
+function catMap(){const m={};(typeof stocks!=='undefined'?stocks:[]).forEach(s=>{const r=detailData[s.id]||{};let c=String(r['Cat No.']||r['Cat No']||r['CatNo']||'').trim();if(!c||c==='-')return;const b=masterOf(s.code);(m[b]=m[b]||new Set());m[b].add(norm(c));const f=c.split(/[\s(]/)[0];if(f)m[b].add(norm(f))});return m}
+function matchBase(pn,CM){const k=norm(pn);if(!k)return [];return Object.keys(CM).filter(b=>CM[b].has(k))}
+window.purchaseFor=function(base){const o=ld();if(!o)return [];const CM=catMap(),set=CM[base];if(!set)return [];
+ return o.items.filter(x=>set.has(norm(x.pn))).sort((a,b)=>(b.order||b.reg).localeCompare(a.order||a.reg))};
+const won=n=>Number.isFinite(n)?Math.round(n).toLocaleString('ko-KR')+'원':'-';
+const days=(a,b)=>a&&b?Math.round((new Date(b)-new Date(a))/864e5):NaN;
+window.purchaseCell=function(base){const L=purchaseFor(base);if(!L.length)return '-';const x=L[0];return `<b>${won(x.price)}</b><div class="small muted">${esc(x.spec||'')}${x.order?' · '+esc(x.order.slice(2).replace(/-/g,'.')):''}</div>`};
+window.purchaseHtml=function(r){const L=purchaseFor(r.base);
+ if(!L.length)return `<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)"><b>구매 정보</b> <span class="muted small">구매 목록에서 같은 Cat No.(약칭 P/N)를 찾지 못했습니다.${ld()?'':' Excel 업로드 탭의 \'구매 정보 올리기\'에서 구매 목록을 올리면 최근 구매가가 나옵니다.'}</span></div>`;
+ const x=L[0],prev=L.find((y,i)=>i>0&&y.spec===x.spec&&y.price!==x.price),ch=prev?Math.round((x.price-prev.price)/prev.price*1000)/10:null;
+ const leads=L.map(y=>days(y.order||y.reg,y.deliv)).filter(d=>Number.isFinite(d)&&d>=0),lead=leads.length?Math.round(leads.reduce((a,b)=>a+b,0)/leads.length):NaN;
+ let when='';if(r.out instanceof Date&&!isNaN(r.out)&&Number.isFinite(lead)){const d=new Date(r.out);d.setDate(d.getDate()-lead);const late=ymd(d)<=ymd(new Date());when=`<p><b${late?' style="color:var(--bad)"':''}>주문 권장 시점: ${ymd(d)}경${late?' — 지금 주문이 필요해요':''}</b> <span class="muted small">(다 쓰는 날 ${ymd(r.out)}에서 평균 입고 기간 ${lead}일을 뺀 날짜)</span></p>`}
+ const rows=L.slice(0,5).map(y=>`<tr><td>${esc(y.order||y.reg||'-')}</td><td>${esc(y.vendor||'-')}</td><td>${esc(y.spec||'-')}</td><td>${y.qty}</td><td>${won(y.price)}</td><td>${esc(y.deliv||'-')}</td><td>${Number.isFinite(days(y.order||y.reg,y.deliv))?days(y.order||y.reg,y.deliv)+'일':'-'}</td></tr>`).join('');
+ return `<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)"><p style="margin:0 0 6px"><b>구매 정보</b> <span class="muted small">구매 담당 팀 발주 목록 · P/N ${esc(x.pn)}</span></p>
+ <p>최근 구매가 <b>${won(x.price)}</b> / ${esc(x.spec||'규격 미기재')} <span class="muted">(${esc(x.order||x.reg||'')} · ${esc(x.vendor||'발주처 미기재')})</span>${ch!=null?` <span class="tag ${ch>0?'warn':''}" style="margin-left:4px">지난번보다 ${ch>0?'▲':'▼'}${Math.abs(ch)}%</span>`:''}</p>
+ ${Number.isFinite(lead)?`<p class="muted">발주부터 납품까지 평균 <b>${lead}일</b> (${leads.length}건)</p>`:''}${when}
+ <div class="tablewrap"><table><thead><tr><th>발주일</th><th>발주처</th><th>규격</th><th>수량</th><th>단가</th><th>납품일</th><th>걸린 기간</th></tr></thead><tbody>${rows}</tbody></table></div>${L.length>5?`<p class="muted small">최근 5건만 표시 (전체 ${L.length}건)</p>`:''}</div>`};
+let pend=null;
+async function prev(src){const out=document.getElementById('purResult');if(!out)return;
+ try{const {items,skip}=toItems(await readRaw(src));if(!items.length){out.innerHTML='<p class="danger">비고가 \'표준품\'인 줄을 찾지 못했습니다.</p>';return}
+  const CM=catMap(),un=items.filter(x=>!matchBase(x.pn,CM).length),mt=items.length-un.length;pend=items;
+  out.innerHTML=`<div class="upload-preview"><h3>확인</h3><p>표준품 구매 <b>${items.length}</b>건 (시약·소모품 등 ${skip}건은 뺌) · 우리 표준품과 연결 <b>${mt}</b>건</p>
+  ${un.length?`<details><summary class="muted small" style="cursor:pointer">Cat No.가 같은 표준품이 없어 연결 안 된 ${un.length}건 보기</summary><div class="tablewrap"><table><thead><tr><th>품목명</th><th>제조사</th><th>P/N</th><th>단가</th></tr></thead><tbody>${un.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.maker)}</td><td>${esc(x.pn)}</td><td>${won(x.price)}</td></tr>`).join('')}</tbody></table></div><p class="muted small">재고 Excel의 Cat No.와 구매 목록의 약칭(P/N)이 같아야 연결됩니다. 연결 안 된 것도 저장해 두면 나중에 그 표준품이 입고될 때 자동으로 연결됩니다.</p></details>`:''}
+  <p class="muted">품목명·제조사·P/N·규격·수량·단가·발주처·등록일·발주일·납품일만 저장합니다. 신청자·소속은 저장하지 않습니다. 같은 발주는 새 내용으로 바뀌고, 다른 발주는 계속 쌓입니다.</p>
+  <div class="toolbar"><button class="primary" onclick="purApply()">반영하기</button><button onclick="purCancel()">취소</button></div></div>`}
+ catch(e){out.innerHTML='<p class="danger">'+esc(e.message||String(e))+'</p>'}}
+window.purFile=function(inp){const f=inp.files&&inp.files[0];if(f)prev(f);inp.value=''};
+window.purPaste=function(){const t=(document.getElementById('purPasteBox')||{}).value||'';if(!t.trim()){document.getElementById('purResult').innerHTML='<p class="danger">붙여넣은 내용이 없습니다.</p>';return}prev({name:'붙여넣기',pasted:t})};
+window.purCancel=function(){pend=null;const o=document.getElementById('purResult');if(o)o.innerHTML=''};
+window.purApply=function(){if(!pend)return;const o=ld()||{items:[]},M=new Map(o.items.map(x=>[x.id,x]));pend.forEach(x=>M.set(x.id,x));
+ try{localStorage.setItem(PK2,JSON.stringify({saved:new Date().toLocaleString('ko-KR'),items:[...M.values()]}))}catch(e){return alert('브라우저 저장 공간이 부족해 저장하지 못했습니다.')}
+ window.logUpload&&logUpload('구매 정보','표준품 구매 '+pend.length+'건 (누적 '+M.size+'건)');alert('구매 정보 '+pend.length+'건을 반영했습니다.');pend=null;render()};
+window.purClear=function(){askConfirm({title:'구매 정보 지우기',message:'저장된 구매 정보를 모두 지웁니다. 계속할까요?',ok:'지우기',danger:true,onOk:()=>{try{localStorage.removeItem(PK2)}catch(e){}alert('구매 정보를 지웠습니다.');render()}})};
+const _r=window.render;window.render=function(){_r();try{if(active!=='upload'||document.getElementById('purPanel'))return;const sec=document.getElementById('upload');if(!sec||!user().admin&&user().status!=='approved')return;const o=ld();
+ const html=`<div class="panel" id="purPanel" style="margin-top:16px"><h3>구매 정보 올리기 (선택)</h3>
+ <p class="muted">구매 담당 팀의 발주 목록 Excel을 올리면 <b>비고가 '표준품'인 줄만</b> 골라, 약칭(P/N)이 재고의 Cat No.와 같은 표준품에 <b>최근 구매가</b>를 붙입니다. 사용 추이에서 볼 수 있습니다.</p>
+ ${o?`<p class="small muted">마지막 반영: ${esc(o.saved)} · 표준품 구매 ${o.items.length}건</p>`:''}
+ <div class="toolbar"><label class="primary" style="display:inline-block;padding:8px 14px;border-radius:8px;cursor:pointer;background:var(--brand);color:var(--on-brand);font-weight:600">파일 선택<input type="file" accept=".xlsx" style="display:none" onchange="purFile(this)"></label>${o?'<button class="danger-outline" onclick="purClear()">구매 정보 지우기</button>':''}</div>
+ <textarea id="purPasteBox" rows="3" spellcheck="false" placeholder="또는 제목 행을 포함해 붙여넣기 (구매의뢰번호, 품목명, 제조사, 약칭(P/N), 규격, 발주단가, 비고, 발주처, 발주일, 납품일 …)" style="width:100%;margin-top:10px"></textarea>
+ <div class="toolbar"><button onclick="purPaste()">붙여넣은 내용 확인</button></div><div id="purResult"></div></div>`;
+ const lp=document.getElementById('labelPanel');if(lp)lp.insertAdjacentHTML('afterend',html);else sec.insertAdjacentHTML('beforeend',html)}catch(e){}};
+})();
 
 /* Excel 업로드 탭: '업로드 내역' 칸은 맨 아래로 */
 (function(){const _r=window.render;window.render=function(){_r();try{if(active!=='upload')return;const sec=document.getElementById('upload');if(!sec)return;
