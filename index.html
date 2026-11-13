@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V9.8</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V9.9</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -429,7 +429,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V9.8 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V9.9 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1946,9 +1946,9 @@ const ANX='.apage{page:annex;box-sizing:border-box;width:297mm;height:210mm;padd
 /* 별첨 1: 쪽마다 머리(로고·제목·쪽 번호·부서명 줄)·표 제목 줄·문서번호가 나오도록 직접 쪽을 나눔.
    인쇄 화면과 같은 CSS로 숨은 iframe에 그려 각 줄 높이를 재고, 가로 A4 한 쪽에 들어가는 만큼씩 담음 */
 function annexBuild(g,o){const logo=(document.querySelector('img.kptr')||{}).src||'',rows=annexRows(g,o.cust);
- /* V9.8: 유효기한 표시 — 점검일 기준 N개월 이내는 노란 칸, 이미 지난 것은 빨간 칸 */
- const mon=Number(o.mon)||0;if(mon&&o.date){const lim=new Date(o.date+'T00:00:00');lim.setMonth(lim.getMonth()+mon);const limS=lim.getFullYear()+'-'+String(lim.getMonth()+1).padStart(2,'0')+'-'+String(lim.getDate()).padStart(2,'0');rows.forEach(r=>{const e=String(r[12]||'').slice(0,10);if(!/^\d{4}-\d\d-\d\d$/.test(e))return;if(e<o.date)r.ec='x-exp';else if(e<=limS)r.ec='x-soon'})}
- const leg=mon&&rows.some(r=>r.ec)?`<div class="aleg"><i class="x-soon"></i>유효기한 ${mon}개월 이내 (작성일 기준)<i class="x-exp"></i>유효기한 지남</div>`:'';
+ /* V9.8: 유효기한 표시 — 작성일부터 N개월 이내는 노란 칸 (V9.9: 이미 지난 것은 표시 안 함) */
+ const mon=Number(o.mon)||0;if(mon&&o.date){const lim=new Date(o.date+'T00:00:00');lim.setMonth(lim.getMonth()+mon);const limS=lim.getFullYear()+'-'+String(lim.getMonth()+1).padStart(2,'0')+'-'+String(lim.getDate()).padStart(2,'0');rows.forEach(r=>{const e=String(r[12]||'').slice(0,10);if(!/^\d{4}-\d\d-\d\d$/.test(e))return;if(e>=o.date&&e<=limS)r.ec='x-soon'})}
+ const leg=mon&&rows.some(r=>r.ec)?`<div class="aleg"><i class="x-soon"></i>유효기한 ${mon}개월 이내 (작성일 기준)</div>`:'';
  const page=(i,n,body,cls)=>`<div class="apage${cls||''}"><div class="ahd">${logo?`<img src="${logo}" alt="KPTR 한국의약품시험연구원">`:'<b>KPTR 한국의약품시험연구원</b>'}<span class="pg">page ${i} of ${n}</span></div><h1 class="at">표준품 관리내역</h1>
  <div class="meta${o.sign?' sg':''}">${o.sign?`<span>부서명 : ${esc(o.dept)}</span><span>작성일 : ${dot(o.date)}</span><span>작성자 : ${i===1?'<i class="sgs" data-f="Author" style="width:42mm"></i>':''}</span><span>확인일 : ${i===1?'<i class="sgs" data-f="ReviewDate" style="width:26mm"></i>':''}</span><span>확인자 : ${i===1?'<i class="sgs" data-f="Reviewer" style="width:42mm"></i>':''}</span>`:`<span>부서명 : ${esc(o.dept)}</span><span>작성일 : ${dot(o.date)}</span><span>작성자 :</span><span>확인일 :</span><span>확인자 :</span>`}</div>
  <table class="a">${headHtml()}<tbody>${body}</tbody></table><div class="adoc">S-P-GO011-F1-V04</div>${leg}</div>`;
