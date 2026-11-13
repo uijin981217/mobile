@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V10.5</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V10.6</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -417,6 +417,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 #inspLayer .in-grid.in-top{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:16px;row-gap:12px;margin-top:6px}#inspLayer .in-top label{display:block;font-size:13px;font-weight:600;margin:0}#inspLayer .in-top label .muted{font-weight:400}#inspLayer .in-top input,#inspLayer .in-top select{display:block;height:38px;min-height:0;padding:6px 10px;margin:5px 0 0!important;width:100%;box-sizing:border-box;font-size:14px}#inspLayer .in-top label>span[style*="inline-flex"]{display:flex!important;margin-top:5px;font-weight:400}#inspLayer .in-top label>span[style*="inline-flex"] input{margin:0!important}@media(max-width:700px){#inspLayer .in-grid.in-top{grid-template-columns:1fr}}
 /* V10.4: 숫자 칸 — 위·아래 화살표 없애고 작게, 숫자 가운데 */#inspLayer input[type=number],#alertMonths{-moz-appearance:textfield;appearance:textfield;text-align:center!important;padding:4px 6px!important;width:52px!important;height:34px!important;min-height:0!important;font-size:14px}#inspLayer input[type=number]::-webkit-inner-spin-button,#inspLayer input[type=number]::-webkit-outer-spin-button,#alertMonths::-webkit-inner-spin-button,#alertMonths::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}#inspLayer .t-box{margin-top:12px;padding:10px 12px}.t-hd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}#inspLayer .t-r{margin:5px 0;gap:8px}#inspLayer .t-r input.t-m{width:52px!important;flex:0 0 52px;height:32px!important}#inspLayer .t-sw button{width:22px!important;height:22px!important;flex:0 0 22px;border-radius:6px!important}#inspLayer .t-sw input.t-c{width:28px!important;height:24px!important;flex:0 0 28px}#inspLayer .t-x{width:26px;height:26px!important;padding:0!important;font-size:16px!important;line-height:1;border-radius:7px}#inspLayer .t-add{height:28px!important;min-height:0!important;padding:0 10px!important;font-size:12.5px!important;margin-top:2px}
 #inspLayer .in-grid.in-top.a4{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,1fr)}@media(max-width:700px){#inspLayer .in-grid.in-top.a4{grid-template-columns:1fr}}
+.d-wrap{position:relative;display:inline-flex;align-items:center;gap:4px;max-width:100%}.d-wrap .d-in{flex:1;min-width:0}.d-cal{flex:0 0 auto;width:34px;height:34px;min-height:0!important;padding:0!important;font-size:15px;line-height:1}.d-hid{position:absolute;left:0;bottom:0;width:1px!important;height:1px!important;opacity:0;pointer-events:none;border:0;padding:0;margin:0}.d-bad{border-color:#d33!important;background:#fff5f5!important}#inspLayer .in-top .d-wrap{display:flex;margin-top:5px}#inspLayer .in-top .d-wrap .d-in{margin:0!important}#inspLayer .in-top .d-cal{height:38px}
 </style></head><body>
 <div id="loginLanding" aria-label="StandardHub 로그인">
  <div class="landing-inner"><div class="landing-icon" aria-hidden="true">▱</div>
@@ -434,7 +435,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V10.5 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V10.6 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2513,4 +2514,38 @@ visibleTabs=window.visibleTabs=function(u){u=u||user();const t=VT(u);return lead
 const R5=window.render;
 window.render=function(){R5();const u=user(),ds=leadDepts(u);if(!ds.length)return;const rt=document.getElementById('roleTag');if(rt)rt.textContent='실장 · '+ds.join(', ')};
 })();
+
+/* V10.6: 날짜 칸 — 사람마다 치는 방법이 달라도 알아듣게(20261130 · 2026-11-30 · 2026.11.30 · 26.11.30 · 2026/11/30 · 2026년 11월 30일 · 11/30 · 2026-11). 사이트의 모든 날짜 칸을 글자 칸 + 달력 버튼으로 바꿈 */
+(function(){
+const p2=n=>String(n).padStart(2,'0');
+const ok=(y,m,d)=>{const t=new Date(y,m-1,d);return t.getFullYear()===y&&t.getMonth()===m-1&&t.getDate()===d};
+const last=(y,m)=>new Date(y,m,0).getDate();
+function normDate(v){let s=String(v||'').trim();if(!s)return '';
+ if(/^\d{4}-\d\d-\d\d$/.test(s)&&ok(+s.slice(0,4),+s.slice(5,7),+s.slice(8,10)))return s;
+ s=s.replace(/\s*년\s*/g,'-').replace(/\s*월\s*/g,'-').replace(/\s*일\s*/g,'').replace(/[.\/\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+ const Y=new Date().getFullYear();let y,m,d;
+ if(/^\d+$/.test(s)){if(s.length===8){y=+s.slice(0,4);m=+s.slice(4,6);d=+s.slice(6,8)}else if(s.length===6){y=2000+ +s.slice(0,2);m=+s.slice(2,4);d=+s.slice(4,6)}else if(s.length===4){y=Y;m=+s.slice(0,2);d=+s.slice(2,4)}else return null}
+ else{const a=s.split('-').map(Number);if(a.some(isNaN))return null;
+  if(a.length===3){[y,m,d]=a;if(y<100)y+=2000}
+  else if(a.length===2){if(a[0]>=1000){y=a[0];m=a[1];d=m>=1&&m<=12?last(y,m):0}else{y=Y;m=a[0];d=a[1]}}
+  else return null}
+ return ok(y,m,d)?y+'-'+p2(m)+'-'+p2(d):null}
+window.normDate=normDate;
+function fix(i){const v=i.value,n=normDate(v);if(n===null){i.classList.add('d-bad');i.title='날짜를 알아볼 수 없어요. 예: 2026-11-30, 20261130, 26.11.30';try{alert('날짜를 알아볼 수 없어요: "'+v+'"\n예: 2026-11-30, 20261130, 2026.11.30, 26.11.30')}catch(e){}return false}
+ i.classList.remove('d-bad');i.title='';if(n!==v)i.value=n;return true}
+function conv(i){if(i.dataset.dconv||i.closest('[data-native-date]'))return;i.dataset.dconv='1';
+ const v=i.value;i.type='text';i.value=v;i.setAttribute('inputmode','numeric');i.setAttribute('autocomplete','off');if(!i.placeholder)i.placeholder='예: 2026-11-30';i.classList.add('d-in');
+ const w=document.createElement('span');w.className='d-wrap';i.parentNode.insertBefore(w,i);w.appendChild(i);
+ const b=document.createElement('button');b.type='button';b.className='d-cal';b.title='달력에서 고르기';b.setAttribute('aria-label','달력에서 고르기');b.textContent='📅';w.appendChild(b);
+ const h=document.createElement('input');h.type='date';h.tabIndex=-1;h.className='d-hid';h.setAttribute('aria-hidden','true');w.appendChild(h);
+ b.addEventListener('click',()=>{const n=normDate(i.value);h.value=n||'';try{h.showPicker()}catch(e){h.focus();h.click()}});
+ h.addEventListener('change',()=>{if(!h.value)return;i.value=h.value;i.classList.remove('d-bad');i.dispatchEvent(new Event('input',{bubbles:true}));i.dispatchEvent(new Event('change',{bubbles:true}))});
+ i.addEventListener('keydown',e=>{if(e.key==='Enter'){const before=i.value;if(fix(i)&&before!==i.value)i.dispatchEvent(new Event('change',{bubbles:true}))}})}
+/* 원래 칸의 onchange보다 먼저 정리되게(캡처 단계) */
+document.addEventListener('change',e=>{const i=e.target;if(i&&i.classList&&i.classList.contains('d-in'))fix(i)},true);
+/* 버튼을 누를 때도(칸에서 벗어나지 않았어도) 알아본 날짜는 정리 */
+document.addEventListener('click',e=>{if(!e.target.closest||!e.target.closest('button'))return;document.querySelectorAll('input.d-in').forEach(i=>{const n=normDate(i.value);if(n&&n!==i.value)i.value=n})},true);
+const scan=r=>{if(!r||r.nodeType!==1)return;if(r.matches&&r.matches('input[type=date]:not(.d-hid)'))conv(r);r.querySelectorAll&&r.querySelectorAll('input[type=date]:not(.d-hid)').forEach(conv)};
+const mo=new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)scan(n)});
+const go=()=>{scan(document.body);mo.observe(document.body,{childList:true,subtree:true})};if(document.body)go();else addEventListener('DOMContentLoaded',go)})();
 </script></body></html>
