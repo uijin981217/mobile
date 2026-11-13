@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V10.6</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V10.7</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -435,7 +435,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V10.6 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V10.7 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2513,6 +2513,23 @@ const VT=window.visibleTabs;
 visibleTabs=window.visibleTabs=function(u){u=u||user();const t=VT(u);return leadDepts(u).length?t.filter(x=>x!=='upload'):t};
 const R5=window.render;
 window.render=function(){R5();const u=user(),ds=leadDepts(u);if(!ds.length)return;const rt=document.getElementById('roleTag');if(rt)rt.textContent='실장 · '+ds.join(', ')};
+/* V10.7: 승인·권한 '계정별 권한 현황'에서 바로 실장 지정·해제(서버판). 실별 실장 지정 표와 같은 자료(standardhub_v22_dept_leads) */
+window.adminSetLead=function(id,on){const u=users.find(x=>String(x.id)===String(id));if(!u)return;let L={};try{L=JSON.parse(localStorage.getItem(LK2))||{}}catch(e){}
+ const save=()=>{try{localStorage.setItem(LK2,JSON.stringify(L))}catch(e){return alert('저장하지 못했습니다.')}render()};
+ if(!on){Object.keys(L).forEach(d=>{if(String(L[d])===String(id))delete L[d]});save();return alert(u.name+' 님의 실장 지정을 해제했습니다.')}
+ if(!u.dept)return alert(u.name+' 님의 소속 실이 정해져 있지 않습니다. 먼저 이 줄의 \'소속 실\'을 골라 주세요.');
+ const cur=L[u.dept],cu=cur&&users.find(x=>String(x.id)===String(cur));
+ const doIt=()=>{L[u.dept]=String(u.id);save();alert(u.dept+' 실장: '+u.name)};
+ if(cu&&String(cur)!==String(id))return askConfirm({title:'실장을 바꿀까요?',message:u.dept+'의 실장이 지금 '+cu.name+' ('+cu.id+') 님입니다.\n'+u.name+' ('+u.id+') 님으로 바꿀까요? 실마다 한 명만 지정됩니다.',ok:'바꾸기',onOk:doIt});
+ askConfirm({title:'실장으로 지정할까요?',message:u.name+' ('+u.id+') 님을 '+u.dept+' 실장(확인자)으로 지정합니다.\n'+u.dept+' 담당자들이 맡은 표준품 전체를 보기 전용으로 보고, 서명 요청을 받습니다.',ok:'지정하기',onOk:doIt})};
+const R6=window.render;
+window.render=function(){R6();if(!SV()||active!=='admin'||!(user()||{}).admin)return;const root=document.getElementById('admin');if(!root)return;
+ const tbl=[...root.querySelectorAll('table')].find(t=>/그룹 배정/.test(t.tHead?.textContent||'')&&/단가 보기/.test(t.tHead?.textContent||''));if(!tbl)return;
+ [...tbl.tBodies[0].rows].forEach(tr=>{if(tr.dataset.leadfix||tr.cells.length<8)return;tr.dataset.leadfix='1';const m=(tr.cells[0].textContent.match(/\(([^()]+)\)\s*$/)||[])[1];const u=m&&users.find(x=>String(x.id)===m);if(!u||u.admin||u.status!=='approved')return;
+  const ds=leadDepts(u),last=tr.cells[tr.cells.length-1];if(ds.length){tr.cells[2].innerHTML='<span class="tag">실장</span>';const gs=deptGroups(u,ds);tr.cells[4].innerHTML=esc(ds.join(', '))+' 전체 <span class="muted small">(보기 전용'+(gs.length?': '+esc(gs.join(', ')):'')+')</span>';tr.cells[5].textContent=stocks.filter(x=>gs.includes(x.group)).length}
+  const b=document.createElement('button');b.textContent=ds.length?'실장 해제':'실장으로 지정';b.onclick=()=>adminSetLead(u.id,!ds.length);const host=last.querySelector('div,.toolbar')||last;host.insertBefore(b,host.firstChild);host.style.flexWrap='nowrap';
+  if(last.style)last.style.whiteSpace='nowrap'});
+ if(!root.querySelector('#leadNote')){const n=document.createElement('p');n.id='leadNote';n.className='muted small';n.textContent='[실장으로 지정]: 그 계정의 소속 실 실장(확인자)이 됩니다. 실마다 한 명이고, 아래 \'실별 실장(확인자) 지정\' 표와 같은 설정입니다.';const w=tbl.closest('.tablewrap');if(w)w.before(n)}};
 })();
 
 /* V10.6: 날짜 칸 — 사람마다 치는 방법이 달라도 알아듣게(20261130 · 2026-11-30 · 2026.11.30 · 26.11.30 · 2026/11/30 · 2026년 11월 30일 · 11/30 · 2026-11). 사이트의 모든 날짜 칸을 글자 칸 + 달력 버튼으로 바꿈 */
