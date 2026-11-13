@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V9.3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V9.4</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -429,7 +429,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V9.3 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V9.4 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1959,6 +1959,9 @@ function annexBuild(g,o){const logo=(document.querySelector('img.kptr')||{}).src
   if(hs.length){chunks=[];let cur=[],used=0;hs.forEach((h,i)=>{if(cur.length&&used+h>avail){chunks.push(cur);cur=[];used=0}cur.push(trs[i]);used+=h});chunks.push(cur)}}catch(e){}
  f.remove();const n=chunks.length;
  return {pages:n,html:chunks.map((c,i)=>page(i+1,n,c.join(''),i===n-1?' last':'')).join('')}}
+/* V9.4: 파일 이름 통일 — '2026년 10월 BPT 표준품 정기점검 (냉동)', '2026년 10월 MEC 표준품 관리내역' */
+function docName(kind,g,ym){const m=String(g).match(/^([^-]+)-(.+)$/),y=ym.slice(0,4),mo=Number(ym.slice(5,7));return y+'년 '+mo+'월 '+(m?m[1]:g)+' 표준품 '+kind+(m?' ('+m[2]+')':'')}
+window.docName=docName;
 function annexHtml(g,o){return annexBuild(g,o).html}
 /* ---- 입력 창 ---- */
 function closeInsp(){const l=document.getElementById('inspLayer');if(l)l.remove()}
@@ -2015,7 +2018,7 @@ window.makeInspection=function(mode){
  const css0='<style>*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{margin:0;padding:0}.doc{font-size:10px;margin-top:6px}.fpage{padding:12mm 12mm 0}@page{size:A4 portrait;margin:0}'+ACSS+ANX+'</style>';
  const AB=annexBuild(g,{cust,dept,date}),annex=AB.html;
  window._signCtx={g,cust,dept,date,ym,css0};
- if(mode==='annex'){closeInsp();window._signCtx.kind='annex';window._signCtx.signHtml=css0+annexBuild(g,{cust,dept,date,sign:true}).html;window._signCtx.title='표준품관리내역_'+g+'_'+ym;return printDoc('표준품관리내역_'+g+'_'+ym,css0+annex)}
+ if(mode==='annex'){closeInsp();window._signCtx.kind='annex';window._signCtx.signHtml=css0+annexBuild(g,{cust,dept,date,sign:true}).html;window._signCtx.title=docName('관리내역',g,ym);return printDoc(docName('관리내역',g,ym),css0+annex)}
  const withAnnex=false,target=all[g].target||'';
  const rv=n=>(document.querySelector(`input[name="${n}"]:checked`)||{}).value==='1';
  const DL=window.labelDisposed?labelDisposed(g,ym):[],dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!dset.has(s.code)),nm=nameFn();
@@ -2053,7 +2056,7 @@ window.makeInspection=function(mode){
  <tr><th>확인일</th><td colspan="2" class="big" style="text-align:center">${dot(date)}</td><th>확인자</th><td colspan="2" class="big"></td></tr></table>
  <div class="doc">S-P-GO011-F4-V03</div></div>`;
  window._signCtx.signHtml=css0+css+form.replace('<th>점검자</th><td class="big"></td>','<th>점검자</th><td class="big" style="position:relative"><i data-f="Inspector" style="position:absolute;inset:0"></i></td>').replace('<th>확인일</th><td colspan="2" class="big" style="text-align:center">'+dot(date)+'</td>','<th>확인일</th><td colspan="2" class="big" style="position:relative"><i data-f="ReviewDate" style="position:absolute;inset:0"></i></td>').replace('<th>확인자</th><td colspan="2" class="big"></td>','<th>확인자</th><td colspan="2" class="big" style="position:relative"><i data-f="Reviewer" style="position:absolute;inset:0"></i></td>');
- closeInsp();window._signCtx.kind='form';window._signCtx.title='표준품정기점검_'+g+'_'+ym;printDoc('표준품정기점검_'+g+'_'+ym,css0+css+form+(withAnnex?annex:''))};
+ closeInsp();window._signCtx.kind='form';window._signCtx.title=docName('정기점검',g,ym);printDoc(docName('정기점검',g,ym),css0+css+form+(withAnnex?annex:''))};
 const _r=window.render;window.render=function(){_r();try{if(active!=='overview')return;const b=document.querySelector('#overview button[onclick="printOverview()"]');if(b&&!document.getElementById('inspBtn')){const w=document.createElement('span');w.style.cssText='display:inline-flex;gap:8px;flex-wrap:wrap';b.replaceWith(w);w.append(b);w.insertAdjacentHTML('beforeend','<button id="inspBtn" onclick="openInspection()">정기점검 양식</button><button id="annexBtn" onclick="openInspection(\'annex\')">관리내역</button>')}}catch(e){}};
 })();
 
@@ -2376,7 +2379,7 @@ window.signPdf=async function(){const C=window._signCtx;if(!C||!C.signHtml)retur
  try{const pages=await snap(C.signHtml,C.kind==='annex'?297:210);const first=C.kind==='annex'?'Author':'Inspector';
   pages.forEach(p=>p.fields=p.fields.map(f=>{const pad=f.name==='ReviewDate'?1.5:2,r=[f.rect[0]+pad,f.rect[1]+pad,f.rect[2]-2*pad,f.rect[3]-2*pad];
    return {name:f.name,rect:r,tu:TU[f.name]||f.name,type:f.name==='ReviewDate'?'date':'sig',lock:f.name===first?['Exclude',['ReviewDate','Reviewer']]:f.name==='Reviewer'?['Include',['ReviewDate']]:null}}));
-  const blob=buildPdf(pages),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=C.title+'_서명용.pdf';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);window.__lastSignPdf=blob;
+  const blob=buildPdf(pages),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=C.title+'.pdf';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);window.__lastSignPdf=blob;
   alert('서명 칸이 들어간 PDF를 받았습니다. Adobe로 열어 '+(C.kind==='annex'?'작성자':'점검자')+' 칸을 눌러 서명한 뒤 NAS 폴더에 저장해 주세요.')}
  catch(e){alert('PDF를 만들지 못했습니다: '+(e&&e.message||e))}
  finally{if(btn){btn.disabled=false;btn.textContent='서명 칸 넣은 PDF 받기'}}};
