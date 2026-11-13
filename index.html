@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V9.0</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V9.1</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -409,6 +409,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 :root[data-theme="dark"] header.hdr3>nav button{color:var(--muted)!important}:root[data-theme="dark"] header.hdr3>nav button.active{color:var(--ink)!important;box-shadow:inset 0 -2px 0 var(--ink)!important}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) header.hdr3,:root:not([data-theme="light"]) header.hdr3>.toolbar{border-color:var(--line)!important}:root:not([data-theme="light"]) header.hdr3>nav button{color:var(--muted)!important}:root:not([data-theme="light"]) header.hdr3>nav button.active{color:var(--ink)!important;box-shadow:inset 0 -2px 0 var(--ink)!important}}
 @media (max-width:700px){header.hdr3{padding:14px 16px!important}header.hdr3>nav{gap:14px!important;overflow-x:auto}}
+.nas-box{padding:0 16px;background:var(--surface);border-bottom:1px solid var(--line)}.nas-box:empty{display:none}.nas-row{display:flex;align-items:center;gap:8px;padding:8px 0;flex-wrap:wrap}.nas-l{font-weight:600;font-size:13px;white-space:nowrap}.nas-row input{flex:1;min-width:240px;margin:0;font:12.5px Consolas,monospace}.nas-p{font:12.5px/1.4 Consolas,monospace;background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:6px 9px;word-break:break-all;flex:1;min-width:200px}.nas-p b{background:#fff3d6;color:#9a6200;border-radius:3px;padding:0 2px}.nas-help{font-size:12px;color:var(--muted);padding:0 0 8px}
 </style></head><body>
 <div id="loginLanding" aria-label="StandardHub 로그인">
  <div class="landing-inner"><div class="landing-icon" aria-hidden="true">▱</div>
@@ -426,7 +427,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V9.0 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V9.1 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1939,12 +1940,12 @@ function annexRows(g,cust){const PN=lj(PNK,{}),UN=usage(),SN=savedNames(),SKIP=l
 const tdHtml=r=>r.map((v,i)=>`<td${[3,4,11,16].includes(i)?' class="l"':[0,1,12,15].includes(i)?' class="n"':''}>${String(v??'').trim()?esc(v):'N/A'}</td>`).join('');
 const headHtml=()=>`<colgroup>${COLS.map(c=>`<col style="width:${c[1]}%">`).join('')}</colgroup><thead><tr>${COLS.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead>`;
 function annexTable(rows){return `<table class="a">${headHtml()}<tbody>${rows.map(r=>`<tr>${tdHtml(r)}</tr>`).join('')}</tbody></table>`}
-const ANX='.apage{page:annex;box-sizing:border-box;width:297mm;height:210mm;padding:10mm 10mm 0;position:relative;overflow:hidden;break-after:page;font-family:Arial,"Malgun Gothic",sans-serif;color:#1a1a2b}.apage.last{break-after:auto}.apage.measure{height:auto;overflow:visible}.ahd{display:flex;align-items:flex-end}.ahd img{height:22px}.ahd .pg{margin-left:auto;font-size:10px}.at{text-align:center;font-size:20px;font-weight:500;margin:2px 0 8px}.meta{display:flex;justify-content:flex-end;gap:34px;font-size:11px;margin:0 6px 5px 0}.meta span{min-width:70px}.adoc{position:absolute;left:10mm;bottom:6mm;font-size:10px}.apage.measure .adoc{position:static;margin-top:4px}@page annex{size:A4 landscape;margin:0}';
+const ANX='.apage{page:annex;box-sizing:border-box;width:297mm;height:210mm;padding:10mm 10mm 0;position:relative;overflow:hidden;break-after:page;font-family:Arial,"Malgun Gothic",sans-serif;color:#1a1a2b}.apage.last{break-after:auto}.apage.measure{height:auto;overflow:visible}.ahd{display:flex;align-items:flex-end}.ahd img{height:22px}.ahd .pg{margin-left:auto;font-size:10px}.at{text-align:center;font-size:20px;font-weight:500;margin:2px 0 8px}.meta{display:flex;justify-content:flex-end;gap:34px;font-size:11px;margin:0 6px 5px 0}.meta span{min-width:70px}.meta .sgs{display:inline-block;height:9mm;vertical-align:middle;margin-left:2px;border-bottom:1px solid #888}.adoc{position:absolute;left:10mm;bottom:6mm;font-size:10px}.apage.measure .adoc{position:static;margin-top:4px}@page annex{size:A4 landscape;margin:0}';
 /* 별첨 1: 쪽마다 머리(로고·제목·쪽 번호·부서명 줄)·표 제목 줄·문서번호가 나오도록 직접 쪽을 나눔.
    인쇄 화면과 같은 CSS로 숨은 iframe에 그려 각 줄 높이를 재고, 가로 A4 한 쪽에 들어가는 만큼씩 담음 */
 function annexBuild(g,o){const logo=(document.querySelector('img.kptr')||{}).src||'',rows=annexRows(g,o.cust);
  const page=(i,n,body,cls)=>`<div class="apage${cls||''}"><div class="ahd">${logo?`<img src="${logo}" alt="KPTR 한국의약품시험연구원">`:'<b>KPTR 한국의약품시험연구원</b>'}<span class="pg">page ${i} of ${n}</span></div><h1 class="at">표준품 관리내역</h1>
- <div class="meta"><span>부서명 : ${esc(o.dept)}</span><span>작성일 : ${dot(o.date)}</span><span>작성자 :</span><span>확인일 : ${dot(o.date)}</span><span>확인자 :</span></div>
+ <div class="meta">${o.sign?`<span>부서명 : ${esc(o.dept)}</span><span>작성일 : ${dot(o.date)}</span><span>작성자 : ${i===1?'<i class="sgs" data-f="Author" style="width:42mm"></i>':''}</span><span>확인일 : ${i===1?'<i class="sgs" data-f="ReviewDate" style="width:26mm"></i>':''}</span><span>확인자 : ${i===1?'<i class="sgs" data-f="Reviewer" style="width:42mm"></i>':''}</span>`:`<span>부서명 : ${esc(o.dept)}</span><span>작성일 : ${dot(o.date)}</span><span>작성자 :</span><span>확인일 : ${dot(o.date)}</span><span>확인자 :</span>`}</div>
  <table class="a">${headHtml()}<tbody>${body}</tbody></table><div class="adoc">S-P-GO011-F1-V04</div></div>`;
  const trs=rows.map(r=>`<tr>${tdHtml(r)}</tr>`);
  const f=document.createElement('iframe');f.style.cssText='position:absolute;left:-10000px;top:0;width:297mm;height:400mm;visibility:hidden;border:0';document.body.appendChild(f);
@@ -1998,8 +1999,7 @@ window.openInspection=function(mode){
  <div class="in-grid"${ins}><div><div style="margin:12px 0 4px;font-weight:600">라벨상태</div><div style="display:flex;align-items:center;flex-wrap:wrap">${radio('inLab','정상','손상')}</div><div style="display:flex;align-items:center;flex-wrap:wrap;margin-top:8px"><span class="muted small" style="margin-right:12px;white-space:nowrap">손상 시 재출력</span>${radio('inLabRe','아니오','예')}</div></div><div><div style="margin:12px 0 4px;font-weight:600">보관상태 (보관위치, 밀봉여부 등)</div><div style="display:flex;align-items:center;flex-wrap:wrap">${radio('inSto','정상','손상')}</div><div style="display:flex;align-items:center;flex-wrap:wrap;margin-top:8px"><span class="muted small" style="margin-right:12px;white-space:nowrap">손상 시 재출력</span>${radio('inStoRe','아니오','예')}</div></div></div>
  <div class="in-grid in-ta"${ins}>${ta('inBuy','추가 구입 (요청) 필요 표준품')}${ta('inRetest','Re-test 필요 표준품')}${ta('inPlan','기타 · 입고 예정')}${ta('inEtc','기타 · 기타')}</div>
  <div id="inProds"></div><div id="inNames"></div><div id="inNotes"></div>
- <div${ins}><label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-weight:400"><input id="inAnnex" type="checkbox" checked style="width:auto;margin:0">별첨 1 표준품 관리내역 함께 출력</label></div>
- <div class="toolbar" style="margin-top:14px"><button class="primary" onclick="makeInspection('${annexOnly?'annex':'form'}')">${annexOnly?'관리내역 만들기':'양식 만들기'}</button><button onclick="closeInspection()">취소</button></div></div>`;
+  <div class="toolbar" style="margin-top:14px"><button class="primary" onclick="makeInspection('${annexOnly?'annex':'form'}')">${annexOnly?'관리내역 만들기':'양식 만들기'}</button><button onclick="closeInspection()">취소</button></div></div>`;
  document.body.appendChild(l);l.addEventListener('click',e=>{if(e.target===l)closeInsp()});inspFill()};
 
 window.makeInspection=function(mode){
@@ -2012,8 +2012,9 @@ window.makeInspection=function(mode){
  const all=lf(),prev=all[g]||{};all[g]=Object.assign(prev,{cust,dept},mode==='annex'?{}:{target:val('inTarget').trim()});sf(all);
  const css0='<style>*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{margin:0;padding:0}.doc{font-size:10px;margin-top:6px}.fpage{padding:12mm 12mm 0}@page{size:A4 portrait;margin:0}'+ACSS+ANX+'</style>';
  const AB=annexBuild(g,{cust,dept,date}),annex=AB.html;
- if(mode==='annex'){closeInsp();return printDoc('표준품관리내역_'+g+'_'+ym,css0+annex)}
- const withAnnex=!!(document.getElementById('inAnnex')||{}).checked,target=all[g].target||'';
+ window._signCtx={g,cust,dept,date,ym,css0};
+ if(mode==='annex'){closeInsp();window._signCtx.kind='annex';window._signCtx.signHtml=css0+annexBuild(g,{cust,dept,date,sign:true}).html;window._signCtx.title='표준품관리내역_'+g+'_'+ym;return printDoc('표준품관리내역_'+g+'_'+ym,css0+annex)}
+ const withAnnex=false,target=all[g].target||'';
  const rv=n=>(document.querySelector(`input[name="${n}"]:checked`)||{}).value==='1';
  const DL=window.labelDisposed?labelDisposed(g,ym):[],dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!dset.has(s.code)),nm=nameFn();
  /* V5.0: 같은 표준품(기본번호·이름·유효기한·뒤 내용이 같음)은 한 줄로 — PB.MEC.003-005~007 */
@@ -2049,7 +2050,8 @@ window.makeInspection=function(mode){
  <tr><th>기타<br>특이사항</th><td colspan="5" style="height:120px">[입고 예정]<br>${tx(val('inPlan'))}<br><br>${blk('입고',inM,s=>ln(s,' · 입고 '+dot(iso((detailData[s.id]||{})['입고 일자']))))}<br><br>[기타]<br>${tx(val('inEtc'))}</td></tr>
  <tr><th>확인일</th><td colspan="2" class="big" style="text-align:center">${dot(date)}</td><th>확인자</th><td colspan="2" class="big"></td></tr></table>
  <div class="doc">S-P-GO011-F4-V03</div></div>`;
- closeInsp();printDoc('표준품정기점검_'+g+'_'+ym,css0+css+form+(withAnnex?annex:''))};
+ window._signCtx.signHtml=css0+css+form.replace('<th>점검자</th><td class="big"></td>','<th>점검자</th><td class="big" style="position:relative"><i data-f="Inspector" style="position:absolute;inset:0"></i></td>').replace('<th>확인일</th><td colspan="2" class="big" style="text-align:center">'+dot(date)+'</td>','<th>확인일</th><td colspan="2" class="big" style="position:relative"><i data-f="ReviewDate" style="position:absolute;inset:0"></i></td>').replace('<th>확인자</th><td colspan="2" class="big"></td>','<th>확인자</th><td colspan="2" class="big" style="position:relative"><i data-f="Reviewer" style="position:absolute;inset:0"></i></td>');
+ closeInsp();window._signCtx.kind='form';window._signCtx.title='표준품정기점검_'+g+'_'+ym;printDoc('표준품정기점검_'+g+'_'+ym,css0+css+form+(withAnnex?annex:''))};
 const _r=window.render;window.render=function(){_r();try{if(active!=='overview')return;const b=document.querySelector('#overview button[onclick="printOverview()"]');if(b&&!document.getElementById('inspBtn')){const w=document.createElement('span');w.style.cssText='display:inline-flex;gap:8px;flex-wrap:wrap';b.replaceWith(w);w.append(b);w.insertAdjacentHTML('beforeend','<button id="inspBtn" onclick="openInspection()">정기점검 양식</button><button id="annexBtn" onclick="openInspection(\'annex\')">관리내역</button>')}}catch(e){}};
 })();
 
@@ -2285,4 +2287,105 @@ const _r=window.render;window.render=function(){_r();try{setup()}catch(e){}};try
  /* V8.3: 화면이 그려지기 전에 바로 적용(예전엔 30ms 뒤라 펼칠 때마다 칸 너비가 한 번 더 바뀌며 버벅여 보였음) */
  const mo=new MutationObserver(muts=>{for(const m of muts)for(const nd of m.addedNodes)if(nd.nodeType===1)fix(nd.matches&&nd.matches('td,th')?nd.parentNode:nd)});
  const go=()=>{fix();mo.observe(document.body,{childList:true,subtree:true})};if(document.body)go();else addEventListener('DOMContentLoaded',go)})();
+
+/* V9.1: 서명 칸 넣은 PDF(Adobe) + NAS 저장 경로 규칙 — 정기점검 양식·관리내역 각각 따로 */
+(function(){
+const NASK='standardhub_v22_nas_paths';
+const lj2=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const uid=()=>{try{const u=user();return u?String(u.id||'').toLowerCase():''}catch(e){return ''}};
+/* 붙여넣은 실제 경로 → 규칙: 연도·월 자리를 {연도}·{월}(두 자리)·{월숫자}(한 자리 허용)로 */
+function toTpl(p){return String(p||'').trim().replace(/^["']|["']$/g,'').split('\\').map((s,i)=>{if(i<3)return s;
+  return s.replace(/(?<!\d)(20\d\d)([.\-_ ])(\d{1,2})(?!\d)/g,(m,y,sep,mo)=>'{연도}'+sep+(mo.length===1?'{월숫자}':'{월}'))
+   .replace(/(?<![\d}])(20\d\d)(0[1-9]|1[0-2])(?!\d)/g,'{연도}{월}')
+   .replace(/(?<![\d}])(20\d\d)(?!\d)/g,'{연도}')
+   .replace(/(?<![\d}])(\d{1,2})(\s*월)/g,(m,mo,w)=>(mo.length===2&&mo[0]==='0'?'{월}':'{월숫자}')+w)}).join('\\')}
+function fromTpl(t,ym){const y=ym.slice(0,4),m=ym.slice(5,7);return String(t||'').replace(/\{연도\}/g,y).replace(/\{월\}/g,m).replace(/\{월숫자\}/g,String(Number(m)))}
+function getTpl(g){const A=lj2(NASK,{});return ((A[uid()]||{})[g])||''}
+function setTpl(g,t){const A=lj2(NASK,{}),u=uid();A[u]=A[u]||{};if(t)A[u][g]=t;else delete A[u][g];try{localStorage.setItem(NASK,JSON.stringify(A))}catch(e){}}
+window.nasToTpl=toTpl;window.nasFromTpl=fromTpl;
+function copyText(t){const done=()=>alert('경로를 복사했습니다. 파일 탐색기 주소창에 붙여넣으세요.');
+  const fb=()=>{const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;left:-9999px';document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}a.remove();ok?done():alert('복사가 막혀 있습니다. 경로를 길게 눌러 직접 복사해 주세요.')};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,fb);else fb()}
+const hl=t=>esc(t).replace(/\{(연도|월|월숫자)\}/g,'<b>{$1}</b>');
+function nasBox(){const C=window._signCtx;if(!C)return '';const t=getTpl(C.g);
+ if(!t)return `<div class="nas-row"><span class="nas-l">NAS 저장 경로</span><input id="nasIn" placeholder="${esc(C.g)}의 NAS 폴더 경로를 한 번만 붙여넣어 주세요 (예: \\\\192.168.40.75\\...\\${C.ym.slice(0,4)}\\${C.ym.replace('-','.')})"><button onclick="nasSave()">저장</button></div>`;
+ const p=fromTpl(t,C.ym);
+ return `<div class="nas-row"><span class="nas-l">NAS 저장 경로</span><code class="nas-p" title="규칙: ${esc(t)}">${esc(p)}</code><button class="primary" onclick="nasCopy()">경로 복사</button><button onclick="nasEdit()">규칙 바꾸기</button></div>`}
+function nasRender(){const b=document.getElementById('nasBox');if(b)b.innerHTML=nasBox()}
+window.nasCopy=function(){const C=window._signCtx;copyText(fromTpl(getTpl(C.g),C.ym))};
+window.nasSave=function(){const C=window._signCtx,v=(document.getElementById('nasIn')||{}).value||'';if(!v.trim())return alert('경로를 붙여넣어 주세요.');
+ const t=toTpl(v);if(!/\{연도\}/.test(t)&&!/\{월/.test(t)){return askConfirm({title:'연도·월을 못 찾았습니다',message:'경로에서 연도·월 폴더를 찾지 못했습니다. 매달 같은 경로로 저장할까요?\n\n바뀌는 자리는 {연도}, {월}(10, 01처럼 두 자리), {월숫자}(1, 10)로 직접 적어도 됩니다.',ok:'그대로 저장',onOk:()=>{setTpl(C.g,t);nasRender()}})}
+ setTpl(C.g,t);nasRender();alert('저장했습니다. 다음 달부터는 연도·월만 바뀌어 자동으로 채워집니다.')};
+window.nasEdit=function(){const C=window._signCtx,t=getTpl(C.g),b=document.getElementById('nasBox');if(!b)return;
+ b.innerHTML=`<div class="nas-row"><span class="nas-l">NAS 경로 규칙</span><input id="nasTpl" value="${esc(t)}"><button class="primary" onclick="nasSaveTpl()">저장</button><button onclick="nasClear()">지우고 다시 붙여넣기</button><button onclick="nasRender2()">취소</button></div><div class="nas-help">{연도}=2026, {월}=10·01(두 자리), {월숫자}=10·1 로 점검월에 맞게 바뀝니다. 지금 규칙: <span class="nas-p">${hl(t)}</span></div>`};
+window.nasRender2=nasRender;
+window.nasSaveTpl=function(){const C=window._signCtx;setTpl(C.g,((document.getElementById('nasTpl')||{}).value||'').trim());nasRender()};
+window.nasClear=function(){const C=window._signCtx;setTpl(C.g,'');nasRender()};
+
+/* ---- PDF 만들기(라이브러리 없음) ---- */
+const enc=s=>{const a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i)&255;return a};
+const u16=s=>{let h='FEFF';for(const ch of s){const c=ch.charCodeAt(0);h+=c.toString(16).toUpperCase().padStart(4,'0')}return '<'+h+'>'};
+/* pages: [{jpg:Uint8Array,iw,ih,W,H,fields:[{name,type:'sig'|'date',tu,rect:[x,y,w,h](pt, 위에서부터),lock}]}] */
+function buildPdf(pages){
+ const parts=[],offs=[];let len=0;const push=b=>{parts.push(b);len+=b.length};
+ push(enc('%PDF-1.7\n%\xE2\xE3\xCF\xD3\n'));
+ const obj=(n,body,stream)=>{offs[n]=len;push(enc(n+' 0 obj\n'+body+(stream?'\nstream\n':'\nendobj\n')));if(stream){push(stream);push(enc('\nendstream\nendobj\n'))}};
+ let n=4;const pg=[],flds=[];const font=3;
+ pages.forEach(p=>{const o={page:n++,img:n++,cnt:n++,f:p.fields.map(()=>n++)};pg.push(o)});
+ const apN=n++;
+ obj(1,'<< /Type /Catalog /Pages 2 0 R /AcroForm << /Fields ['+pg.flatMap(o=>o.f.map(x=>x+' 0 R')).join(' ')+'] /DA (/Helv 11 Tf 0 g) /DR << /Font << /Helv '+font+' 0 R >> >> /SigFlags 0 >> >>');
+ obj(2,'<< /Type /Pages /Kids ['+pg.map(o=>o.page+' 0 R').join(' ')+'] /Count '+pg.length+' >>');
+ obj(font,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+ pages.forEach((p,i)=>{const o=pg[i];
+  obj(o.page,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+p.W.toFixed(2)+' '+p.H.toFixed(2)+'] /Resources << /XObject << /Im1 '+o.img+' 0 R >> >> /Contents '+o.cnt+' 0 R'+(o.f.length?' /Annots ['+o.f.map(x=>x+' 0 R').join(' ')+']':'')+' >>');
+  obj(o.img,'<< /Type /XObject /Subtype /Image /Width '+p.iw+' /Height '+p.ih+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+p.jpg.length+' >>',p.jpg);
+  const c=enc('q '+p.W.toFixed(2)+' 0 0 '+p.H.toFixed(2)+' 0 0 cm /Im1 Do Q');obj(o.cnt,'<< /Length '+c.length+' >>',c);
+  p.fields.forEach((f,j)=>{const [x,y,w,h]=f.rect,R=[x,p.H-y-h,x+w,p.H-y].map(v=>v.toFixed(2)).join(' ');
+   const base='<< /Type /Annot /Subtype /Widget /F 4 /P '+o.page+' 0 R /Rect ['+R+'] /T ('+f.name+') /TU '+u16(f.tu);
+   if(f.type==='sig')obj(o.f[j],base+' /FT /Sig'+(f.lock?' /Lock << /Type /SigFieldLock /Action /'+f.lock[0]+' /Fields ['+f.lock[1].map(x=>'('+x+')').join(' ')+'] >>':'')+' /MK << /BC [0.17 0.42 0.85] >> >>');
+   else obj(o.f[j],base+' /FT /Tx /Q 1 /MaxLen 10 /DA (/Helv 11 Tf 0 g) /MK << /BC [0.17 0.42 0.85] >> /AP << /N '+apN+' 0 R >> /AA << /K << /S /JavaScript /JS (AFDate_KeystrokeEx\\("yyyy.mm.dd"\\);) >> /F << /S /JavaScript /JS (AFDate_FormatEx\\("yyyy.mm.dd"\\);) >> >> >>')})});
+ obj(apN,'<< /Type /XObject /Subtype /Form /BBox [0 0 1 1] /Length 0 >>',new Uint8Array(0));
+ const xref=len;let x='xref\n0 '+n+'\n0000000000 65535 f \n';for(let i=1;i<n;i++)x+=String(offs[i]||0).padStart(10,'0')+(offs[i]!=null?' 00000 n \n':' 65535 f \n');
+ push(enc(x+'trailer\n<< /Size '+n+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n'));
+ return new Blob(parts,{type:'application/pdf'})}
+
+/* 화면 그대로(같은 CSS) 숨은 iframe에 그려서 쪽마다 그림으로 */
+async function snap(html,wmm){
+ const f=document.createElement('iframe');f.style.cssText='position:absolute;left:-10000px;top:0;width:'+wmm+'mm;height:1200px;border:0;visibility:hidden';document.body.appendChild(f);
+ try{const d=f.contentDocument;d.open();d.write('<!doctype html><html lang="ko"><head><meta charset="utf-8"><style>body{margin:0;padding:0;background:#fff}</style></head><body>'+html+'</body></html>');d.close();
+  await new Promise(r=>setTimeout(r,60));try{await d.fonts.ready}catch(e){}
+  const css=[...d.querySelectorAll('style')].map(s=>s.textContent).join('\n').replace(/@page[^{]*\{[^}]*\}/g,'');
+  const mm=96/25.4,out=[];
+  for(const el of d.querySelectorAll('.fpage,.apage')){
+   const land=el.classList.contains('apage'),Wpx=(land?297:210)*mm,Hpx=(land?210:297)*mm;
+   /* 서명·확인일 자리 */
+   const P=el.getBoundingClientRect(),fields=[];
+   el.querySelectorAll('[data-f]').forEach(s=>{const r=s.getBoundingClientRect();fields.push({name:s.dataset.f,rect:[r.left-P.left,r.top-P.top,r.width,r.height]})});
+   const xml=new XMLSerializer().serializeToString(el);
+   const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+Wpx+'" height="'+Hpx+'"><foreignObject x="0" y="0" width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="width:'+Wpx+'px;height:'+Hpx+'px;overflow:hidden;background:#fff"><style>'+css.replace(/[<&]/g,c=>c==='<'?'&lt;':'&amp;')+'</style>'+xml+'</div></foreignObject></svg>';
+   const img=new Image();img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);await img.decode();
+   const S=2.5,c=document.createElement('canvas');c.width=Math.round(Wpx*S);c.height=Math.round(Hpx*S);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.scale(S,S);x.drawImage(img,0,0);
+   const b64=c.toDataURL('image/jpeg',.9).split(',')[1],jpg=Uint8Array.from(atob(b64),ch=>ch.charCodeAt(0));
+   const k=72/96;out.push({jpg,iw:c.width,ih:c.height,W:Wpx*k,H:Hpx*k,fields:fields.map(q=>({name:q.name,rect:q.rect.map(v=>v*k)}))})}
+  return out}finally{f.remove()}}
+
+const TU={Inspector:'점검자 서명',Author:'작성자 서명',ReviewDate:'확인일 (확인자가 입력, 예: 2026.11.14)',Reviewer:'확인자(팀장) 서명'};
+window.signPdf=async function(){const C=window._signCtx;if(!C||!C.signHtml)return;const btn=document.getElementById('plSign');if(btn){btn.disabled=true;btn.textContent='만드는 중…'}
+ try{const pages=await snap(C.signHtml,C.kind==='annex'?297:210);const first=C.kind==='annex'?'Author':'Inspector';
+  pages.forEach(p=>p.fields=p.fields.map(f=>{const pad=f.name==='ReviewDate'?1.5:2,r=[f.rect[0]+pad,f.rect[1]+pad,f.rect[2]-2*pad,f.rect[3]-2*pad];
+   return {name:f.name,rect:r,tu:TU[f.name]||f.name,type:f.name==='ReviewDate'?'date':'sig',lock:f.name===first?['Exclude',['ReviewDate','Reviewer']]:f.name==='Reviewer'?['Include',['ReviewDate']]:null}}));
+  const blob=buildPdf(pages),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=C.title+'_서명용.pdf';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);window.__lastSignPdf=blob;
+  alert('서명 칸이 들어간 PDF를 받았습니다. Adobe로 열어 '+(C.kind==='annex'?'작성자':'점검자')+' 칸을 눌러 서명한 뒤 NAS 폴더에 저장해 주세요.')}
+ catch(e){alert('PDF를 만들지 못했습니다: '+(e&&e.message||e))}
+ finally{if(btn){btn.disabled=false;btn.textContent='서명 칸 넣은 PDF 받기'}}};
+
+/* 출력 미리보기에 [서명 칸 넣은 PDF 받기] + NAS 경로 줄 */
+const P0=window.printDoc;
+window.printDoc=function(title,body){P0(title,body);const C=window._signCtx;if(!C||C.title!==title||!C.signHtml)return;
+ const l=document.getElementById('printLayer');if(!l)return;const bar=l.querySelector('.pl-bar'),pr=l.querySelector('#plPrint');
+ const b=document.createElement('button');b.id='plSign';b.textContent='서명 칸 넣은 PDF 받기';b.title='Adobe에서 '+(C.kind==='annex'?'작성자':'점검자')+' · 확인일 · 확인자 칸을 눌러 바로 서명할 수 있는 PDF';b.onclick=signPdf;
+ bar.insertBefore(b,pr);pr.classList.remove('primary');b.classList.add('primary');
+ const nb=document.createElement('div');nb.id='nasBox';nb.className='nas-box';bar.after(nb);nasRender();
+ const note=l.querySelector('.pl-note');if(note)note.textContent='[서명 칸 넣은 PDF 받기] → Adobe로 열어 '+(C.kind==='annex'?'작성자':'점검자')+' 칸에 서명 → 아래 NAS 경로에 저장 → 팀장님께 경로 전달. 서명하면 내용은 잠기고 확인일·확인자 칸만 열립니다.'};
+})();
 </script></body></html>
