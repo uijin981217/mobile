@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V12.7</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V12.8</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -445,7 +445,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V12.7 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V12.8 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2026,6 +2026,7 @@ document.addEventListener('change',e=>{if(e.target&&e.target.id==='inDate'&&docu
 window.dispSet=function(code,on){const D=lj(DK,{});if(on)D[code]=today();else delete D[code];try{localStorage.setItem(DK,JSON.stringify(D))}catch(e){return alert('저장하지 못했습니다.')}dispBox();if(document.getElementById('inNotes'))notesBox()};
 /* ---- 입력 창 ---- */
 function closeInsp(){const l=document.getElementById('inspLayer');if(l)l.remove()}
+/* V12.8: 미리보기를 여는 동안 입력 창은 숨겨 두고, 미리보기 [닫기] → 입력하던 그대로 다시 보임 */function hideInsp(){const l=document.getElementById('inspLayer');if(l)l.style.display='none'}
 window.closeInspection=closeInsp;
 /* V11.2: 비고 줄에 유효기한 — 작성일 기준, 내 '유효기한 색 표시' 단계 색으로 표시, 지난 것은 '지남' */
 function ntExp(s){const e=String(s.exp||'').slice(0,10);if(!/^\d{4}-\d\d-\d\d$/.test(e))return '<span class="nt-exp muted">유효기한 -</span>';
@@ -2106,7 +2107,7 @@ window.makeInspection=function(mode){
  const css0='<style>*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{margin:0;padding:0}.doc{font-size:10px;margin-top:6px}.fpage{padding:12mm 12mm 0}@page{size:A4 portrait;margin:0}'+ACSS+ANX+'</style>';
  const monA=(m=>Number.isInteger(m)&&m>=1&&m<=24?m:3)(Math.round(Number(val('inMon'))));const tiersA=mode==='annex'?readTiers():null,stockA=mode==='annex'?readStock():null;const AB=annexBuild(g,{cust,dept,date,mon:monA,tiers:tiersA,stock:stockA}),annex=AB.html;
  window._signCtx={g,cust,dept,date,ym,css0};
- if(mode==='annex'){closeInsp();window._signCtx.kind='annex';window._signCtx.signHtml=css0+annexBuild(g,{cust,dept,date,mon:monA,tiers:tiersA,stock:stockA,sign:true}).html;window._signCtx.title=docName('관리내역',g,ym);return printDoc(docName('관리내역',g,ym),css0+annex)}
+ if(mode==='annex'){hideInsp();window._signCtx.kind='annex';window._signCtx.signHtml=css0+annexBuild(g,{cust,dept,date,mon:monA,tiers:tiersA,stock:stockA,sign:true}).html;window._signCtx.title=docName('관리내역',g,ym);return printDoc(docName('관리내역',g,ym),css0+annex)}
  const withAnnex=false,target=all[g].target||'';
  const rv=n=>(document.querySelector(`input[name="${n}"]:checked`)||{}).value==='1';
  const DL=window.labelDisposed?labelDisposed(g,ym):[],dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!dset.has(s.code)&&!(window.labelGone&&labelGone(s.code))&&!dispDone(s.code)),nm=nameFn();/* V11.7: 라벨이 모두 폐기된 입고번호(지난달 이전에 폐기 완료)는 빼고, 이번 달 폐기분은 DL로 폐기일과 함께 */
@@ -2144,7 +2145,7 @@ window.makeInspection=function(mode){
  <tr><th>확인일</th><td colspan="2" class="big" style="text-align:center"></td><th>확인자</th><td colspan="2" class="big"></td></tr></table>
  <div class="doc">S-P-GO011-F4-V03</div></div>`;
  window._signCtx.signHtml=css0+css+form.replace('<th>점검자</th><td class="big"></td>','<th>점검자</th><td class="big" style="position:relative"><i data-f="Inspector" style="position:absolute;inset:0"></i></td>').replace('<th>확인일</th><td colspan="2" class="big" style="text-align:center"></td>','<th>확인일</th><td colspan="2" class="big" style="position:relative"><i data-f="ReviewDate" style="position:absolute;inset:0"></i></td>').replace('<th>확인자</th><td colspan="2" class="big"></td>','<th>확인자</th><td colspan="2" class="big" style="position:relative"><i data-f="Reviewer" style="position:absolute;inset:0"></i></td>');
- closeInsp();window._signCtx.kind='form';window._signCtx.title=docName('정기점검',g,ym);printDoc(docName('정기점검',g,ym),css0+css+form+(withAnnex?annex:''))};
+ hideInsp();window._signCtx.kind='form';window._signCtx.title=docName('정기점검',g,ym);printDoc(docName('정기점검',g,ym),css0+css+form+(withAnnex?annex:''))};
 const _r=window.render;window.render=function(){_r();try{if(active!=='overview')return;const b=document.querySelector('#overview button[onclick="printOverview()"]');if(b&&!document.getElementById('inspBtn')){const w=document.createElement('span');w.style.cssText='display:inline-flex;gap:8px;flex-wrap:wrap';b.replaceWith(w);w.append(b);w.insertAdjacentHTML('beforeend','<button id="inspBtn" onclick="openInspection()">정기점검 양식</button><button id="annexBtn" onclick="openInspection(\'annex\')">관리내역</button>')}}catch(e){}};
 })();
 
@@ -2474,7 +2475,7 @@ window.signPdf=async function(){const C=window._signCtx;if(!C||!C.signHtml)retur
 
 /* 출력 미리보기에 [서명 칸 넣은 PDF 받기] + NAS 경로 줄 */
 const P0=window.printDoc;
-window.printDoc=function(title,body){P0(title,body);const C=window._signCtx;if(!C||C.title!==title||!C.signHtml)return;
+window.printDoc=function(title,body){P0(title,body);{const L=document.getElementById('inspLayer'),cb=document.getElementById('plClose');if(L&&L.style.display==='none'&&cb){cb.textContent='← 입력 창으로';cb.addEventListener('click',()=>{const X=document.getElementById('inspLayer');if(X)X.style.display=''})}}const C=window._signCtx;if(!C||C.title!==title||!C.signHtml)return;
  const l=document.getElementById('printLayer');if(!l)return;const bar=l.querySelector('.pl-bar'),pr=l.querySelector('#plPrint');
  const b=document.createElement('button');b.id='plSign';b.textContent='서명 칸 넣은 PDF 받기';b.title='Adobe에서 '+(C.kind==='annex'?'작성자':'점검자')+' · 확인일 · 확인자 칸을 눌러 바로 서명할 수 있는 PDF';b.onclick=signPdf;
  bar.insertBefore(b,pr);pr.classList.remove('primary');b.classList.add('primary');
