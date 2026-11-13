@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V11.2</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V11.3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -422,6 +422,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 /* V10.9: 관리내역 비고 — 줄노트 모양(밑줄 한 줄, 촘촘하게) */#inNotes .nt-r{padding:0!important;gap:12px!important;align-items:flex-end!important;margin:0!important}#inNotes .nt-r>span{font-size:12.5px!important;padding-bottom:3px;color:#4c525b}#inNotes .nt-v{border:0!important;border-bottom:1px solid #6b7280!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;height:24px!important;min-height:0!important;padding:2px 2px!important;font-size:13.5px}#inNotes .nt-v:focus{border-bottom:2px solid #20242b!important;outline:none}#inNotes .nt-v::placeholder{color:#9aa1ad}#inNotes details>div{padding:0 0 4px 18px!important}#inNotes summary{padding:4px 2px!important}#inNotes .nt-allbtn{margin-left:auto;height:26px;min-height:0;padding:0 9px;font-size:12px;border-radius:7px}#inNotes .nt-allrow[hidden]{display:none!important}#inNotes .nt-allrow .nt-all{height:30px;min-height:0;padding:4px 8px;font-size:13px}#inNotes .nt-allrow button{height:30px;min-height:0;padding:0 10px;font-size:12.5px}
 /* V11.1: 유효기한 색 표시 — 테두리 상자·긴 설명 없애고, [+ 단계 추가]는 제목 옆 작은 버튼 */#inspLayer .t-box{border:0!important;padding:0!important;margin-top:14px;border-radius:0}#inspLayer .t-hd{align-items:center;margin-bottom:2px}#inspLayer .t-add{height:24px!important;padding:0 8px!important;font-size:12px!important;margin:0!important;border-radius:6px!important}
 /* V11.2: 비고 줄 덜그럭거림 — 누를 때 밑줄 두께를 바꾸지 않고 그림자로, 제목 줄 높이 통일 */#inNotes .nt-v:focus{border-bottom:1px solid #20242b!important;box-shadow:0 1px 0 #20242b!important}#inNotes summary{min-height:34px;box-sizing:border-box}#inNotes .nt-allbtn{height:24px!important;padding:0 8px!important}#inNotes>div>div[style*="overflow-y"]{scrollbar-gutter:stable}#inNotes .nt-exp{flex:0 0 auto;width:178px;font-size:12px;color:#4c525b;padding-bottom:4px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}#inNotes .nt-b{font-style:normal;font-size:11px;font-weight:600;color:#1a1a1a;border-radius:10px;padding:1px 7px}#inNotes .nt-b.nt-over{background:#eceef2;color:#8a3b3b}
+#hdrInfo{margin-right:auto;display:flex;align-items:center;gap:12px;min-width:0;font-size:13px;color:#4c525b;white-space:nowrap;overflow:hidden}#hdrInfo[hidden]{display:none!important}#hdrInfo .hi-l{all:unset;cursor:pointer;color:inherit;font-size:13px;line-height:38px;white-space:nowrap}#hdrInfo .hi-l:hover{text-decoration:underline}#hdrInfo .hi-l b{color:#20242b}#hdrInfo .hi-l b.hi-r{color:#b42318}#hdrInfo .hi-l b.hi-o{color:#b45309}#hdrInfo .hi-sep{color:#c3c8d0}@media(max-width:900px){#hdrInfo{display:none!important}}
 </style></head><body>
 <div id="loginLanding" aria-label="StandardHub 로그인">
  <div class="landing-inner"><div class="landing-icon" aria-hidden="true">▱</div>
@@ -439,7 +440,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V11.2 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V11.3 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2586,4 +2587,23 @@ document.addEventListener('click',e=>{if(!e.target.closest||!e.target.closest('b
 const scan=r=>{if(!r||r.nodeType!==1)return;if(r.matches&&r.matches('input[type=date]:not(.d-hid)'))conv(r);r.querySelectorAll&&r.querySelectorAll('input[type=date]:not(.d-hid)').forEach(conv)};
 const mo=new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)scan(n)});
 const go=()=>{scan(document.body);mo.observe(document.body,{childList:true,subtree:true})};if(document.body)go();else addEventListener('DOMContentLoaded',go)})();
+
+/* V11.3: 머리 셋째 줄 왼쪽 — 확인 필요 건수(만료·임박·재고 0 폐기 미완료), 관리자는 회원가입 승인 대기, 서버판은 내게 온 서명 요청. 누르면 해당 화면으로 */
+(function(){
+const am=()=>{let v=3;try{v=Number(JSON.parse(localStorage.getItem('standardhub_v22_alert_months')||'3'))}catch(e){}return Number.isInteger(v)&&v>=1&&v<=24?v:3};
+function counts(){let list=[];try{list=activeMine()}catch(e){}const st=s=>{try{return expireState(s)||''}catch(e){return ''}};
+ return {exp:list.filter(s=>st(s)==='만료').length,soon:list.filter(s=>/이내/.test(st(s))).length,zero:list.filter(s=>Number(s.qty)===0).length}}
+function draw(){const t=document.querySelector('header .toolbar');if(!t)return;let u;try{u=user()}catch(e){}
+ let el=document.getElementById('hdrInfo');
+ if(!u||u.status==='guest'||(u.status!=='approved'&&!u.admin)||!(typeof stocks!=='undefined'&&stocks.length)){if(el)el.hidden=true;return}
+ if(!el){el=document.createElement('div');el.id='hdrInfo';t.insertBefore(el,t.firstChild);t.style.width='100%';if(t.parentElement&&t.parentElement.tagName!=='HEADER')t.parentElement.style.width='100%'}
+ el.hidden=false;const c=counts(),parts=[];
+ parts.push(`<button type="button" class="hi-l" onclick="hdrGo('dashboard')" title="대시보드 확인 항목으로"><b>확인 필요</b> · 만료 <b class="hi-r">${c.exp}</b>건 · ${am()}개월 이내 <b class="hi-o">${c.soon}</b>건 · 재고 0 폐기 미완료 <b>${c.zero}</b>건</button>`);
+ if(u.admin){const n=users.filter(x=>x.status==='pending').length;parts.push(`<button type="button" class="hi-l" onclick="hdrGo('admin')" title="승인·권한으로">회원가입 승인 대기 <b${n?' class="hi-o"':''}>${n}</b>건</button>`)}
+ if(window.__SH_SERVER&&window.signReqs){const id=String(u.id);const n=signReqs().filter(r=>r.status==='requested'&&r.to===id).length;if(n||Object.values((()=>{try{return JSON.parse(localStorage.getItem('standardhub_v22_dept_leads'))||{}}catch(e){return {}}})()).includes(id))parts.push(`<button type="button" class="hi-l" onclick="hdrGo('sign')">내게 온 서명 요청 <b${n?' class="hi-o"':''}>${n}</b>건</button>`)}
+ const h=parts.join('<span class="hi-sep">|</span>');if(el.innerHTML!==h)el.innerHTML=h}
+window.hdrGo=function(w){try{if(w==='sign'){go(user().admin?'overview':'dashboard');setTimeout(()=>{const p=document.getElementById('signPanel');if(p)p.scrollIntoView({behavior:'smooth',block:'start'})},60)}else go(w)}catch(e){}};
+const R7=window.render;window.render=function(){R7();try{draw()}catch(e){}};
+addEventListener('sh-live',()=>{try{draw()}catch(e){}});
+})();
 </script></body></html>
