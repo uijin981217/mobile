@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V9.5</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V9.6</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -429,7 +429,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V9.5 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V9.6 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1993,7 +1993,7 @@ window.openInspection=function(mode){
  const ins=annexOnly?' style="display:none"':'';
  const l=document.createElement('div');l.id='inspLayer';l.className='account-overlay';
  l.innerHTML=`<div class="account-dialog" role="dialog" aria-modal="true"><div class="toolbar" style="justify-content:space-between"><h2 style="margin:0">${annexOnly?'표준품 관리내역':'표준품 정기점검 양식'}</h2><button onclick="closeInspection()">✕ 닫기</button></div>
- <p class="muted">${annexOnly?'관리내역(가로 A4)만 출력합니다. 작성자 · 확인일 · 확인자는 Adobe 서명과 팀장님 입력을 위해 비워 둡니다.':'유효기한(임박 · 만료), 폐기 대상(만료 · 재고 0), 이번 달 입고는 자동으로 채웁니다. 점검자 · 확인일 · 확인자 칸은 Adobe 서명과 팀장님 입력을 위해 비워 둡니다.'}</p>
+ <p class="muted">${annexOnly?'관리내역(가로 A4)만 출력합니다. 작성자 · 확인일 · 확인자는 Adobe 서명과 실장님 입력을 위해 비워 둡니다.':'유효기한(임박 · 만료), 폐기 대상(만료 · 재고 0), 이번 달 입고는 자동으로 채웁니다. 점검자 · 확인일 · 확인자 칸은 Adobe 서명과 실장님 입력을 위해 비워 둡니다.'}</p>
  <div class="in-grid">
  <label>${annexOnly?'대상':'점검 대상'}<select id="inG" onchange="inspFill()">${gs.map(g=>`<option value="${esc(g)}">${esc(g)}${isB(g)?'':' (의뢰사)'}</option>`).join('')}</select></label>
  <label>${annexOnly?'회사명':'고객사 (= 관리내역 회사명)'}<input id="inCust"></label><label>부서명 <span class="muted small">(관리내역 위쪽)</span><input id="inDept" placeholder="예: 바이오의약1실"></label>
@@ -2374,7 +2374,7 @@ async function snap(html,wmm){
    const k=72/96;out.push({jpg,iw:c.width,ih:c.height,W:Wpx*k,H:Hpx*k,fields:fields.map(q=>({name:q.name,rect:q.rect.map(v=>v*k)}))})}
   return out}finally{f.remove()}}
 
-const TU={Inspector:'점검자 서명',Author:'작성자 서명',ReviewDate:'확인일 (확인자가 입력, 예: 2026.11.14)',Reviewer:'확인자(팀장) 서명'};
+const TU={Inspector:'점검자 서명',Author:'작성자 서명',ReviewDate:'확인일 (확인자가 입력, 예: 2026.11.14)',Reviewer:'확인자(실장) 서명'};
 window.signPdf=async function(){const C=window._signCtx;if(!C||!C.signHtml)return;const btn=document.getElementById('plSign');if(btn){btn.disabled=true;btn.textContent='만드는 중…'}
  try{const pages=await snap(C.signHtml,C.kind==='annex'?297:210);const first=C.kind==='annex'?'Author':'Inspector';
   pages.forEach(p=>p.fields=p.fields.map(f=>{const pad=f.name==='ReviewDate'?1.5:2,r=[f.rect[0]+pad,f.rect[1]+pad,f.rect[2]-2*pad,f.rect[3]-2*pad];
@@ -2391,10 +2391,10 @@ window.printDoc=function(title,body){P0(title,body);const C=window._signCtx;if(!
  const b=document.createElement('button');b.id='plSign';b.textContent='서명 칸 넣은 PDF 받기';b.title='Adobe에서 '+(C.kind==='annex'?'작성자':'점검자')+' · 확인일 · 확인자 칸을 눌러 바로 서명할 수 있는 PDF';b.onclick=signPdf;
  bar.insertBefore(b,pr);pr.classList.remove('primary');b.classList.add('primary');
  const nb=document.createElement('div');nb.id='nasBox';nb.className='nas-box';bar.after(nb);nasRender();
- const note=l.querySelector('.pl-note');if(note)note.textContent='[서명 칸 넣은 PDF 받기] → Adobe로 열어 '+(C.kind==='annex'?'작성자':'점검자')+' 칸에 서명 → 아래 NAS 경로에 저장 → 팀장님께 경로 전달. 서명하면 내용은 잠기고 확인일·확인자 칸만 열립니다.'};
+ const note=l.querySelector('.pl-note');if(note)note.textContent='[서명 칸 넣은 PDF 받기] → Adobe로 열어 '+(C.kind==='annex'?'작성자':'점검자')+' 칸에 서명 → 아래 NAS 경로에 저장 → 실장님께 경로 전달. 서명하면 내용은 잠기고 확인일·확인자 칸만 열립니다.'};
 })();
 
-/* V9.3: 서버판(앱허브) 서명 요청 — 실별 팀장(확인자) 지정, [NAS에 올렸음 → 팀장님께 요청], 서명 현황, 🔔 알림. 서버판(window.__SH_SERVER)에서만 보임 */
+/* V9.3: 서버판(앱허브) 서명 요청 — 실별 실장(확인자) 지정, [NAS에 올렸음 → 실장님께 요청], 서명 현황, 🔔 알림. 서버판(window.__SH_SERVER)에서만 보임 */
 (function(){
 const SV=()=>!!window.__SH_SERVER;
 const LEADK='standardhub_v22_dept_leads',REQK='standardhub_v22_sign_requests';
@@ -2413,24 +2413,24 @@ function mine(){const id=myId(),u=me(),all=reqs();if(u&&u.admin)return all;retur
 function todo(){const id=myId();return reqs().filter(r=>r.status==='requested'&&r.to===id)}
 window.signReqs=reqs;
 
-/* 출력 미리보기: NAS 경로 줄에 [NAS에 올렸음 → 팀장님께 요청] */
+/* 출력 미리보기: NAS 경로 줄에 [NAS에 올렸음 → 실장님께 요청] */
 const P1=window.printDoc;
 window.printDoc=function(t,b){P1(t,b);if(!SV())return;const C=window._signCtx;if(!C||C.title!==t)return;addReqBtn()};
 function addReqBtn(){const box=document.getElementById('nasBox');if(!box)return;const row=box.querySelector('.nas-row');if(!row||!box.querySelector('.nas-p')||box.querySelector('#nasReq'))return;
  const C=window._signCtx,ex=reqs().find(r=>r.kind===C.kind&&r.g===C.g&&r.ym===C.ym);
- const b=document.createElement('button');b.id='nasReq';b.className='primary';b.textContent=ex&&ex.status==='done'?'확인 완료됨 · 다시 요청':ex?'요청함 · 다시 요청':'NAS에 올렸음 → 팀장님께 요청';b.onclick=signRequest;row.appendChild(b)}
+ const b=document.createElement('button');b.id='nasReq';b.className='primary';b.textContent=ex&&ex.status==='done'?'확인 완료됨 · 다시 요청':ex?'요청함 · 다시 요청':'NAS에 올렸음 → 실장님께 요청';b.onclick=signRequest;row.appendChild(b)}
 /* NAS 줄이 다시 그려질 때도 버튼 유지 */
 new MutationObserver(()=>{if(SV()&&document.getElementById('nasBox'))addReqBtn()}).observe(document.documentElement,{childList:true,subtree:true});
 
 window.signRequest=function(){const C=window._signCtx,u=me();if(!C||!u)return;
  const dept=deptOf(u),to=leads()[dept];
  if(!dept)return alert('내 소속 실이 정해져 있지 않습니다. 관리자에게 승인·권한 > 계정별 권한 현황에서 소속 실을 정해 달라고 요청해 주세요.');
- if(!to)return alert(dept+'의 팀장(확인자)이 아직 지정되지 않았습니다. 관리자에게 승인·권한 > 실별 팀장 지정을 요청해 주세요.');
+ if(!to)return alert(dept+'의 실장(확인자)이 아직 지정되지 않았습니다. 관리자에게 승인·권한 > 실별 실장 지정을 요청해 주세요.');
  const path=nasFromTpl(((lj3('standardhub_v22_nas_paths',{})[String(u.id).toLowerCase()]||{})[C.g])||'',C.ym);
- askConfirm({title:'팀장님께 확인 요청',message:`${KIND[C.kind]} · ${C.g} · ${C.ym}\n\n점검자 서명한 PDF를 아래 폴더에 저장했나요?\n${path}\n\n${uName(to)} 팀장님 화면에 알림이 갑니다.`,ok:'요청하기',onOk:()=>{
+ askConfirm({title:'실장님께 확인 요청',message:`${KIND[C.kind]} · ${C.g} · ${C.ym}\n\n점검자 서명한 PDF를 아래 폴더에 저장했나요?\n${path}\n\n${uName(to)} 실장님 화면에 알림이 갑니다.`,ok:'요청하기',onOk:()=>{
   const all=reqs().filter(r=>!(r.kind===C.kind&&r.g===C.g&&r.ym===C.ym));
   all.unshift({id:Date.now().toString(36),kind:C.kind,g:C.g,ym:C.ym,path,by:String(u.id),dept,to:String(to),at:new Date().toISOString(),status:'requested'});
-  if(sv3(REQK,all.slice(0,500))){const b=document.getElementById('nasReq');if(b)b.textContent='요청함 · 다시 요청';bell();alert(uName(to)+' 팀장님께 확인 요청을 보냈습니다.')}}})};
+  if(sv3(REQK,all.slice(0,500))){const b=document.getElementById('nasReq');if(b)b.textContent='요청함 · 다시 요청';bell();alert(uName(to)+' 실장님께 확인 요청을 보냈습니다.')}}})};
 window.signDone=function(id){const all=reqs(),r=all.find(x=>x.id===id);if(!r)return;
  askConfirm({title:'확인 서명 완료',message:`${KIND[r.kind]} · ${r.g} · ${r.ym}\n\nPDF에 확인일을 쓰고 확인자 서명을 마친 뒤 같은 폴더에 저장했나요?`,ok:'완료로 표시',onOk:()=>{r.status='done';r.doneAt=new Date().toISOString();r.doneBy=myId();if(sv3(REQK,all)){render()}}})};
 window.signUndo=function(id){const all=reqs(),r=all.find(x=>x.id===id);if(!r)return;r.status='requested';delete r.doneAt;delete r.doneBy;if(sv3(REQK,all))render()};
@@ -2446,22 +2446,22 @@ function panel(){const id=myId(),u=me();if(!u||u.status==='guest')return '';
  const isLead=Object.values(leads()).includes(id);if(!list.length&&!isLead)return '';
  const open=list.filter(r=>r.status==='requested'),done=list.filter(r=>r.status==='done').slice(0,8);
  const row=r=>{const toMe=r.to===id&&r.status==='requested',byMe=r.by===id;
-  const chip=r.status==='done'?`<span class="sg-chip ok">확인 완료 · ${fmt(r.doneAt)}</span>`:toMe?'<span class="sg-chip me">내 확인 필요</span>':'<span class="sg-chip wait">팀장님 확인 대기</span>';
+  const chip=r.status==='done'?`<span class="sg-chip ok">확인 완료 · ${fmt(r.doneAt)}</span>`:toMe?'<span class="sg-chip me">내 확인 필요</span>':'<span class="sg-chip wait">실장님 확인 대기</span>';
   return `<tr${toMe?' class="sg-me"':''}><td><b>${KIND[r.kind]}</b> · ${esc(r.g)}<div class="muted small">${esc(r.ym)}</div></td><td>${esc(uName(r.by))}<div class="muted small">${fmt(r.at)}</div></td><td>${esc(uName(r.to))}</td><td><code class="sg-path" title="${esc(r.path)}">${esc(short(r.path))}</code> <button class="sm" onclick="signCopy('${r.id}')">경로 복사</button></td><td>${chip}</td><td class="sg-act">${toMe?`<button class="primary sm" onclick="signDone('${r.id}')">확인 서명 완료</button>`:''}${r.status==='done'&&(r.to===id||u.admin)?`<button class="sm" onclick="signUndo('${r.id}')">되돌리기</button>`:''}${r.status==='requested'&&(byMe||u.admin)?`<button class="sm" onclick="signCancel('${r.id}')">요청 취소</button>`:''}</td></tr>`};
  const n=open.filter(r=>r.to===id).length;
- return `<div class="panel sg-panel" id="signPanel"><h3>서명 현황 ${n?`<span class="sg-chip me">내 확인 필요 ${n}건</span>`:''}</h3><p class="muted small" style="margin:2px 0 8px">점검자가 Adobe로 서명한 PDF를 NAS에 저장하고 요청하면 그 실 팀장님께 표시됩니다. 팀장님은 [경로 복사] → 파일 탐색기에 붙여넣기 → 확인일 입력 · 확인자 서명 → 저장 후 [확인 서명 완료]를 눌러 주세요.</p>
- ${list.length?`<div class="tablewrap"><table><thead><tr><th>문서</th><th>점검자</th><th>확인자(팀장)</th><th>NAS 경로</th><th>상태</th><th></th></tr></thead><tbody>${open.concat(done).map(row).join('')}</tbody></table></div>`:'<p class="muted">아직 받은 요청이 없습니다.</p>'}</div>`}
+ return `<div class="panel sg-panel" id="signPanel"><h3>서명 현황 ${n?`<span class="sg-chip me">내 확인 필요 ${n}건</span>`:''}</h3><p class="muted small" style="margin:2px 0 8px">점검자가 Adobe로 서명한 PDF를 NAS에 저장하고 요청하면 그 실 실장님께 표시됩니다. 실장님은 [경로 복사] → 파일 탐색기에 붙여넣기 → 확인일 입력 · 확인자 서명 → 저장 후 [확인 서명 완료]를 눌러 주세요.</p>
+ ${list.length?`<div class="tablewrap"><table><thead><tr><th>문서</th><th>점검자</th><th>확인자(실장)</th><th>NAS 경로</th><th>상태</th><th></th></tr></thead><tbody>${open.concat(done).map(row).join('')}</tbody></table></div>`:'<p class="muted">아직 받은 요청이 없습니다.</p>'}</div>`}
 function bell(){if(!SV())return;const tb=document.querySelector('header .toolbar #sessionName');if(!tb)return;const bar=tb.parentNode;let b=document.getElementById('signBell');
  const u=me(),n=u&&u.status!=='guest'?todo().length:0,wait=u&&u.status!=='guest'?reqs().filter(r=>r.by===myId()&&r.status==='requested').length:0;
  if(!n&&!wait){if(b)b.remove();return}
  if(!b){b=document.createElement('button');b.id='signBell';b.onclick=()=>{go(user().admin?'overview':'dashboard');setTimeout(()=>{const p=document.getElementById('signPanel');if(p)p.scrollIntoView({behavior:'smooth',block:'start'})},60)};bar.insertBefore(b,bar.querySelector('button'))}
- b.innerHTML=n?`🔔 서명 요청 <i class="sg-badge">${n}</i>`:`🔔 확인 대기 ${wait}`;b.title=n?'팀장님 확인이 필요한 서명 요청':'내가 요청한 서명 중 팀장님 확인을 기다리는 것'}
+ b.innerHTML=n?`🔔 서명 요청 <i class="sg-badge">${n}</i>`:`🔔 확인 대기 ${wait}`;b.title=n?'실장님 확인이 필요한 서명 요청':'내가 요청한 서명 중 실장님 확인을 기다리는 것'}
 
-/* 승인·권한: 실별 팀장(확인자) 지정 */
+/* 승인·권한: 실별 실장(확인자) 지정 */
 function leadPanel(){const L=leads(),cand=users.filter(x=>x.status==='approved'||x.admin);
  const depts=[...new Set([...DEPTS,...users.map(deptOf).filter(Boolean),...Object.keys(L)])];
- return `<div class="panel" id="leadPanel"><h3>실별 팀장(확인자) 지정</h3><p class="muted small">실마다 한 명. 그 실 담당자가 [팀장님께 요청]을 누르면 이 팀장님 화면(대시보드 · 🔔)에 표시됩니다.</p><div class="tablewrap"><table><thead><tr><th>소속 실</th><th>팀장(확인자)</th><th>담당자 수</th></tr></thead><tbody>${depts.map(d=>`<tr><td>${esc(d)}</td><td><select onchange="setLead('${esc(d)}',this.value)" style="margin:0;min-width:180px"><option value="">선택해 주세요</option>${cand.map(x=>`<option value="${esc(x.id)}"${String(L[d]||'')===String(x.id)?' selected':''}>${esc(x.name)} (${esc(x.id)})${x.dept?' · '+esc(x.dept):''}</option>`).join('')}</select></td><td>${users.filter(x=>!x.admin&&x.status==='approved'&&deptOf(x)===d).length}명</td></tr>`).join('')}</tbody></table></div></div>`}
-window.setLead=function(d,id){const L=leads();if(id)L[d]=id;else delete L[d];if(sv3(LEADK,L)){bell();alert(id?d+' 팀장: '+uName(id):d+' 팀장 지정을 지웠습니다.')}};
+ return `<div class="panel" id="leadPanel"><h3>실별 실장(확인자) 지정</h3><p class="muted small">실마다 한 명. 그 실 담당자가 [실장님께 요청]을 누르면 이 실장님 화면(대시보드 · 🔔)에 표시됩니다. 실장님은 우리 실 담당자들이 맡은 그룹 전체를 볼 수 있고(보기 전용), Excel 올리기·승인·계정 관리는 할 수 없습니다. 그룹을 따로 배정할 필요는 없습니다.</p><div class="tablewrap"><table><thead><tr><th>소속 실</th><th>실장(확인자)</th><th>담당자 수</th></tr></thead><tbody>${depts.map(d=>`<tr><td>${esc(d)}</td><td><select onchange="setLead('${esc(d)}',this.value)" style="margin:0;min-width:180px"><option value="">선택해 주세요</option>${cand.map(x=>`<option value="${esc(x.id)}"${String(L[d]||'')===String(x.id)?' selected':''}>${esc(x.name)} (${esc(x.id)})${x.dept?' · '+esc(x.dept):''}</option>`).join('')}</select></td><td>${users.filter(x=>!x.admin&&x.status==='approved'&&deptOf(x)===d).length}명</td></tr>`).join('')}</tbody></table></div></div>`}
+window.setLead=function(d,id){const L=leads();if(id)L[d]=id;else delete L[d];if(sv3(LEADK,L)){bell();alert(id?d+' 실장: '+uName(id):d+' 실장 지정을 지웠습니다.')}};
 
 const R3=window.render;
 window.render=function(){R3();if(!SV())return;try{
@@ -2471,10 +2471,25 @@ window.render=function(){R3();if(!SV())return;try{
 /* 로그인했을 때 · 다른 사람이 요청했을 때(서버에서 30초마다 확인) 알림 */
 let seenId=null,seen=new Set();
 function notify(first){const t=todo(),fresh=t.filter(r=>!seen.has(r.id));t.forEach(r=>seen.add(r.id));
- if(first&&t.length)alert('🔔 팀장님 확인이 필요한 서명 요청이 '+t.length+'건 있습니다. 대시보드의 서명 현황을 확인해 주세요.');
+ if(first&&t.length)alert('🔔 실장님 확인이 필요한 서명 요청이 '+t.length+'건 있습니다. 대시보드의 서명 현황을 확인해 주세요.');
  else if(!first&&fresh.length)alert('🔔 새 서명 요청: '+fresh.map(r=>uName(r.by)+' · '+KIND[r.kind]+' '+r.g+' '+r.ym).join(', '))}
 const R4=window.render;
 window.render=function(){R4();if(!SV())return;const u=me(),id=u&&u.status!=='guest'?myId():'';if(id!==seenId){seenId=id;seen=new Set();if(id)notify(true)}};
 window.addEventListener('sh-live',()=>{if(!SV())return;bell();if(seenId)notify(false);if(active==='dashboard'||active==='overview'||active==='admin'){const y=scrollY;render();scrollTo(0,y)}});
+})();
+/* V9.6: 실장 권한(서버판) — 승인·권한에서 실장으로 지정된 계정은 우리 실 담당자들이 맡은 그룹 전체를 보고(보기 전용), 서명 요청을 확인. Excel 올리기·승인·계정 관리는 없음 */
+(function(){
+const SV=()=>!!window.__SH_SERVER;
+const LK2='standardhub_v22_dept_leads';
+function leadDepts(u){if(!SV()||!u||u.admin||u.status!=='approved')return [];let L={};try{L=JSON.parse(localStorage.getItem(LK2))||{}}catch(e){}return Object.keys(L).filter(d=>String(L[d])===String(u.id))}
+function deptGroups(u,ds){const s=new Set(u.groups||[]);users.forEach(x=>{if(!x.admin&&x.status==='approved'&&ds.includes(x.dept))(x.groups||[]).forEach(g=>s.add(g))});return [...s]}
+window.leadDepts=leadDepts;
+const U0=user;
+/* 실장은 user().groups가 '우리 실 담당 그룹 전체'로 보임(저장되는 계정 정보는 그대로) */
+user=window.user=function(){const u=U0();const ds=leadDepts(u);if(!ds.length)return u;return new Proxy(u,{get(t,k){if(k==='groups')return deptGroups(t,ds);if(k==='leadOf')return ds;return t[k]}})};
+const VT=window.visibleTabs;
+visibleTabs=window.visibleTabs=function(u){u=u||user();const t=VT(u);return leadDepts(u).length?t.filter(x=>x!=='upload'):t};
+const R5=window.render;
+window.render=function(){R5();const u=user(),ds=leadDepts(u);if(!ds.length)return;const rt=document.getElementById('roleTag');if(rt)rt.textContent='실장 · '+ds.join(', ')};
 })();
 </script></body></html>
