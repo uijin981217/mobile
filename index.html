@@ -2461,7 +2461,7 @@ function bell(){if(!SV())return;const tb=document.querySelector('header .toolbar
 function leadPanel(){const L=leads(),cand=users.filter(x=>x.status==='approved'||x.admin);
  const depts=[...new Set([...DEPTS,...users.map(deptOf).filter(Boolean),...Object.keys(L)])];
  return `<div class="panel" id="leadPanel"><h3>실별 실장(확인자) 지정</h3><p class="muted small">실마다 한 명. 그 실 담당자가 [실장님께 요청]을 누르면 이 실장님 화면(대시보드 · 🔔)에 표시됩니다. 실장님은 우리 실 담당자들이 맡은 그룹 전체를 볼 수 있고(보기 전용), Excel 올리기·승인·계정 관리는 할 수 없습니다. 그룹을 따로 배정할 필요는 없습니다.</p><div class="tablewrap"><table><thead><tr><th>소속 실</th><th>실장(확인자)</th><th>담당자 수</th></tr></thead><tbody>${depts.map(d=>`<tr><td>${esc(d)}</td><td><select onchange="setLead('${esc(d)}',this.value)" style="margin:0;min-width:180px"><option value="">선택해 주세요</option>${cand.map(x=>`<option value="${esc(x.id)}"${String(L[d]||'')===String(x.id)?' selected':''}>${esc(x.name)} (${esc(x.id)})${x.dept?' · '+esc(x.dept):''}</option>`).join('')}</select></td><td>${users.filter(x=>!x.admin&&x.status==='approved'&&deptOf(x)===d&&String(x.id)!==String(L[d]||'')).length}명</td></tr>`).join('')}</tbody></table></div></div>`}
-window.setLead=function(d,id){const L=leads();if(id)L[d]=id;else delete L[d];if(sv3(LEADK,L)){bell();alert(id?d+' 실장: '+uName(id):d+' 실장 지정을 지웠습니다.')}};
+window.setLead=function(d,id){const L=leads();if(id)L[d]=id;else delete L[d];if(sv3(LEADK,L)){bell();{const lp=document.getElementById('leadPanel');if(lp){const w=document.createElement('div');w.innerHTML=leadPanel();lp.replaceWith(w.firstChild)}}alert(id?d+' 실장: '+uName(id):d+' 실장 지정을 지웠습니다.')}};
 
 const R3=window.render;
 window.render=function(){R3();if(!SV())return;try{
