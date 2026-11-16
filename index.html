@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V13.1</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V13.2</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -445,7 +445,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V13.1 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V13.2 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2068,6 +2068,14 @@ function dispBox(){const box=document.getElementById('inDisp');if(!box)return;co
  const n=ls.filter(s=>D[s.code]).length;
  box.innerHTML=`<details class="dp-box"${open?' open':''}><summary><b>폐기 대상 확인</b> <span class="muted small">만료 · 재고 0 입고 ${ls.length}개${n?` · <b style="color:#17703c">폐기 완료 체크 ${n}개</b>`:''} — 이미 폐기한 것은 체크하면 정기점검 폐기 목록과 관리내역에서 빠집니다</span></summary><div class="dp-list">${ls.map(s=>{const why=[s.exp&&s.exp<d0?'만료':'',Number(s.qty)===0?'재고 0':''].filter(Boolean).join(' · ');return `<label class="dp-r"><input type="checkbox" ${D[s.code]?'checked':''} onchange="dispSet('${esc(s.code)}',this.checked)"><span class="dp-c">${esc(s.code)}</span><span class="dp-e">EXP. ${esc(s.exp||'-')}</span><span class="dp-w">${why}</span>${D[s.code]?`<span class="dp-d">폐기 완료 체크 ${esc(dot(D[s.code]))}</span>`:''}</label>`}).join('')}</div></details>`}
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='inDate'&&document.getElementById('inDisp'))setTimeout(dispBox,0)});
+/* V13.2: 정기점검 입력 창 '관리내역 비고' — 관리내역 입력 창에서 적은 입고번호별 비고를 보여 주고, 체크한 것을 양식의 해당 칸에 넣음 */
+const LNS=[['buy','추가 구입'],['retest','Re-test'],['plan','입고 예정'],['etc','기타']];
+function lnSec(t){return /re-?\s*test|재시험|리테스트/i.test(t)?'retest':/구입|구매|주문|발주/.test(t)?'buy':/입고/.test(t)?'plan':'etc'}
+function lnBox(){const box=document.getElementById('inLotNotes');if(!box)return;const g=val('inG'),NT=lj(LK,{});
+ const ls=listOf(g).filter(s=>NT[s.code]&&!(window.labelGone&&labelGone(s.code))&&!dispDone(s.code));
+ if(!ls.length){box.innerHTML='<p class="muted small" style="margin:12px 0 0;border-top:1px solid var(--line);padding-top:8px"><b style="color:#20242b">관리내역 비고</b> — 이 그룹에 적힌 비고가 없습니다. (관리내역 입력 창에서 입고번호별로 적은 비고가 여기 나옵니다)</p>';return}
+ box.innerHTML=`<div class="dp-box"><div style="padding:4px 0"><b>관리내역 비고</b> <span class="muted small">비고 ${ls.length}개 — 체크한 것은 양식의 고른 칸(추가 구입 · Re-test · 입고 예정 · 기타)에 들어갑니다</span></div><div class="dp-list">${ls.map(s=>{const n=NT[s.code],k=lnSec(n);return `<label class="dp-r ln-r" data-code="${esc(s.code)}"><input type="checkbox" class="ln-c" checked><span class="dp-c">${esc(s.code)}</span><span class="dp-e">EXP. ${esc(s.exp||'-')}</span><span class="ln-n" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(n)}">${esc(n)}</span><select class="ln-s" style="width:auto;min-height:0;height:30px;padding:2px 6px;margin:0;font-size:12.5px" >${LNS.map(([v,t])=>`<option value="${v}"${v===k?' selected':''}>${t}</option>`).join('')}</select></label>`}).join('')}</div></div>`}
+window.lnBox=lnBox;
 window.dispSet=function(code,on){const D=lj(DK,{});if(on)D[code]=today();else delete D[code];try{localStorage.setItem(DK,JSON.stringify(D))}catch(e){return alert('저장하지 못했습니다.')}dispBox();if(document.getElementById('inNotes'))notesBox()};
 /* ---- 입력 창 ---- */
 function closeInsp(){const l=document.getElementById('inspLayer');if(l)l.remove()}
@@ -2108,7 +2116,7 @@ window.ntAllOpen=function(e,b){e.preventDefault();e.stopPropagation();const d=b.
 window.ntAll=function(btn){const d=btn.closest('details'),v=d.querySelector('.nt-all').value.trim();d.querySelectorAll('.nt-v').forEach(i=>i.value=v)};
 window.noteSet=function(code,v){const N=lj(LK,{});v=String(v||'').trim();if(v)N[code]=v;else delete N[code];try{localStorage.setItem(LK,JSON.stringify(N))}catch(e){return alert('이 브라우저에서는 저장할 수 없습니다.')}notesBox()};
 window.noteAdd=function(){const c=val('ntCode'),t=val('ntText').trim();if(!t)return alert('비고 내용을 입력해 주세요.');noteSet(c,t)};
-window.inspFill=function(){notesBox();dispBox();if(document.getElementById('inTiers')&&!document.getElementById('tRows'))tiersBox();const g=val('inG'),m=lf()[g]||{};document.getElementById('inCust').value=m.cust||defCust(g);document.getElementById('inTarget').value=m.target||defTarget(g);document.getElementById('inDept').value=m.dept||'';
+window.inspFill=function(){notesBox();dispBox();lnBox();if(document.getElementById('inTiers')&&!document.getElementById('tRows'))tiersBox();const g=val('inG'),m=lf()[g]||{};document.getElementById('inCust').value=m.cust||defCust(g);document.getElementById('inTarget').value=m.target||defTarget(g);document.getElementById('inDept').value=m.dept||'';
  const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),miss=[...new Set(listOf(g).map(baseCode))].filter(b=>!(UN[b]||{}).name&&!(window.labelName&&labelName(b))),box=document.getElementById('inNames');if(!box)return;
  const PN=lj(PNK,{}),pbox=document.getElementById('inProds');if(pbox){const bs=isB(g)?[]:[...new Set(listOf(g).map(baseCode))].sort();
   const row=(b,au)=>`<div style="display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap"><span style="min-width:110px;font-family:var(--mono,monospace)">${esc(b)}</span><input class="in-pn" data-base="${esc(b)}" data-auto="${esc(au)}" value="${esc(prodClean(PN[b]||'')===prodClean(au)?'':prodClean(PN[b]||''))}" placeholder="${esc(au||'제품명 입력 (비우면 N/A)')}" style="margin:0;flex:1;min-width:140px"></div>`;
@@ -2137,7 +2145,7 @@ window.openInspection=function(mode){
  </div>
  <div class="rs-box"${ins}><div class="rs-row"><b>라벨상태</b><span class="rs-g">${radio('inLab','정상','손상')}</span><span class="rs-sep">/</span><span class="muted small rs-l">손상 시 재출력</span><span class="rs-g">${radio('inLabRe','아니오','예')}</span></div><div class="rs-row"><b>보관상태 <span class="muted small" style="font-weight:400">(보관위치, 밀봉여부 등)</span></b><span class="rs-g">${radio('inSto','정상','손상')}</span><span class="rs-sep">/</span><span class="muted small rs-l">손상 시 재출력</span><span class="rs-g">${radio('inStoRe','아니오','예')}</span></div></div>
  <div class="in-grid in-ta"${ins}>${ta('inBuy','추가 구입 (요청) 필요 표준품')}${ta('inRetest','Re-test 필요 표준품')}${ta('inPlan','기타 · 입고 예정')}${ta('inEtc','기타 · 기타')}</div>
- ${annexOnly?'<div id="inTiers"></div><div id="inProds"></div><div id="inNames"></div><div id="inNotes"></div>':'<div id="inDisp"></div>'}
+ ${annexOnly?'<div id="inTiers"></div><div id="inProds"></div><div id="inNames"></div><div id="inNotes"></div>':'<div id="inDisp"></div><div id="inLotNotes"></div>'}
   <div class="toolbar" style="margin-top:14px"><button class="primary" onclick="makeInspection('${annexOnly?'annex':'form'}')">${annexOnly?'관리내역 만들기':'양식 만들기'}</button><button onclick="closeInspection()">취소</button></div></div>`;
  document.body.appendChild(l);l.addEventListener('click',e=>{if(e.target===l)closeInsp()});inspFill()};
 
@@ -2165,6 +2173,8 @@ window.makeInspection=function(mode){
  const grpL=items=>{const m=new Map();items.forEach(o=>{const k=[masterOf(o.code),o.name,o.exp,o.tail].join('\u0001');if(!m.has(k))m.set(k,{...o,codes:[]});m.get(k).codes.push(o.code)});
   return [...m.values()].map(o=>'- '+esc(codesTxt(o.codes))+(o.name?' : '+esc(o.name):'')+' (EXP. '+esc(o.exp)+')'+o.tail)};
  const blk=(t,arr,f)=>'['+t+']<br>'+(arr.length?grpL(arr.map(f)).join('<br>'):'- N/A'),blk2=(t,items)=>'['+t+']<br>'+(items.length?grpL(items).join('<br>'):'- N/A');
+ const NT0=lj(LK,{}),LNx={};[...document.querySelectorAll('#inLotNotes .ln-r')].forEach(r=>{if(!r.querySelector('.ln-c').checked)return;const c=r.dataset.code,n=NT0[c];if(!n)return;const k=r.querySelector('.ln-s').value,K=masterOf(c)+'\u0001'+n;(LNx[k]=LNx[k]||new Map());const m=LNx[k];if(!m.has(K))m.set(K,{n,cs:[]});m.get(K).cs.push(c)});
+ const lnx=k=>LNx[k]?'\n'+[...LNx[k].values()].map(o=>codesTxt(o.cs)+' : '+o.n).join('\n'):'';
  const tx=v=>{v=String(v||'').trim();return v?v.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>(/^[-·•]/.test(x)?'':'- ')+esc(x)).join('<br>'):'- N/A'};
  const mon=(m=>Number.isInteger(m)&&m>=1&&m<=24?m:3)(Math.round(Number(val('inMon')))),lim=new Date(date+'T00:00:00');lim.setMonth(lim.getMonth()+mon);const limS=lim.getFullYear()+'-'+String(lim.getMonth()+1).padStart(2,'0')+'-'+String(lim.getDate()).padStart(2,'0');
  const okD=s=>/^\d{4}-\d{2}-\d{2}$/.test(s.exp||'');
@@ -2183,10 +2193,10 @@ window.makeInspection=function(mode){
  <tr><th>유효기한</th><td colspan="5" style="height:120px">${blk('임박',soon,s=>ln(s))}<br><br>${blk('만료',exp,s=>ln(s))}</td></tr>
  <tr><th>라벨상태</th><td colspan="5">${st(rv('inLab'),rv('inLabRe'))}</td></tr>
  <tr><th>보관상태<br>(보관위치,<br>밀봉여부 등)</th><td colspan="5">${st(rv('inSto'),rv('inStoRe'))}</td></tr>
- <tr><th>추가 구입<br>(요청)<br>필요 표준품</th><td colspan="5">${tx(val('inBuy'))}</td></tr>
- <tr><th>Re-test 필요<br>표준품</th><td colspan="5">${tx(val('inRetest'))}</td></tr>
+ <tr><th>추가 구입<br>(요청)<br>필요 표준품</th><td colspan="5">${tx(val('inBuy')+lnx('buy'))}</td></tr>
+ <tr><th>Re-test 필요<br>표준품</th><td colspan="5">${tx(val('inRetest')+lnx('retest'))}</td></tr>
  <tr><th>폐기 표준품</th><td colspan="5" style="height:100px">${blk2('유효기한 만료',[...exp.map(s=>ln(s,Number(s.qty)===0?' · 재고 0':'')),...DL.filter(x=>x.expired).map(dl)])}<br><br>${blk2('소진',[...empty.filter(s=>!exp.includes(s)).map(s=>ln(s,' · 재고 0')),...DL.filter(x=>!x.expired).map(dl)])}</td></tr>
- <tr><th>기타<br>특이사항</th><td colspan="5" style="height:120px">[입고 예정]<br>${tx(val('inPlan'))}<br><br>${blk('입고',inM,s=>ln(s,' · 입고 '+dot(iso((detailData[s.id]||{})['입고 일자']))))}<br><br>[기타]<br>${tx(val('inEtc'))}</td></tr>
+ <tr><th>기타<br>특이사항</th><td colspan="5" style="height:120px">[입고 예정]<br>${tx(val('inPlan')+lnx('plan'))}<br><br>${blk('입고',inM,s=>ln(s,' · 입고 '+dot(iso((detailData[s.id]||{})['입고 일자']))))}<br><br>[기타]<br>${tx(val('inEtc')+lnx('etc'))}</td></tr>
  <tr><th>확인일</th><td colspan="2" class="big" style="text-align:center"></td><th>확인자</th><td colspan="2" class="big"></td></tr></table>
  <div class="doc">S-P-GO011-F4-V03</div></div>`;
  window._signCtx.signHtml=css0+css+form.replace('<th>점검자</th><td class="big"></td>','<th>점검자</th><td class="big" style="position:relative"><i data-f="Inspector" style="position:absolute;inset:0"></i></td>').replace('<th>확인일</th><td colspan="2" class="big" style="text-align:center"></td>','<th>확인일</th><td colspan="2" class="big" style="position:relative"><i data-f="ReviewDate" style="position:absolute;inset:0"></i></td>').replace('<th>확인자</th><td colspan="2" class="big"></td>','<th>확인자</th><td colspan="2" class="big" style="position:relative"><i data-f="Reviewer" style="position:absolute;inset:0"></i></td>');
