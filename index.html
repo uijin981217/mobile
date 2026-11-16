@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V13.3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V13.4</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -445,7 +445,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V13.3 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V13.4 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2082,8 +2082,19 @@ function lnBox(){const box=document.getElementById('inLotNotes');if(!box)return;
  box.innerHTML=`<details class="dp-box"${ls.length<=5?' open':''}><summary><b>관리내역 비고</b> <span class="muted small"><span class="ln-cnt"></span> — 고른 칸(여러 개 가능)에 '입고번호 : 비고'로 들어갑니다. 아무 칸도 안 고르면 빠짐</span></summary><div class="dp-list">${ls.map(s=>{const n=NT[s.code],k=lnSecs(n);return `<div class="dp-r ln-r" data-code="${esc(s.code)}"><span class="dp-c">${esc(s.code)}</span><span class="dp-e">EXP. ${esc(s.exp||'-')}</span><span class="ln-n" title="${esc(n)}">${esc(n)}</span><span class="ln-ks">${LNS.map(([v,t])=>chip(s.code,v,t,k.includes(v))).join('')}</span></div>`}).join('')}</div></details>`;lnSum()}
 window.lnBox=lnBox;
 window.dispSet=function(code,on){const D=lj(DK,{});if(on)D[code]=today();else delete D[code];try{localStorage.setItem(DK,JSON.stringify(D))}catch(e){return alert('저장하지 못했습니다.')}dispBox();if(document.getElementById('inNotes'))notesBox()};
+/* V13.4: 입력 창 내용(관리내역 비고·제품명·표준품명·빼기·고객사·부서명)을 치는 대로 저장 — [닫기]로 나가도 남음 */
+function inspSave(mode){if(!document.getElementById('inspLayer')||!document.getElementById('inG'))return;mode=mode||(document.getElementById('inNotes')?'annex':'form');const g=val('inG'),cust=val('inCust').trim(),dept=val('inDept').trim();
+ const SN=savedNames();document.querySelectorAll('#inspLayer .in-nm').forEach(i=>{const v=i.value.trim();if(v)SN[i.dataset.base]=v;else delete SN[i.dataset.base]});try{localStorage.setItem(NK,JSON.stringify(SN))}catch(e){}
+ {const PN=lj(PNK,{});document.querySelectorAll('#inspLayer .in-pn').forEach(i=>{const v=prodClean(i.value);if(v&&v!==prodClean(i.dataset.auto||''))PN[i.dataset.base]=v;else delete PN[i.dataset.base]});try{localStorage.setItem(PNK,JSON.stringify(PN))}catch(e){}}
+
+ const NT=lj(LK,{});document.querySelectorAll('#inspLayer .nt-v').forEach(i=>{const v=i.value.trim();if(v)NT[i.dataset.code]=v;else delete NT[i.dataset.code]});try{localStorage.setItem(LK,JSON.stringify(NT))}catch(e){}
+ const SKIP=lj(SK,{});document.querySelectorAll('#inspLayer .in-skip').forEach(i=>{if(i.checked)SKIP[i.dataset.base]=1;else delete SKIP[i.dataset.base]});try{localStorage.setItem(SK,JSON.stringify(SKIP))}catch(e){}
+ const all=lf(),prev=all[g]||{};all[g]=Object.assign(prev,{cust,dept},mode==='annex'?{}:{target:val('inTarget').trim()});sf(all);}
+window.inspSave=inspSave;let _isT=0;
+document.addEventListener('input',e=>{if(e.target&&e.target.closest&&e.target.closest('#inspLayer')&&e.target.id!=='inG'){clearTimeout(_isT);_isT=setTimeout(()=>inspSave(),400)}});
+document.addEventListener('change',e=>{if(e.target&&e.target.closest&&e.target.closest('#inspLayer')&&e.target.id!=='inG'){clearTimeout(_isT);inspSave()}});
 /* ---- 입력 창 ---- */
-function closeInsp(){const l=document.getElementById('inspLayer');if(l)l.remove()}
+function closeInsp(){try{clearTimeout(_isT);inspSave()}catch(e){}const l=document.getElementById('inspLayer');if(l)l.remove()}
 /* V12.8: 미리보기를 여는 동안 입력 창은 숨겨 두고, 미리보기 [닫기] → 입력하던 그대로 다시 보임 */function hideInsp(){const l=document.getElementById('inspLayer');if(l)l.style.display='none'}
 window.closeInspection=closeInsp;
 /* V11.2: 비고 줄에 유효기한 — 작성일 기준, 내 '유효기한 색 표시' 단계 색으로 표시, 지난 것은 '지남' */
@@ -2157,11 +2168,7 @@ window.openInspection=function(mode){
 window.makeInspection=function(mode){
  {const em=[...document.querySelectorAll('#inspLayer .in-pn')].filter(i=>!i.dataset.auto&&!i.value.trim());if(em.length&&!window.__pnOk){return askConfirm({title:'제품명이 비어 있습니다',message:'자동으로 못 찾은 표준품 '+em.length+'종의 제품명이 비어 있어 관리내역에 N/A로 나갑니다.\n'+em.map(i=>i.dataset.base).join(', ')+'\n\n그대로 만들까요?',ok:'그대로 만들기',onOk:()=>{window.__pnOk=1;try{makeInspection(mode)}finally{window.__pnOk=0}}})}}
  const g=val('inG'),cust=val('inCust').trim(),dept=val('inDept').trim(),date=val('inDate')||today(),ym=date.slice(0,7);
- const SN=savedNames();document.querySelectorAll('#inspLayer .in-nm').forEach(i=>{const v=i.value.trim();if(v)SN[i.dataset.base]=v;else delete SN[i.dataset.base]});try{localStorage.setItem(NK,JSON.stringify(SN))}catch(e){}
- {const PN=lj(PNK,{});document.querySelectorAll('#inspLayer .in-pn').forEach(i=>{const v=prodClean(i.value);if(v&&v!==prodClean(i.dataset.auto||''))PN[i.dataset.base]=v;else delete PN[i.dataset.base]});try{localStorage.setItem(PNK,JSON.stringify(PN))}catch(e){}}
- const NT=lj(LK,{});document.querySelectorAll('#inspLayer .nt-v').forEach(i=>{const v=i.value.trim();if(v)NT[i.dataset.code]=v;else delete NT[i.dataset.code]});try{localStorage.setItem(LK,JSON.stringify(NT))}catch(e){}
- const SKIP=lj(SK,{});document.querySelectorAll('#inspLayer .in-skip').forEach(i=>{if(i.checked)SKIP[i.dataset.base]=1;else delete SKIP[i.dataset.base]});try{localStorage.setItem(SK,JSON.stringify(SKIP))}catch(e){}
- const all=lf(),prev=all[g]||{};all[g]=Object.assign(prev,{cust,dept},mode==='annex'?{}:{target:val('inTarget').trim()});sf(all);
+ inspSave(mode);const all=lf();
  const css0='<style>*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{margin:0;padding:0}.doc{font-size:10px;margin-top:6px}.fpage{padding:12mm 12mm 0}@page{size:A4 portrait;margin:0}'+ACSS+ANX+'</style>';
  const monA=(m=>Number.isInteger(m)&&m>=1&&m<=24?m:3)(Math.round(Number(val('inMon'))));const tiersA=mode==='annex'?readTiers():null,stockA=mode==='annex'?readStock():null;const AB=annexBuild(g,{cust,dept,date,mon:monA,tiers:tiersA,stock:stockA}),annex=AB.html;
  window._signCtx={g,cust,dept,date,ym,css0};
