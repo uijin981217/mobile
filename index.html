@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.2</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -445,7 +445,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V1.2 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V1.3 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1512,8 +1512,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAsk();closePri
 // 3) 업로드 데이터 초기화: 확인 창을 거친 뒤 실행
 window.clearUploadDemo=function(){
   if(!user().admin)return alert('전체 초기화는 관리자만 할 수 있습니다. 잘못 올린 업로드는 업로드 내역의 [삭제]로 지워 주세요.');
-  askConfirm({title:'업로드 데이터를 모두 지울까요?',message:'모든 담당자의 표준품 데이터와 업로드 내역이 모두 삭제됩니다.\n삭제 후에는 되돌릴 수 없고, Excel을 다시 올려야 합니다.',ok:'모두 삭제',danger:true,
-    onOk:()=>{try{localStorage.removeItem(uploadStoreKey)}catch(e){}location.reload()}});
+  askConfirm({title:'업로드 데이터를 모두 지울까요?',message:'모든 담당자가 올린 재고 Excel · 사용기록 · 라벨 정보 · 구매 정보와 업로드 내역이 모두 삭제됩니다.\n(계정 · 관리내역 비고 · 제품명 · 색 설정 등은 그대로)\n삭제 후에는 되돌릴 수 없고, Excel을 다시 올려야 합니다.',ok:'모두 삭제',danger:true,
+    onOk:()=>{/* V1.3: 재고만 지우고 사용기록·라벨·구매·업로드 내역이 남던 문제 */[uploadStoreKey,'standardhub_v22_upload_log','standardhub_v22_upload_undo','standardhub_v22_usage','standardhub_v22_label_info','standardhub_v22_purchase'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});location.reload()}});
 };
 // 4) 출력: 새 창 대신 화면 안 미리보기 + 인쇄 버튼
 const CSS='body{font-family:Arial,"Malgun Gothic",sans-serif;margin:24px;color:#1a1a2b}h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:22px 0 8px}table{border-collapse:collapse;width:100%;font-size:12px}th,td{border:1px solid #c5cad8;padding:6px 8px;text-align:left;vertical-align:top}th{background:#eceff6}.m{color:#59607a;font-size:12px}.danger{color:#b42318}pre{white-space:pre-wrap;font-family:inherit;font-size:13px;border:1px solid #c5cad8;padding:10px;min-height:60px}tr.grp td{background:#f3f5fa}.w{width:90px}.c{text-align:center;width:44px}';
