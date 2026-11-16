@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V13.6</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V13.7</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -445,7 +445,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V13.6 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V13.7 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2090,13 +2090,26 @@ function inspSave(mode){if(!document.getElementById('inspLayer')||!document.getE
  const NT=lj(LK,{});document.querySelectorAll('#inspLayer .nt-v').forEach(i=>{const v=i.value.trim();if(v)NT[i.dataset.code]=v;else delete NT[i.dataset.code]});try{localStorage.setItem(LK,JSON.stringify(NT))}catch(e){}
  const SKIP=lj(SK,{});document.querySelectorAll('#inspLayer .in-skip').forEach(i=>{if(i.checked)SKIP[i.dataset.base]=1;else delete SKIP[i.dataset.base]});try{localStorage.setItem(SK,JSON.stringify(SKIP))}catch(e){}
  const all=lf(),prev=all[g]||{};all[g]=Object.assign(prev,{cust,dept},mode==='annex'?{}:{target:val('inTarget').trim()});sf(all);}
-window.inspSave=inspSave;function savedMark(){const e=document.getElementById('inSaved');if(!e)return;const d=new Date();e.innerHTML='<span style="color:#17703c">✓ 자동 저장됨</span> ('+d.toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit'})+')'}let _isT=0;
-document.addEventListener('input',e=>{if(e.target&&e.target.closest&&e.target.closest('#inspLayer')&&e.target.id!=='inG'){clearTimeout(_isT);_isT=setTimeout(()=>{inspSave();savedMark()},400)}});
-document.addEventListener('change',e=>{if(e.target&&e.target.closest&&e.target.closest('#inspLayer')&&e.target.id!=='inG'){clearTimeout(_isT);inspSave();savedMark()}});
+/* V13.7: 정기점검 입력 창 작성 중 내용(점검일·임박 기준·라벨/보관상태·추가 구입·Re-test·입고 예정·기타·관리내역 비고 칸 선택)도 그룹별로 기억 — 저장 후 31일 지나면 새로 시작 */
+const DFK='standardhub_v22_inspect_draft',DF_IDS=['inDate','inMon','inBuy','inRetest','inPlan','inEtc'];
+function draftSave(){if(!document.getElementById('inspLayer')||document.getElementById('inNotes')||!document.getElementById('inG'))return;const g=val('inG'),A=lj(DFK,{}),o={ts:Date.now(),v:{},r:{},ln:{}};
+ DF_IDS.forEach(id=>{const e=document.getElementById(id);if(e)o.v[id]=e.value});
+ document.querySelectorAll('#inspLayer input[type=radio]:checked').forEach(e=>{o.r[e.name]=e.value});
+ document.querySelectorAll('#inLotNotes .ln-r').forEach(r=>{o.ln[r.dataset.code]=[...r.querySelectorAll('.ln-k:checked')].map(x=>x.value)});
+ A[g]=o;try{localStorage.setItem(DFK,JSON.stringify(A))}catch(e){}}
+function draftLoad(){if(document.getElementById('inNotes'))return;const g=val('inG'),o=lj(DFK,{})[g];
+ if(!o||Date.now()-(o.ts||0)>31*86400000){['inBuy','inRetest','inPlan','inEtc'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});return}
+ DF_IDS.forEach(id=>{const e=document.getElementById(id);if(e&&o.v[id]!=null)e.value=o.v[id]});
+ Object.keys(o.r||{}).forEach(n=>{const e=document.querySelector('#inspLayer input[type=radio][name="'+n+'"][value="'+o.r[n]+'"]');if(e)e.checked=true});
+ if(o.v.inDate){dispBox();lnBox()}
+ document.querySelectorAll('#inLotNotes .ln-r').forEach(r=>{const L=(o.ln||{})[r.dataset.code];if(!L)return;r.querySelectorAll('.ln-k').forEach(x=>{x.checked=L.includes(x.value)})});if(window.lnSum)lnSum()}
+window.inspSave=function(m){inspSave(m);draftSave()};function savedMark(){const e=document.getElementById('inSaved');if(!e)return;const d=new Date();e.innerHTML='<span style="color:#17703c">✓ 자동 저장됨</span> ('+d.toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit'})+')'}let _isT=0;
+document.addEventListener('input',e=>{if(e.target&&e.target.closest&&e.target.closest('#inspLayer')&&e.target.id!=='inG'){clearTimeout(_isT);_isT=setTimeout(()=>{window.inspSave();savedMark()},400)}});
+document.addEventListener('change',e=>{if(e.target&&e.target.closest&&e.target.closest('#inspLayer')&&e.target.id!=='inG'){clearTimeout(_isT);window.inspSave();savedMark()}});
 /* V13.6: 색 버튼·단계 추가·× 도 저장(누른 뒤 화면이 바뀐 다음) */
-document.addEventListener('click',e=>{if(e.target&&e.target.closest&&e.target.closest('#inTiers button')){clearTimeout(_isT);_isT=setTimeout(()=>{inspSave();savedMark()},50)}});
+document.addEventListener('click',e=>{if(e.target&&e.target.closest&&e.target.closest('#inTiers button')){clearTimeout(_isT);_isT=setTimeout(()=>{window.inspSave();savedMark()},50)}});
 /* ---- 입력 창 ---- */
-function closeInsp(){try{clearTimeout(_isT);inspSave()}catch(e){}const l=document.getElementById('inspLayer');if(l)l.remove()}
+function closeInsp(){try{clearTimeout(_isT);window.inspSave()}catch(e){}const l=document.getElementById('inspLayer');if(l)l.remove()}
 /* V12.8: 미리보기를 여는 동안 입력 창은 숨겨 두고, 미리보기 [닫기] → 입력하던 그대로 다시 보임 */function hideInsp(){const l=document.getElementById('inspLayer');if(l)l.style.display='none'}
 window.closeInspection=closeInsp;
 /* V11.2: 비고 줄에 유효기한 — 작성일 기준, 내 '유효기한 색 표시' 단계 색으로 표시, 지난 것은 '지남' */
@@ -2134,7 +2147,7 @@ window.ntAllOpen=function(e,b){e.preventDefault();e.stopPropagation();const d=b.
 window.ntAll=function(btn){const d=btn.closest('details'),v=d.querySelector('.nt-all').value.trim();d.querySelectorAll('.nt-v').forEach(i=>i.value=v)};
 window.noteSet=function(code,v){const N=lj(LK,{});v=String(v||'').trim();if(v)N[code]=v;else delete N[code];try{localStorage.setItem(LK,JSON.stringify(N))}catch(e){return alert('이 브라우저에서는 저장할 수 없습니다.')}notesBox()};
 window.noteAdd=function(){const c=val('ntCode'),t=val('ntText').trim();if(!t)return alert('비고 내용을 입력해 주세요.');noteSet(c,t)};
-window.inspFill=function(){notesBox();dispBox();lnBox();if(document.getElementById('inTiers')&&!document.getElementById('tRows'))tiersBox();const g=val('inG'),m=lf()[g]||{};document.getElementById('inCust').value=m.cust||defCust(g);document.getElementById('inTarget').value=m.target||defTarget(g);document.getElementById('inDept').value=m.dept||'';
+window.inspFill=function(){notesBox();dispBox();lnBox();if(document.getElementById('inTiers')&&!document.getElementById('tRows'))tiersBox();const g=val('inG'),m=lf()[g]||{};document.getElementById('inCust').value=m.cust||defCust(g);document.getElementById('inTarget').value=m.target||defTarget(g);document.getElementById('inDept').value=m.dept||'';try{draftLoad()}catch(e){}
  const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),miss=[...new Set(listOf(g).map(baseCode))].filter(b=>!(UN[b]||{}).name&&!(window.labelName&&labelName(b))),box=document.getElementById('inNames');if(!box)return;
  const PN=lj(PNK,{}),pbox=document.getElementById('inProds');if(pbox){const bs=isB(g)?[]:[...new Set(listOf(g).map(baseCode))].sort();
   const row=(b,au)=>`<div style="display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap"><span style="min-width:110px;font-family:var(--mono,monospace)">${esc(b)}</span><input class="in-pn" data-base="${esc(b)}" data-auto="${esc(au)}" value="${esc(prodClean(PN[b]||'')===prodClean(au)?'':prodClean(PN[b]||''))}" placeholder="${esc(au||'제품명 입력 (비우면 N/A)')}" style="margin:0;flex:1;min-width:140px"></div>`;
