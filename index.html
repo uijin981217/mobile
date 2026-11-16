@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V13.0</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V13.1</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -445,7 +445,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V13.0 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V13.1 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -724,24 +724,36 @@ window.undoPut=function(id,r){const a=undoAll();r.ts=Date.now();r.owner=(user()|
  for(let i=0;i<5;i++){try{localStorage.setItem(UNDO,JSON.stringify(a));return true}catch(e){const k=Object.keys(a).sort((x,y)=>a[x].ts-a[y].ts)[0];if(!k||k===id)break;delete a[k]}}return false};
 window.undoDel=function(id){const a=undoAll();delete a[id];try{localStorage.setItem(UNDO,JSON.stringify(a))}catch(e){}};
 /* 나중에 같은 표준품을 다시 올렸으면 앞의 것은 되돌릴 수 없음(뒤의 내용이 덮어써짐) */
-function undoBlock(id){const a=undoAll(),r=a[id];if(!r)return 'none';const ks=new Set(r.keys||[]);
+function undoBlock(id,sc){const a=undoAll(),r=a[id];if(!r)return 'none';const ks=new Set(sc||r.keys||[]);
  return Object.keys(a).some(k=>{const x=a[k];if(k===id||x.kind!==r.kind||x.ts<=r.ts)return false;if(r.kind==='사용기록'&&(x.to<r.from||x.from>r.to))return false;return (x.keys||[]).some(c=>ks.has(c))})?'later':''}
-window.uploadUndo=function(id){const r=undoAll()[id];if(!r)return;const u=user();if(!(u.admin||r.owner===u.id))return alert('본인이 올린 내역만 삭제할 수 있습니다.');
- if(undoBlock(id))return alert('그 뒤에 같은 표준품을 다시 올린 내역이 있어 삭제할 수 없습니다. 최근 업로드부터 삭제해 주세요.');
- const what=r.kind==='재고 Excel'?'이 업로드로 새로 들어온 입고번호 '+r.added.length+'개는 지우고, 바뀐 입고번호 '+Object.keys(r.prev).length+'개는 올리기 전 값으로 되돌립니다.':'이 업로드로 들어간 사용기록(기간 '+r.from+' ~ '+r.to+', 내 담당 표준품)을 지우고 올리기 전 기록으로 되돌립니다.';
+/* V13.1: 삭제는 '내가 담당한 표준품' 부분만 — 담당 그룹이 없는 관리자는 보기만 */
+function grpOf(k,r){const s=stocks.find(x=>x.code===k)||stocks.find(x=>masterOf(x.code)===k)||(r&&r.prev&&r.prev[k]&&r.prev[k].stock);if(s&&s.group)return s.group;const m=String(k).match(/^PB\.([^.]+)\./i);return m?m[1].toUpperCase():''}
+function undoScope(r,u){u=u||user();const G=new Set(u.groups||[]);if(!G.size||!r)return [];return (r.keys||[]).filter(k=>G.has(grpOf(k,r)))}
+window.undoScope=undoScope;
+function canUndo(id,owner){const u=user(),r=undoAll()[id];if(!r||!(u.admin||owner===u.id))return false;return undoScope(r,u).length>0}
+window.uploadUndo=function(id){const all=undoAll(),r=all[id];if(!r)return;const u=user();
+ if(!(u.admin||r.owner===u.id))return alert('본인이 올린 내역만 삭제할 수 있습니다.');
+ const sc=undoScope(r,u),S=new Set(sc);if(!sc.length)return alert('내가 담당한 표준품이 없어 삭제할 수 없습니다(보기만 가능).');
+ if(undoBlock(id,sc))return alert('그 뒤에 같은 표준품을 다시 올린 내역이 있어 삭제할 수 없습니다. 최근 업로드부터 삭제해 주세요.');
+ const part=sc.length<(r.keys||[]).length,stock=r.kind==='재고 Excel';
+ const add=stock?r.added.filter(c=>S.has(c)):[],prv=stock?Object.keys(r.prev).filter(c=>S.has(c)):[];
+ const what=(part?'이 업로드 중 내가 담당한 표준품 부분만 삭제합니다.\n':'')+(stock?'새로 들어온 입고번호 '+add.length+'개는 지우고, 바뀐 입고번호 '+prv.length+'개는 올리기 전 값으로 되돌립니다.':'기간 '+r.from+' ~ '+r.to+'의 사용기록(내 담당 표준품 '+sc.length+'종)을 올리기 전 기록으로 되돌립니다.');
  askConfirm({title:'업로드 삭제',message:what+'\n계속할까요?',ok:'삭제',danger:true,onOk:function(){let ok=false;
-  if(r.kind==='재고 Excel'){r.added.forEach(c=>{const i=stocks.findIndex(s=>s.code===c);if(i>=0){delete detailData[stocks[i].id];stocks.splice(i,1)}});
-   Object.keys(r.prev).forEach(c=>{const s=stocks.find(x=>x.code===c),b=r.prev[c];if(!s)return;Object.keys(s).forEach(k=>{if(k!=='id')delete s[k]});Object.assign(s,b.stock,{id:s.id});detailData[s.id]=b.row||{}});
-   const st=loadUploadState()||{},h=(st.history||[]).filter(x=>x.uid!==id);ok=persistUploadState(h)}
-  else if(r.kind==='사용기록')ok=window.usageUndo&&usageUndo(r);
+  if(stock){add.forEach(c=>{const i=stocks.findIndex(s=>s.code===c);if(i>=0){delete detailData[stocks[i].id];stocks.splice(i,1)}});
+   prv.forEach(c=>{const s=stocks.find(x=>x.code===c),b=r.prev[c];if(!s)return;Object.keys(s).forEach(k=>{if(k!=='id')delete s[k]});Object.assign(s,b.stock,{id:s.id});detailData[s.id]=b.row||{}});
+   const st=loadUploadState()||{},h=(st.history||[]).filter(x=>part||x.uid!==id).map(x=>x.uid===id?Object.assign({},x,{part:(x.part||0)+sc.length}):x);ok=persistUploadState(h)}
+  else if(r.kind==='사용기록'){const bf={};Object.keys(r.before||{}).forEach(b=>{if(S.has(b))bf[b]=r.before[b]});ok=window.usageUndo&&usageUndo(Object.assign({},r,{keys:sc,before:bf}))}
   if(!ok)return alert('삭제하지 못했습니다.');
-  try{const L=JSON.parse(localStorage.getItem(ULOG)||'[]').filter(x=>x.uid!==id);localStorage.setItem(ULOG,JSON.stringify(L))}catch(e){}
-  undoDel(id);window.logUpload&&logUpload('삭제',r.kind+' 업로드('+new Date(r.ts).toLocaleString('ko-KR')+') 삭제');alert('업로드를 삭제했습니다.');render()}})};
+  if(part){r.keys=r.keys.filter(k=>!S.has(k));if(stock){r.added=r.added.filter(c=>!S.has(c));prv.forEach(c=>delete r.prev[c])}else sc.forEach(b=>{if(r.before)delete r.before[b]});all[id]=r;
+   try{localStorage.setItem(UNDO,JSON.stringify(all))}catch(e){}
+   try{const L=JSON.parse(localStorage.getItem(ULOG)||'[]').map(x=>x.uid===id?Object.assign(x,{part:(x.part||0)+sc.length}):x);localStorage.setItem(ULOG,JSON.stringify(L))}catch(e){}}
+  else{try{const L=JSON.parse(localStorage.getItem(ULOG)||'[]').filter(x=>x.uid!==id);localStorage.setItem(ULOG,JSON.stringify(L))}catch(e){}undoDel(id)}
+  window.logUpload&&logUpload('삭제',r.kind+' 업로드('+new Date(r.ts).toLocaleString('ko-KR')+') '+(part?'중 내 담당 '+sc.length+(stock?'개 입고번호':'종')+' 삭제':'삭제'));alert(part?'내 담당 표준품 부분을 삭제했습니다.':'업로드를 삭제했습니다.');render()}})};
 window.uhAll=false;
 function koTs(t){const m=String(t||'').match(/(\d{4})\.\s*(\d+)\.\s*(\d+)\.?\s*(오전|오후)?\s*(\d+):(\d+)(?::(\d+))?/);if(!m)return 0;let h=+m[5];if(m[4]==='오후'&&h<12)h+=12;if(m[4]==='오전'&&h===12)h=0;return new Date(+m[1],m[2]-1,+m[3],h,+m[6],+(m[7]||0)).getTime()}
 function renderUploadHistory(){const h=loadUploadState(),rows=[];
- ((h&&h.history)||[]).forEach(x=>rows.push({ts:x.ts||koTs(x.time),time:x.time,kind:'재고 Excel',owner:x.owner,detail:'신규 '+x.added+' · 갱신 '+x.updated,uid:x.uid}));
- let log=[];try{log=JSON.parse(localStorage.getItem(ULOG)||'[]')}catch(e){}log.forEach(x=>rows.push(x));
+ ((h&&h.history)||[]).forEach(x=>rows.push({ts:x.ts||koTs(x.time),time:x.time,kind:'재고 Excel',owner:x.owner,detail:'신규 '+x.added+' · 갱신 '+x.updated+(x.part?' (일부 삭제됨)':''),uid:x.uid}));
+ let log=[];try{log=JSON.parse(localStorage.getItem(ULOG)||'[]')}catch(e){}log.forEach(x=>rows.push(x.part?Object.assign({},x,{detail:x.detail+' (일부 삭제됨)'}):x));
  /* 기록을 남기기 전에 올린 사용기록·라벨 정보도 마지막 저장 시각으로 한 줄씩 */
  try{const u=JSON.parse(localStorage.getItem('standardhub_v22_usage')||'null');if(u&&u.saved&&!log.some(x=>x.kind==='사용기록'||x.kind==='삭제'))rows.push({ts:u.saved,time:new Date(u.saved).toLocaleString('ko-KR'),kind:'사용기록',owner:'-',detail:'기간 '+(u.from||'?')+' ~ '+(u.to||'?')+' (이전 업로드)'})}catch(e){}
  try{const l=JSON.parse(localStorage.getItem('standardhub_v22_label_info')||'null');if(l&&l.saved&&!log.some(x=>x.kind==='라벨 정보'))rows.push({ts:koTs(l.saved),time:l.saved,kind:'라벨 정보',owner:'-',detail:'입고번호 '+Object.keys(l.lots||{}).length+'개 (이전 업로드)'})}catch(e){}
@@ -749,8 +761,8 @@ function renderUploadHistory(){const h=loadUploadState(),rows=[];
  /* V13.0: 담당자는 내가 올린 내역만, 최근 10건(더 보기), 칸 안에서 스크롤 */
  const me=user()||{},adm=!!me.admin,mine=adm?rows:rows.filter(x=>x.owner===me.id),U=undoAll(),N=10,shown=window.uhAll?mine:mine.slice(0,N);
  const tag=k=>'<span class="tag'+(k==='재고 Excel'?' gold':'')+'" style="white-space:nowrap">'+esc(k)+'</span>';
- const act=x=>{if(!x.uid||!U[x.uid]||!(adm||x.owner===me.id))return '';const b=undoBlock(x.uid);return b?'<span class="muted small" title="그 뒤에 같은 표준품을 다시 올려서 삭제할 수 없습니다">나중 업로드 있음</span>':'<button class="danger-outline" style="padding:3px 9px;min-height:0" onclick="uploadUndo(\''+x.uid+'\')">삭제</button>'};
- const info='<p class="muted small" style="margin:0 0 8px">'+(adm?'모든 담당자의 업로드 내역입니다.':'내가 올린 내역만 보입니다.')+' 잘못 올린 재고 Excel·사용기록은 [삭제]로 올리기 전 상태로 되돌릴 수 있습니다(최근 10건까지, 같은 표준품을 나중에 다시 올렸으면 최근 것부터).</p>';
+ const act=x=>{if(!x.uid||!U[x.uid]||!canUndo(x.uid,x.owner))return '';const b=undoBlock(x.uid,undoScope(U[x.uid]));return b?'<span class="muted small" title="그 뒤에 같은 표준품을 다시 올려서 삭제할 수 없습니다">나중 업로드 있음</span>':'<button class="danger-outline" style="padding:3px 9px;min-height:0" onclick="uploadUndo(\''+x.uid+'\')">삭제</button>'};
+ const info='<p class="muted small" style="margin:0 0 8px">'+(adm?'모든 담당자의 업로드 내역입니다.':'내가 올린 내역만 보입니다.')+(adm&&!(me.groups||[]).length?' 담당 표준품이 없는 관리자는 보기만 할 수 있습니다.</p>':' 잘못 올린 재고 Excel·사용기록은 [삭제]로 올리기 전 상태로 되돌릴 수 있습니다 — 내가 담당한 표준품 부분만(최근 10건까지, 같은 표준품을 나중에 다시 올렸으면 최근 것부터).</p>');
  return mine.length?info+`<div class="tablewrap" style="max-height:360px;overflow:auto"><table style="min-width:620px"><thead style="position:sticky;top:0;z-index:1;background:var(--panel,#fff)"><tr><th>업로드 일시</th><th>종류</th><th>담당 계정</th><th>내용</th><th></th></tr></thead><tbody>${shown.map(x=>`<tr><td>${esc(x.time)}</td><td>${tag(x.kind)}</td><td>${esc(x.owner)}</td><td>${esc(x.detail)}</td><td>${act(x)}</td></tr>`).join('')}</tbody></table></div>`+(mine.length>N?`<p class="muted small" style="margin:8px 0 0">${window.uhAll?'전체 '+mine.length+'건':'최근 '+N+'건 / 전체 '+mine.length+'건'} <button style="margin-left:6px;padding:3px 10px;min-height:0" onclick="uhAll=!uhAll;render()">${window.uhAll?'최근 10건만':'모두 보기'}</button></p>`:''):'<p class="muted">'+(adm?'아직 업로드 내역이 없습니다.':'내가 올린 업로드 내역이 없습니다.')+'</p>'}
 function loadUploadState(){try{return JSON.parse(localStorage.getItem(uploadStoreKey)||'null')}catch(e){return null}}
 function persistUploadState(history){try{localStorage.setItem(uploadStoreKey,JSON.stringify({stocks:stocks.filter(s=>s.uploaded),rows:Object.fromEntries(stocks.filter(s=>s.uploaded).map(s=>[s.code,detailData[s.id]])),history}));return true}catch(e){alert('브라우저 저장 공간이 부족하거나 차단되어 있습니다. 이번 화면에만 반영됩니다.');return false}}
@@ -2059,7 +2071,7 @@ document.addEventListener('change',e=>{if(e.target&&e.target.id==='inDate'&&docu
 window.dispSet=function(code,on){const D=lj(DK,{});if(on)D[code]=today();else delete D[code];try{localStorage.setItem(DK,JSON.stringify(D))}catch(e){return alert('저장하지 못했습니다.')}dispBox();if(document.getElementById('inNotes'))notesBox()};
 /* ---- 입력 창 ---- */
 function closeInsp(){const l=document.getElementById('inspLayer');if(l)l.remove()}
-/* V13.0: 미리보기를 여는 동안 입력 창은 숨겨 두고, 미리보기 [닫기] → 입력하던 그대로 다시 보임 */function hideInsp(){const l=document.getElementById('inspLayer');if(l)l.style.display='none'}
+/* V12.8: 미리보기를 여는 동안 입력 창은 숨겨 두고, 미리보기 [닫기] → 입력하던 그대로 다시 보임 */function hideInsp(){const l=document.getElementById('inspLayer');if(l)l.style.display='none'}
 window.closeInspection=closeInsp;
 /* V11.2: 비고 줄에 유효기한 — 작성일 기준, 내 '유효기한 색 표시' 단계 색으로 표시, 지난 것은 '지남' */
 function ntExp(s){const e=String(s.exp||'').slice(0,10);if(!/^\d{4}-\d\d-\d\d$/.test(e))return '<span class="nt-exp muted">유효기한 -</span>';
