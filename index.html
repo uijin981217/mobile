@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.4</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.5</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -445,7 +445,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V1.4 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V1.5 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2161,8 +2161,8 @@ window.inspFill=function(){notesBox();dispBox();lnBox();if(document.getElementBy
   /* V12.4: 한 번 입력해 기억된 제품명은 접어 둠 — 아직 아무 이름도 없는 것만 펼쳐서 '입력해 주세요' */
   const miss=bs.filter(b=>!autoProd(b,UN)&&!prodClean(PN[b]||'')),typed=bs.filter(b=>!autoProd(b,UN)&&prodClean(PN[b]||'')),found=bs.filter(b=>autoProd(b,UN));
   const rest=[...typed.map(b=>row(b,'')),...found.map(b=>row(b,autoProd(b,UN)))];
-  pbox.innerHTML=bs.length?(miss.length?`<div class="pn-box warn"><b>관리내역 제품명</b><p style="margin:6px 0 4px;font-weight:600;color:#b45309">⚠ 제품명을 모르는 표준품 ${miss.length}종 — 입력해 주세요</p><p class="muted small" style="margin:0 0 6px">사용기록(Excel)에서 못 찾았습니다. 한 번 입력하면 기억하고, 다음부터는 접혀 있습니다.</p>${miss.map(b=>row(b,'')).join('')}${rest.length?`<details class="pn-more"><summary class="muted small">입력·자동으로 정해진 제품명 ${rest.length}종 보기 · 고치기</summary>${rest.join('')}</details>`:''}</div>`
-   :`<details class="pn-box pn-mini"><summary><b>관리내역 제품명</b> <span class="muted small">${bs.length}종 모두 정해짐${typed.length?` (직접 입력 ${typed.length}종)`:''} · 보기 · 고치기</span></summary>${rest.join('')}</details>`):''}
+  pbox.innerHTML=bs.length?(miss.length?`<div class="pn-box warn"><b>관리내역 제품명</b> <span class="muted small" style="font-weight:400">(= 검체명 · 이 표준품으로 시험하는 의뢰사 제품, 예: 스카이리치)</span><p style="margin:6px 0 4px;font-weight:600;color:#b45309">⚠ 제품명을 모르는 표준품 ${miss.length}종 — 입력해 주세요</p><p class="muted small" style="margin:0 0 6px">사용기록(Excel)에서 못 찾았습니다. 한 번 입력하면 기억하고, 다음부터는 접혀 있습니다.</p>${miss.map(b=>row(b,'')).join('')}${rest.length?`<details class="pn-more"><summary class="muted small">입력·자동으로 정해진 제품명 ${rest.length}종 보기 · 고치기</summary>${rest.join('')}</details>`:''}</div>`
+   :`<details class="pn-box pn-mini"><summary><b>관리내역 제품명</b> <span class="muted small" style="font-weight:400">(= 검체명 · 이 표준품으로 시험하는 의뢰사 제품, 예: 스카이리치)</span> <span class="muted small">${bs.length}종 모두 정해짐${typed.length?` (직접 입력 ${typed.length}종)`:''} · 보기 · 고치기</span></summary>${rest.join('')}</details>`):''}
  /* V12.4: 이름을 입력했거나 '빼기'를 고른 표준품만 있으면 접어 둠 */const _open=miss.some(b=>!SN[b]&&!SKIP[b]);
  box.innerHTML=miss.length?`<${_open?'div':'details'} class="pn-box${_open?'':' pn-mini'}">${_open?'':'<summary>'}<b>표준품명이 없는 표준품 ${miss.length}종</b>${_open?'':' <span class="muted small">모두 입력·빼기 정해짐 · 보기 · 고치기</span></summary>'}<p class="muted small" style="margin:4px 0 8px">사용기록이 없어 표준품명을 모릅니다. 쓰는 표준품이면 이름을 입력하고(비우면 N/A), 지금 안 쓰는 표준품이면 '관리내역에서 빼기'를 체크하세요. 선택은 다음에도 기억합니다.</p>${miss.map(b=>`<div style="display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap"><span style="min-width:110px;font-family:var(--mono,monospace)">${esc(b)}</span><input class="in-nm" data-base="${esc(b)}" value="${esc(SN[b]||'')}" placeholder="비우면 N/A" style="margin:0;flex:1;min-width:140px"><label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-weight:400;white-space:nowrap"><input class="in-skip" data-base="${esc(b)}" type="checkbox" ${SKIP[b]?'checked':''} style="width:auto;margin:0">관리내역에서 빼기</label></div>`).join('')}</${_open?'div':'details'}>`:''};
 window.openInspection=function(mode){
@@ -2841,6 +2841,17 @@ const _r=window.render;window.render=function(){const r=_r.apply(this,arguments)
   d.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap"><div><h3 style="margin:0 0 6px">처음 오셨네요 — 먼저 LIMS Excel을 올려 주세요</h3><p class="muted" style="margin:0;line-height:1.6">① <b>재고 Excel</b>(표준품 목록의 바탕) → ② <b>사용기록</b>(사용 추이 · 1회 사용량) → ③ <b>라벨 정보</b>(표준품명 · 폐기 표시) 순서로 올리면 대시보드 · 관리내역 · 정기점검이 자동으로 채워집니다. 내 담당 그룹 표준품만 들어가요.</p></div><div class="toolbar" style="gap:6px"><button onclick="window._firstGuide=false;document.getElementById(\'firstGuide\').remove()">닫기</button><button class="primary" onclick="window._firstGuide=false;go(\'overview\')">나중에 · 대시보드로</button></div></div>';
   const h=sec.querySelector('h2');(h&&h.nextSibling?sec.insertBefore(d,h.nextSibling):sec.insertBefore(d,sec.firstChild))}}}catch(e){}
  return r};
+})();
+</script><script>/* V1.5: 앱허브(서버판)에서는 '테스트 버전 · 이 브라우저에만 저장' 안내를 빼거나 서버 기준 문구로 */
+(function(){if(!window.__SH_SERVER)return;
+function fix(){try{
+ document.querySelectorAll('details.hint-fold').forEach(d=>{const s=d.querySelector('summary');if(s&&s.textContent.trim()==='테스트 버전 안내')d.remove()});
+ document.querySelectorAll('.landing-note').forEach(e=>{if(/테스트 버전/.test(e.textContent))e.textContent='사내 앱허브 · 계정과 자료는 회사 서버에 함께 저장됩니다. 공식 기준은 LIMS입니다.'});
+ document.querySelectorAll('#upload p.muted').forEach(e=>{if(/테스트 버전입니다/.test(e.textContent))e.textContent='원본 Excel 파일은 저장하지 않고 필요한 행 데이터만 회사 서버에 저장합니다.'});
+ const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;const R=[[' (서버 연동 전 로컬 데모)',''],[' (테스트 버전: 서버 저장이 아니므로 이력의 무결성은 보증되지 않습니다.)',''],['이 브라우저에 저장합니다','회사 서버에 저장합니다'],['테스트 버전에서는 20MB 이하','20MB 이하']];
+ while(n=w.nextNode()){let t=n.nodeValue,o=t;R.forEach(([a,b])=>{if(t.indexOf(a)>=0)t=t.split(a).join(b)});if(t!==o)n.nodeValue=t}
+}catch(e){}}
+const _r=window.render;window.render=function(){const r=_r.apply(this,arguments);fix();return r};fix();
 })();
 </script><script>/* V1.2: 새로 고침해도 로그인 유지 — 이 탭(sessionStorage)에만 아이디·보던 화면을 기억(서버로 보내지 않음, 로그아웃하거나 탭을 닫으면 지워짐) */
 (function(){var K='sh_login_session';
