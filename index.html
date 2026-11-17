@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.5</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.6</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -428,6 +428,12 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 /* V11.9: 선택 탭이 굵은 글꼴(맑은 고딕 Bold)로 바뀌며 글씨체가 달라 보이고 옆 버튼이 밀리던 문제 — 굵기는 그대로(500), 글자 테두리로만 살짝 진하게 */#subTabs button.active{font-weight:500!important;-webkit-text-stroke:0;color:#20242b!important}header.hdr3>nav button.active,nav button.active{font-weight:500!important;-webkit-text-stroke:0;color:#20242b!important}#subTabs button:not(.active){color:#6b7280}/* V12.0: 글자 테두리 효과는 맑은 고딕에서 깨져 보여 뺌 — 선택은 바탕·밑줄·글자색으로만 */
 /* V12.4: 관리내역 제품명·표준품명 상자 — 다 정해지면 한 줄로 접힘 */#inspLayer .pn-box{margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}#inspLayer .pn-box.warn{border-color:#e0a100}#inspLayer .pn-box.pn-mini{background:transparent;padding:6px 2px;border:0;border-top:1px solid var(--line);border-radius:0}#inspLayer .pn-box summary{cursor:pointer}#inspLayer .pn-more{margin-top:6px}#inspLayer .pn-more summary{cursor:pointer}#inspLayer .pn-box .in-pn,#inspLayer .pn-box .in-nm{height:32px;min-height:0;padding:4px 10px;font-size:13.5px}#inspLayer .pn-box div[style*="margin:6px 0"]{margin:4px 0!important}
 #inspLayer .s-on{display:inline-flex!important;align-items:center;gap:6px;margin:0!important;font-weight:400!important;width:150px;white-space:nowrap}#inspLayer .s-on input{width:auto!important;margin:0!important}
+</style><style>/* V1.6: 표준품 목록 표가 회사 PC(맑은 고딕)에서 오른쪽으로 넘쳐 잘려 보이던 것 — 제목 칸 선택 상자를 글자 아래로, 안쪽 표 여백 줄임, 긴 값은 칸 안에서 줄바꿈 */
+#inventory thead th{vertical-align:bottom}
+#inventory thead th .head-filter{display:block;margin:4px 0 0!important;width:100%;min-width:76px;max-width:130px}
+#masterRows td[colspan]{padding-left:20px!important;padding-right:20px!important}
+#masterRows td[colspan] .tablewrap td{white-space:normal}
+#masterRows td[colspan] .tablewrap td.nw{white-space:nowrap}
 </style></head><body>
 <div id="loginLanding" aria-label="StandardHub 로그인">
  <div class="landing-inner"><div class="landing-icon" aria-hidden="true">▱</div>
@@ -445,7 +451,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V1.5 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V1.6 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
