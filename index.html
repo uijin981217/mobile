@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.5</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.6</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -451,7 +451,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V2.5 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V2.6 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -520,7 +520,7 @@ let dashboardSoonSort='asc';
 function setDashboardSoonSort(value){dashboardSoonSort=value==='desc'?'desc':'asc';const root=document.getElementById('dashboard');if(root)root.innerHTML=dash();}
 function dash(){
  const u=user(),m=activeMine(),soon=m.filter(s=>expireState(s)==='3개월 이내'),expired=m.filter(s=>expireState(s)==='만료');
- const line=(s,desc)=>`<div class="alertrow"><div><b>${esc(s.code)}</b> <span class="muted">${esc(getInventoryValue(s,'Cat No.')||'')} · ${esc(getInventoryValue(s,'보관 장소'))}</span><div class="muted">${desc}</div></div></div>`;
+ const line=(s,desc)=>`<div class="alertrow"><div><b>${esc(s.code)}</b> ${(()=>{try{const n=window.stdName&&stdName(masterOf(s.code));return n?esc(n)+' ':''}catch(e){return ''}})()}<span class="muted">${esc(getInventoryValue(s,'Cat No.')||'')} · ${esc(getInventoryValue(s,'보관 장소'))}</span><div class="muted">${desc}</div></div></div>`;
  const groupedAlerts=(arr,type)=>{let grouped=groupMasters(arr);if(type==='soon')grouped=[...grouped].sort((a,b)=>{const ea=Math.min(...a[1].map(s=>dayGap(s.exp))),eb=Math.min(...b[1].map(s=>dayGap(s.exp)));return dashboardSoonSort==='desc'?eb-ea:ea-eb});if(!grouped.length)return '<p class="muted">확인할 입고번호가 없습니다.</p>';
  return `<div class="expiry-group-list">${grouped.map(([base,items])=>{const sorted=[...items].sort((a,b)=>dashboardSoonSort==='desc'&&type==='soon'?dayGap(b.exp)-dayGap(a.exp):dayGap(a.exp)-dayGap(b.exp));const earliest=type==='soon'?[...items].sort((a,b)=>dayGap(a.exp)-dayGap(b.exp))[0]:sorted[0];const desc=type==='soon'?'가장 빠른 유효기한 '+esc(earliest.exp):'유효기한 '+esc(earliest.exp);return `<details class="expiry-group"><summary><span class="expiry-group-name">${esc(base)}</span><span class="expiry-group-count">${items.length}건 확인 필요</span><span class="expiry-group-date">${desc}</span></summary><div class="expiry-group-items">${sorted.map(s=>line(s,type==='soon'?`유효기한 <strong class="expiry-date-emphasis soon">${esc(s.exp)}</strong> · <span class="expiry-days-emphasis">D-${dayGap(s.exp)}</span> · 실재고 ${esc(s.qty)} ${esc(s.unit)}`:`만료일 <strong class="expiry-date-emphasis expired">${esc(s.exp)}</strong> · 실재고 ${esc(s.qty)} ${esc(s.unit)} · 폐기 미완료`)).join('')}</div></details>`;}).join('')}</div>`;};
  const client=clientAlertOverview();const lowName=hasGeneral(u)?'재고 부족 예상 (BPT)':'재고 부족 알림';const lowCount=hasGeneral(u)?'분석 준비 중':client.triggered.length+'종';const tabs=[['soon','유효기한 3개월 이내',soon.length+'건'],['expired','유효기한 만료',expired.length+'건'],['low',lowName,lowCount]];
@@ -1794,7 +1794,7 @@ window.usageClear=function(){askConfirm({title:'사용기록 지우기',message:
 function monthsBetween(a,b){return (Number(b.slice(0,4))-Number(a.slice(0,4)))*12+Number(b.slice(5,7))-Number(a.slice(5,7))}
 function addMonth(k,i){const y=Number(k.slice(0,4)),m=Number(k.slice(5,7))-1+i;return Math.floor(y+m/12)+'-'+String(((m%12)+12)%12+1).padStart(2,'0')}
 function compute(base,lots,U){
-  const bd=U&&U.data[base],r={base,lots,name:(bd&&bd.name)||(lots[0]&&lots[0].name)||'',has:!!bd};
+  const bd=U&&U.data[base],r={base,lots,name:(window.stdName&&stdName(base))||(bd&&bd.name)||(lots[0]&&lots[0].name)||'',has:!!bd};
   /* 단위 그룹 집계 */
   const fam={};
   if(bd)Object.keys(bd.lots).forEach(c=>Object.keys(bd.lots[c]).forEach(un=>{const ui=unitInfo(un),f=fam[ui.fam]=fam[ui.fam]||{nz:0,tot:{},ui};Object.keys(bd.lots[c][un]).forEach(d=>{const x=bd.lots[c][un][d];f.nz+=x[1];f.tot[ui.label]=(f.tot[ui.label]||0)+x[1]})}));
