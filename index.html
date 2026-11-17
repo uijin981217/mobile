@@ -2350,16 +2350,20 @@ window.canSeePrice=function(){const u=user();return !!u&&(!!u.admin||u.status===
 window.purchaseFor=function(base){if(!canSeePrice())return [];const o=ld();if(!o)return [];const CM=catMap(),set=CM[base];if(!set)return [];
  return o.items.filter(x=>pnKeys(x.pn).some(k=>set.has(k))).sort((a,b)=>(b.order||b.reg).localeCompare(a.order||a.reg))};
 const won=n=>Number.isFinite(n)?Math.round(n).toLocaleString('ko-KR')+'원':'-';
+/* V3.0: 가격이 튀는 구매 — 같은 규격의 다른 구매가 중앙값과 비교해 2배 이상 비싸거나 절반 이하로 싸면 '⚠ 평소의 N배' 표시(값은 그대로). 규격이 다르면 다른 상품으로 봄 */
+const spK=s=>String(s||'').toLowerCase().replace(/\s+/g,'');
+const oddOf=(y,L)=>{if(!(y.price>0))return null;const ps=L.filter(z=>z!==y&&spK(z.spec)===spK(y.spec)&&z.price>0).map(z=>z.price).sort((a,b)=>a-b);if(ps.length<2)return null;const m=ps.length%2?ps[(ps.length-1)/2]:(ps[ps.length/2-1]+ps[ps.length/2])/2;const r=y.price/m;return r>=2||r<=0.5?Math.round(r*10)/10:null};
+const oddTag=r=>r==null?'':` <span class="tag ${r>=2?'red':'gold'}" title="같은 규격의 다른 구매가(중앙값)와 비교 — 규격·수량·입력 실수를 확인해 주세요" style="margin-left:4px">⚠ 평소의 ${r}배</span>`;
 const days=(a,b)=>a&&b?Math.round((new Date(b)-new Date(a))/864e5):NaN;
-window.purchaseCell=function(base){const L=purchaseFor(base);if(!L.length)return '-';const x=L[0];return `<b>${won(x.price)}</b><div class="small muted">${esc(x.spec||'')}${x.order?' · '+esc(x.order.slice(2).replace(/-/g,'.')):''}</div>`};
+window.purchaseCell=function(base){const L=purchaseFor(base);if(!L.length)return '-';const x=L[0];return `<b>${won(x.price)}</b>${oddTag(oddOf(x,L))}<div class="small muted">${esc(x.spec||'')}${x.order?' · '+esc(x.order.slice(2).replace(/-/g,'.')):''}</div>`};
 window.purchaseHtml=function(r){const L=purchaseFor(r.base);
  if(!L.length)return '';
- const x=L[0],prev=L.find((y,i)=>i>0&&y.spec===x.spec&&y.price!==x.price),ch=prev?Math.round((x.price-prev.price)/prev.price*1000)/10:null;
+ const x=L[0],prev=L.find((y,i)=>i>0&&spK(y.spec)===spK(x.spec)&&y.price!==x.price),ch=prev?Math.round((x.price-prev.price)/prev.price*1000)/10:null;
  const leads=L.map(y=>days(y.order||y.reg,y.deliv)).filter(d=>Number.isFinite(d)&&d>=0),lead=leads.length?Math.round(leads.reduce((a,b)=>a+b,0)/leads.length):NaN;
  let when='';if(r.out instanceof Date&&!isNaN(r.out)&&Number.isFinite(lead)){const d=new Date(r.out);d.setDate(d.getDate()-lead);const late=ymd(d)<=ymd(new Date());when=`<p><b${late?' style="color:var(--bad)"':''}>주문 권장 시점: ${ymd(d)}경${late?' — 지금 주문이 필요해요':''}</b> <span class="muted small">(다 쓰는 날 ${ymd(r.out)}에서 평균 입고 기간 ${lead}일을 뺀 날짜)</span></p>`}
- const rows=L.slice(0,5).map(y=>`<tr><td>${esc(y.order||y.reg||'-')}</td><td>${esc(y.vendor||'-')}</td><td>${esc(y.spec||'-')}</td><td>${y.qty}</td><td>${won(y.price)}</td><td>${esc(y.deliv||'-')}</td><td>${Number.isFinite(days(y.order||y.reg,y.deliv))?days(y.order||y.reg,y.deliv)+'일':'-'}</td></tr>`).join('');
+ const rows=L.slice(0,5).map(y=>`<tr><td>${esc(y.order||y.reg||'-')}</td><td>${esc(y.vendor||'-')}</td><td>${esc(y.spec||'-')}</td><td>${y.qty}</td><td style="white-space:nowrap">${won(y.price)}${oddTag(oddOf(y,L))}</td><td>${esc(y.deliv||'-')}</td><td>${Number.isFinite(days(y.order||y.reg,y.deliv))?days(y.order||y.reg,y.deliv)+'일':'-'}</td></tr>`).join('');
  return `<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)"><p style="margin:0 0 6px"><b>구매 정보</b> <span class="muted small">구매 담당 팀 발주 목록 · P/N ${esc(x.pn)}</span></p>
- <p>최근 구매가 <b>${won(x.price)}</b> / ${esc(x.spec||'규격 미기재')} <span class="muted">(${esc(x.order||x.reg||'')} · ${esc(x.vendor||'발주처 미기재')})</span>${ch!=null?` <span class="tag ${ch>0?'warn':''}" style="margin-left:4px">지난번보다 ${ch>0?'▲':'▼'}${Math.abs(ch)}%</span>`:''}</p>
+ <p>최근 구매가 <b>${won(x.price)}</b>${oddTag(oddOf(x,L))} / ${esc(x.spec||'규격 미기재')} <span class="muted">(${esc(x.order||x.reg||'')} · ${esc(x.vendor||'발주처 미기재')})</span>${ch!=null?` <span class="tag ${ch>0?'warn':''}" style="margin-left:4px">같은 규격 지난번보다 ${ch>0?'▲':'▼'}${Math.abs(ch)}%</span>`:''}</p>${(()=>{const sm=new Map();L.forEach(y=>{if(!sm.has(spK(y.spec)))sm.set(spK(y.spec),y)});const sp=[...sm.values()];return sp.length>1?`<p class="muted small">규격별 최근 구매가: ${sp.map(y=>esc(y.spec||'규격 미기재')+' '+won(y.price)).join(' · ')}</p>`:''})()}
  ${Number.isFinite(lead)?`<p class="muted">발주부터 납품까지 평균 <b>${lead}일</b> (${leads.length}건)</p>`:''}${when}
  <div class="tablewrap"><table><thead><tr><th>발주일</th><th>발주처</th><th>규격</th><th>수량</th><th>단가</th><th>납품일</th><th>걸린 기간</th></tr></thead><tbody>${rows}</tbody></table></div>${L.length>5?`<p class="muted small">최근 5건만 표시 (전체 ${L.length}건)</p>`:''}</div>`};
 let pend=null;
