@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.2</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -451,7 +451,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V2.2 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V2.3 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2906,5 +2906,33 @@ window.toggleGroup=function(id,g,on){const u=users.find(x=>x.id===id);if(!u)retu
  alert(u.name+' — '+g+' 그룹 '+(on?'배정':'해제')+' 적용됨 (저장 완료)')};
 window.addItem=function(id){const u=users.find(x=>x.id===id),el=document.getElementById('itemPick');if(!u||!el)return;
  u.items=[...new Set([...(u.items||[]),el.value])];saveDemoAccounts();render()};
+})();
+
+/* V2.3: 계정별 권한 현황 — 계정이 많아도 길어지지 않게: 칸 안 스크롤(제목 줄 고정)·이름/아이디 찾기·소속 실 거르기·승인 대기/관리자/실장 먼저 */
+(function(){
+const st=document.createElement('style');st.textContent='#admin .acct-wrap{max-height:520px;overflow:auto}#admin .acct-wrap thead th{position:sticky;top:0;z-index:2;background:var(--panel,#fff)}#admin .acct-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}#admin .acct-bar input{margin:0;max-width:240px}#admin .acct-bar select{margin:0;width:auto;min-width:150px}';
+document.head.appendChild(st);
+let q='',dp='';
+function fix(){if(active!=='admin')return;const root=document.getElementById('admin');if(!root)return;
+ const tbl=[...root.querySelectorAll('table')].find(t=>/그룹 배정/.test(t.tHead?.textContent||'')&&/소속 실/.test(t.tHead?.textContent||''));if(!tbl||!tbl.tBodies[0])return;
+ const wrap=tbl.closest('.tablewrap');if(!wrap)return;wrap.classList.add('acct-wrap');
+ const body=tbl.tBodies[0],rows=[...body.rows].filter(r=>r.cells.length>3);
+ const deptOf=r=>{const s=r.cells[1].querySelector('select');return s?s.value:r.cells[1].textContent.trim()};
+ const rank=r=>{const st=r.cells[3].textContent,ro=r.cells[2].textContent;return /대기/.test(st)?0:/관리자/.test(ro)?1:/실장/.test(ro)?2:/반려/.test(st)?4:3};
+ rows.sort((a,b)=>rank(a)-rank(b)||a.cells[0].textContent.localeCompare(b.cells[0].textContent,'ko')).forEach(r=>body.appendChild(r));
+ let bar=root.querySelector('.acct-bar');
+ if(!bar){bar=document.createElement('div');bar.className='acct-bar';
+  const ds=[...new Set(rows.map(deptOf).filter(Boolean))].sort();
+  bar.innerHTML='<input type="search" id="acctQ" placeholder="이름 · 아이디 찾기" autocomplete="off"><select id="acctD"><option value="">소속 실 전체</option>'+ds.map(d=>'<option>'+esc(d)+'</option>').join('')+'<option value="__none">미지정</option></select><span class="muted small" id="acctN"></span>';
+  wrap.before(bar);
+  const qi=bar.querySelector('#acctQ'),di=bar.querySelector('#acctD');qi.value=q;di.value=[...di.options].some(o=>o.value===dp)?dp:'';
+  qi.oninput=()=>{q=qi.value;apply()};di.onchange=()=>{dp=di.value;apply()}}
+ apply()}
+function apply(){const root=document.getElementById('admin');const tbl=root&&root.querySelector('.acct-wrap table');if(!tbl)return;
+ const rows=[...tbl.tBodies[0].rows].filter(r=>r.cells.length>3),k=q.trim().toLowerCase();let n=0;
+ rows.forEach(r=>{const s=r.cells[1].querySelector('select'),d=s?s.value:'';const hit=(!k||r.cells[0].textContent.toLowerCase().includes(k))&&(!dp||(dp==='__none'?!d:d===dp));r.hidden=!hit;if(hit)n++});
+ let none=tbl.tBodies[0].querySelector('.acct-none');if(!n&&rows.length){if(!none){none=document.createElement('tr');none.className='acct-none';none.innerHTML='<td colspan="8" class="muted">찾는 계정이 없습니다.</td>';tbl.tBodies[0].appendChild(none)}}else if(none)none.remove();
+ const c=document.getElementById('acctN');if(c)c.textContent=(k||dp)?n+' / '+rows.length+'명':'전체 '+rows.length+'명'}
+const _r=window.render;window.render=function(){_r.apply(this,arguments);try{fix()}catch(e){}};
 })();
 </script></body></html>
