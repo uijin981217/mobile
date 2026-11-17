@@ -2348,7 +2348,7 @@ function matchBase(pn,CM){const ks=pnKeys(pn);if(!ks.length)return [];return Obj
 /* V7.2: 단가는 관리자, 그리고 관리자가 '단가 보기'를 허용한 담당자만 */
 window.canSeePrice=function(){const u=user();return !!u&&(!!u.admin||u.status==='approved'&&!!u.priceView)};
 window.purchaseFor=function(base){if(!canSeePrice())return [];const o=ld();if(!o)return [];const CM=catMap(),set=CM[base];if(!set)return [];
- const FX=fxLoad();return o.items.filter(x=>pnKeys(x.pn).some(k=>set.has(k))&&!(FX[x.id]&&FX[x.id].hide)).map(x=>FX[x.id]&&FX[x.id].price>0?Object.assign({},x,{price:FX[x.id].price,orig:x.price,fixed:true}):x).sort((a,b)=>(b.order||b.reg).localeCompare(a.order||a.reg))};
+ const FX=fxLoad();return o.items.filter(x=>pnKeys(x.pn).some(k=>set.has(k))&&!(FX[x.id]&&FX[x.id].hide)&&!((x.order||x.reg||'')&&(x.order||x.reg)<'2022-01-01'))/* V3.0: 2022년 전 발주는 안 봄(화면·계산 모두, 저장 자료는 그대로) */.map(x=>FX[x.id]&&FX[x.id].price>0?Object.assign({},x,{price:FX[x.id].price,orig:x.price,fixed:true}):x).sort((a,b)=>(b.order||b.reg).localeCompare(a.order||a.reg))};
 /* V3.0: 구매 정보 고치기 — ⚠(튀는 가격) 줄에만 [고치기]: 단가 고치기 / 이 구매 빼기. 원래 자료는 그대로 두고 고친 내용만 따로 저장(standardhub_v22_purchase_fix) → 같은 Excel을 다시 올려도 유지. 단가를 볼 수 있는 사람만 */
 const FXK='standardhub_v22_purchase_fix';
 function fxLoad(){try{return JSON.parse(localStorage.getItem(FXK)||'{}')||{}}catch(e){return {}}}
