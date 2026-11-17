@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.1</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.2</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -445,7 +445,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V1.1 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V1.2 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -932,7 +932,7 @@ function urgentTable(list,limit,withOwner,useF){
   if(f.all)limit=0;info=`<p class="muted small" style="margin:6px 0 0">${rows.length<tot?'조건에 맞는 '+rows.length+'건 (전체 '+tot+'건)':'전체 '+tot+'건'}${limit&&rows.length>limit?' 중 유효기한이 빠른 '+limit+'건 표시':''}</p>`}
  rows=rows.slice(0,limit||9999);if(useF)return urgTableHtml(rows,withOwner,urgHeadSel(list,withOwner))+info;return urgTableHtml(rows,withOwner)}
 function urgTableHtml(rows,withOwner,H){H=H||{};
- return `<table><thead><tr><th>입고번호${H.grp||''}</th><th>품명</th><th>보관${H.sto||''}</th><th>유효기한</th><th>재고</th><th>구분${H.kind||''}</th>${withOwner?'<th>담당자'+(H.owner||'')+'</th>':''}</tr></thead><tbody>${rows.map(s=>{const d=dayGap(s.exp);const tag=Number.isFinite(d)&&d<0?'만료':Number.isFinite(d)&&d<=30?'30일 이내':'재고 0 · 폐기 미완료';return `<tr><td><b>${esc(s.code)}</b></td><td>${esc(s.name||'')}</td><td>${esc(s.storage)}</td><td>${esc(s.exp||'-')} <span class="small muted">${esc(dday(s))}</span></td><td>${esc(s.qty)} ${esc(s.unit)}</td><td>${tag}</td>${withOwner?'<td>'+(ownersOf(s).map(u=>esc(u.name)).join(', ')||(hasStaff()?'<b class="danger">없음</b>':'—'))+'</td>':''}</tr>`}).join('')||'<tr><td colspan="7">해당 없음</td></tr>'}</tbody></table>`}
+ return `<table><thead><tr><th>입고번호${H.grp||''}</th><th>표준품명</th><th>보관${H.sto||''}</th><th>유효기한</th><th>재고</th><th>구분${H.kind||''}</th>${withOwner?'<th>담당자'+(H.owner||'')+'</th>':''}</tr></thead><tbody>${rows.map(s=>{const d=dayGap(s.exp);const tag=Number.isFinite(d)&&d<0?'만료':Number.isFinite(d)&&d<=30?'30일 이내':'재고 0 · 폐기 미완료';const nm=(window.labelName&&labelName(masterOf(s.code)))||'';return `<tr><td><b>${esc(s.code)}</b></td><td>${nm?esc(nm)+(s.name&&s.name!==nm?' <span class="small muted">'+esc(s.name)+'</span>':''):esc(s.name||'')}</td><td>${esc(s.storage)}</td><td>${esc(s.exp||'-')} <span class="small muted">${esc(dday(s))}</span></td><td>${esc(s.qty)} ${esc(s.unit)}</td><td>${tag}</td>${withOwner?'<td>'+(ownersOf(s).map(u=>esc(u.name)).join(', ')||(hasStaff()?'<b class="danger">없음</b>':'—'))+'</td>':''}</tr>`}).join('')||'<tr><td colspan="7">해당 없음</td></tr>'}</tbody></table>`}
 
 function urgHeadSel(act,adm){const f=window._uf||{},U=act.filter(s=>{const d=dayGap(s.exp);return Number.isFinite(d)&&(d<0||d<=30)||Number(s.qty)===0});
  const opt=(v,t,cur)=>`<option value="${esc(v)}"${v===cur?' selected':''}>${esc(t)}</option>`,stos=[...new Set(U.map(s=>s.storage).filter(Boolean))].sort();
@@ -2738,5 +2738,18 @@ function draw(){const t=document.querySelector('header .toolbar');if(!t)return;l
 window.hdrGo=function(w){try{if(w==='sign'){go(user().admin?'overview':'dashboard');setTimeout(()=>{const p=document.getElementById('signPanel');if(p)p.scrollIntoView({behavior:'smooth',block:'start'})},60)}else go(w)}catch(e){}};
 const R7=window.render;window.render=function(){R7();try{draw()}catch(e){}};
 addEventListener('sh-live',()=>{try{draw()}catch(e){}});
+})();
+</script><script>/* V1.2: 새로 고침해도 로그인 유지 — 이 탭(sessionStorage)에만 아이디·보던 화면을 기억(서버로 보내지 않음, 로그아웃하거나 탭을 닫으면 지워짐) */
+(function(){var K='sh_login_session';
+ function get(){try{return JSON.parse(sessionStorage.getItem(K)||'null')}catch(e){return null}}
+ function put(v){try{if(v)sessionStorage.setItem(K,JSON.stringify(v));else sessionStorage.removeItem(K)}catch(e){}}
+ try{var o=get(),sel=document.getElementById('who');
+  if(o&&o.id&&sel&&typeof users!=='undefined'){var u=users.find(function(x){return x.id===o.id});
+   if(u&&(u.admin||u.status==='approved')){if(!Array.from(sel.options).some(function(x){return x.value===u.id}))sel.add(new Option(u.name,u.id));sel.value=u.id;
+    var l=document.getElementById('loginLanding');if(l)l.classList.add('hidden');
+    var tabs=[];try{tabs=visibleTabs(user())}catch(e){}active=(o.active&&tabs.indexOf(o.active)>=0)?o.active:(u.admin?'admin':'dashboard');render();try{if(o.y)scrollTo(0,o.y)}catch(e){}}
+   else put(null)}}catch(e){}
+ var R=window.render;window.render=function(){var r=R.apply(this,arguments);try{var id=document.getElementById('who').value;put(id&&id!=='guest'?{id:id,active:active}:null)}catch(e){}return r};
+ addEventListener('beforeunload',function(){try{var o=get();if(o){o.y=scrollY;put(o)}}catch(e){}});
 })();
 </script></body></html>
