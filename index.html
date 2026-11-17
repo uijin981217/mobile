@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.7</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V2.8</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -451,7 +451,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V2.7 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V2.8 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1980,7 +1980,7 @@ function gv(r,k){if(r[k]!=null&&r[k]!=='')return String(r[k]).trim();const t=k.r
 function listOf(g){return activeMine().filter(s=>s.group===g).sort((a,b)=>a.code.localeCompare(b.code,undefined,{numeric:true}))}
 const usage=()=>(lj('standardhub_v22_usage',{})||{}).data||{};
 const savedNames=()=>lj(NK,{});
-function stdName(base,UN,SN){return (window.labelName&&labelName(base))||((UN||usage())[base]||{}).name||(SN||savedNames())[base]||''}
+function stdName(base,UN,SN){return (SN||savedNames())[base]||(window.labelName&&labelName(base))||((UN||usage())[base]||{}).name||''}
 function nameFn(){const UN=usage(),SN=savedNames();return s=>{const u=stdName(baseCode(s),UN,SN);if(u)return u;return s.name&&s.name!==s.code?s.name:'-'}}
 function curMon(){let v=Number(lj('standardhub_v22_alert_months',3));return (Number.isInteger(v)&&v>=1&&v<=24)?v:3}
 
@@ -2161,7 +2161,7 @@ window.ntAll=function(btn){const d=btn.closest('details'),v=d.querySelector('.nt
 window.noteSet=function(code,v){const N=lj(LK,{});v=String(v||'').trim();if(v&&!ntNone(v))N[code]=v;else delete N[code];try{localStorage.setItem(LK,JSON.stringify(N))}catch(e){return alert('이 브라우저에서는 저장할 수 없습니다.')}notesBox()};
 window.noteAdd=function(){const c=val('ntCode'),t=val('ntText').trim();if(!t)return alert('비고 내용을 입력해 주세요.');noteSet(c,t)};
 window.inspFill=function(){notesBox();dispBox();lnBox();if(document.getElementById('inTiers')&&!document.getElementById('tRows'))tiersBox();const g=val('inG'),m=lf()[g]||{};document.getElementById('inCust').value=m.cust||defCust(g);document.getElementById('inTarget').value=m.target||defTarget(g);document.getElementById('inDept').value=m.dept||'';try{draftLoad()}catch(e){}
- const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),miss=[...new Set(listOf(g).map(baseCode))].filter(b=>!(UN[b]||{}).name&&!(window.labelName&&labelName(b))),box=document.getElementById('inNames');if(!box)return;
+ const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),allB=[...new Set(listOf(g).map(baseCode))].sort(),autoNm=b=>(window.labelName&&labelName(b))||(UN[b]||{}).name||'',miss=allB.filter(b=>!autoNm(b)),box=document.getElementById('inNames');if(!box)return;
  const PN=lj(PNK,{}),pbox=document.getElementById('inProds');if(pbox){const bs=isB(g)?[]:[...new Set(listOf(g).map(baseCode))].sort();
   const row=(b,au)=>`<div style="display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap"><span style="min-width:110px;font-family:var(--mono,monospace)">${esc(b)}</span><input class="in-pn" data-base="${esc(b)}" data-auto="${esc(au)}" value="${esc(prodClean(PN[b]||'')===prodClean(au)?'':prodClean(PN[b]||''))}" placeholder="${esc(au||'제품명 입력 (비우면 N/A)')}" style="margin:0;flex:1;min-width:140px"></div>`;
   /* V12.4: 한 번 입력해 기억된 제품명은 접어 둠 — 아직 아무 이름도 없는 것만 펼쳐서 '입력해 주세요' */
@@ -2169,8 +2169,12 @@ window.inspFill=function(){notesBox();dispBox();lnBox();if(document.getElementBy
   const rest=[...typed.map(b=>row(b,'')),...found.map(b=>row(b,autoProd(b,UN)))];
   pbox.innerHTML=bs.length?(miss.length?`<div class="pn-box warn"><b>관리내역 제품명</b> <span class="muted small" style="font-weight:400">(= 검체명 · 이 표준품으로 시험하는 의뢰사 제품, 예: 스카이리치)</span><p style="margin:6px 0 4px;font-weight:600;color:#b45309">⚠ 제품명을 모르는 표준품 ${miss.length}종 — 입력해 주세요</p><p class="muted small" style="margin:0 0 6px">사용기록(Excel)에서 못 찾았습니다. 한 번 입력하면 기억하고, 다음부터는 접혀 있습니다.</p>${miss.map(b=>row(b,'')).join('')}${rest.length?`<details class="pn-more"><summary class="muted small">입력·자동으로 정해진 제품명 ${rest.length}종 보기 · 고치기</summary>${rest.join('')}</details>`:''}</div>`
    :`<details class="pn-box pn-mini"><summary><b>관리내역 제품명</b> <span class="muted small" style="font-weight:400">(= 검체명 · 이 표준품으로 시험하는 의뢰사 제품, 예: 스카이리치)</span> <span class="muted small">${bs.length}종 모두 정해짐${typed.length?` (직접 입력 ${typed.length}종)`:''} · 보기 · 고치기</span></summary>${rest.join('')}</details>`):''}
- /* V12.4: 이름을 입력했거나 '빼기'를 고른 표준품만 있으면 접어 둠 */const _open=miss.some(b=>!SN[b]&&!SKIP[b]);
- box.innerHTML=miss.length?`<${_open?'div':'details'} class="pn-box${_open?'':' pn-mini'}">${_open?'':'<summary>'}<b>표준품명이 없는 표준품 ${miss.length}종</b>${_open?'':' <span class="muted small">모두 입력·빼기 정해짐 · 보기 · 고치기</span></summary>'}<p class="muted small" style="margin:4px 0 8px">사용기록이 없어 표준품명을 모릅니다. 쓰는 표준품이면 이름을 입력하고(비우면 N/A), 지금 안 쓰는 표준품이면 '관리내역에서 빼기'를 체크하세요. 선택은 다음에도 기억합니다.</p>${miss.map(b=>`<div style="display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap"><span style="min-width:110px;font-family:var(--mono,monospace)">${esc(b)}</span><input class="in-nm" data-base="${esc(b)}" value="${esc(SN[b]||'')}" placeholder="비우면 N/A" style="margin:0;flex:1;min-width:140px"><label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-weight:400;white-space:nowrap"><input class="in-skip" data-base="${esc(b)}" type="checkbox" ${SKIP[b]?'checked':''} style="width:auto;margin:0">관리내역에서 빼기</label></div>`).join('')}</${_open?'div':'details'}>`:''};
+ /* V2.8: 표준품명 칸을 모든 표준품에 — 라벨·사용기록 이름으로 미리 채우고, 고친(또는 확인한) 이름은 저장되어 라벨 정보가 바뀌거나 지워져도 그대로(직접 입력 이름이 1순위) */
+ const nrow=b=>`<div style="display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap"><span style="min-width:110px;font-family:var(--mono,monospace)">${esc(b)}</span><input class="in-nm" data-base="${esc(b)}" value="${esc(SN[b]||autoNm(b))}" placeholder="비우면 N/A" style="margin:0;flex:1;min-width:140px"><label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-weight:400;white-space:nowrap"><input class="in-skip" data-base="${esc(b)}" type="checkbox" ${SKIP[b]?'checked':''} style="width:auto;margin:0">관리내역에서 빼기</label></div>`;
+ const need=allB.filter(b=>!SN[b]&&!autoNm(b)&&!SKIP[b]),rest=allB.filter(b=>!need.includes(b));
+ const guide='<p class="muted small" style="margin:4px 0 8px">여기 적힌 이름이 관리내역과 사이트의 모든 화면(대시보드·표준품 목록·사용 추이 등)에 쓰입니다. 라벨 정보에서 가져온 이름은 미리 채워 두었고, 고치면 그 이름으로 계속 남습니다. 지금 안 쓰는 표준품은 \'관리내역에서 빼기\'.</p>';
+ box.innerHTML=!allB.length?'':need.length?`<div class="pn-box warn"><b>표준품명</b><p style="margin:6px 0 4px;font-weight:600;color:#b45309">⚠ 표준품명을 모르는 표준품 ${need.length}종 — 입력해 주세요 (비우면 N/A)</p>${guide}${need.map(nrow).join('')}${rest.length?`<details class="pn-more"><summary class="muted small">이름이 정해진 표준품 ${rest.length}종 보기 · 고치기</summary>${rest.map(nrow).join('')}</details>`:''}</div>`
+  :`<details class="pn-box pn-mini"><summary><b>표준품명</b> <span class="muted small">${allB.length}종 모두 정해짐${miss.length?'':''} · 보기 · 고치기</span></summary>${guide}${rest.map(nrow).join('')}</details>`};
 window.openInspection=function(mode){
  const annexOnly=mode==='annex',gs=targets();if(!gs.length)return alert('출력할 표준품이 없습니다. 먼저 Excel을 올려 주세요.');
  closeInsp();const rb=(n,v,t,c)=>`<label style="display:inline-flex;align-items:center;gap:6px;margin:0 16px 0 0;white-space:nowrap;font-weight:400"><input type="radio" name="${n}" value="${v}" ${c?'checked':''} style="width:auto;margin:0">${t}</label>`;
@@ -2753,7 +2757,7 @@ const lj=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?
 const ui=u=>{try{return window.unitInfoG?unitInfoG(u):null}catch(e){return null}};
 const r2=x=>Math.round(x*100)/100;
 function catOf(items){for(const s of items||[]){const r=(window.detailData&&detailData[s.id])||(typeof detailData!=='undefined'?detailData[s.id]:null)||{};const c=String(r['Cat No.']||'').trim();if(c)return c}return ''}
-function nameOf(base){return (window.labelName&&labelName(base))||(window.usageNameOf&&usageNameOf(base))||(lj(NK,{})[base]||'')}
+function nameOf(base){return (lj(NK,{})[base]||'')||(window.labelName&&labelName(base))||(window.usageNameOf&&usageNameOf(base))||''}
 window.stdName=nameOf;
 window.stdLabel=function(base,items){const n=nameOf(base),c=catOf(items);return n?(c?n+' ('+c+')':n):(c?'N/A ('+c+')':'N/A')};
 /* 1회 사용량: 직접 입력이 먼저, 없으면 최근 6개월 사용기록에서 날짜별 (쓴 양 ÷ 횟수) 중 가장 큰 값 — 한 번만 튄 큰 값(중앙값의 2배 넘음)은 뺌 */
