@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.6</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V1.7</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -451,7 +451,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell"><div class="hint"><b>테스트 버전</b> · 표준품 데이터와 계정은 이 브라우저에만 저장되며 다른 PC와 공유되지 않습니다. 실제 비밀번호는 사용하지 마세요. 공식 기준은 LIMS입니다.</div>
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V1.6 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V1.7 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2854,10 +2854,36 @@ function fix(){try{
  document.querySelectorAll('details.hint-fold').forEach(d=>{const s=d.querySelector('summary');if(s&&s.textContent.trim()==='테스트 버전 안내')d.remove()});
  document.querySelectorAll('.landing-note').forEach(e=>{if(/테스트 버전/.test(e.textContent))e.textContent='사내 앱허브 · 계정과 자료는 회사 서버에 함께 저장됩니다. 공식 기준은 LIMS입니다.'});
  document.querySelectorAll('#upload p.muted').forEach(e=>{if(/테스트 버전입니다/.test(e.textContent))e.textContent='원본 Excel 파일은 저장하지 않고 필요한 행 데이터만 회사 서버에 저장합니다.'});
- const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;const R=[[' (서버 연동 전 로컬 데모)',''],[' (테스트 버전: 서버 저장이 아니므로 이력의 무결성은 보증되지 않습니다.)',''],['이 브라우저에 저장합니다','회사 서버에 저장합니다'],['테스트 버전에서는 20MB 이하','20MB 이하']];
+ const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;const R=[[' (서버 연동 전 로컬 데모)',''],[' (테스트 버전: 서버 저장이 아니므로 이력의 무결성은 보증되지 않습니다.)',''],['이 브라우저에 저장합니다','회사 서버에 저장합니다'],['테스트 버전에서는 20MB 이하','20MB 이하'],[' 파일 선택이 막혀 있으면 아래 칸에 표를 복사해 붙여넣을 수 있습니다.','']];
  while(n=w.nextNode()){let t=n.nodeValue,o=t;R.forEach(([a,b])=>{if(t.indexOf(a)>=0)t=t.split(a).join(b)});if(t!==o)n.nodeValue=t}
 }catch(e){}}
 const _r=window.render;window.render=function(){const r=_r.apply(this,arguments);fix();return r};fix();
+})();
+</script><script>/* V1.7: Excel 업로드 칸 4개(재고 · 사용기록 · 라벨 · 구매)를 같은 모양의 '끌어 놓기' 칸으로 — 파일을 끌어다 놓거나 [파일 선택]. 앱허브에서는 '표 붙여넣기' 숨김 */
+(function(){
+const ICON='<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path d="M9 3.5h10l6 6V27a1.5 1.5 0 0 1-1.5 1.5h-14A1.5 1.5 0 0 1 8 27V5A1.5 1.5 0 0 1 9 3.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M19 3.5V10h6M16 24v-8M12.5 19.5 16 16l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const DEF=[
+ {find:()=>document.getElementById('excelFile'),title:'재고 Excel',hint:".xlsx · '관리 번호' 열이 있는 첫 번째 시트를 읽어요",go:f=>previewExcel(f)},
+ {find:()=>document.querySelector('#usagePanel input[type=file]'),title:'사용기록 Excel',hint:'.xlsx · .csv · BPT 전체가 들어 있어도 내 표준품만 반영해요',go:f=>usageFile({files:[f],value:''})},
+ {find:()=>document.querySelector('#labelPanel input[type=file]'),title:'라벨 정보 Excel',hint:'.xlsx · LIMS 라벨별 Excel',go:f=>labelFile({files:[f],value:''})},
+ {find:()=>document.querySelector('#purPanel input[type=file]'),title:'구매 정보 Excel',hint:'.xlsx · 발주 목록(모든 시트를 읽어요)',go:f=>purFile({files:[f],value:''})}];
+function build(){if(active!=='upload')return;DEF.forEach(d=>{const inp=d.find();if(!inp||inp.closest('.dz'))return;
+ const z=document.createElement('div');z.className='dz';z.tabIndex=0;z.setAttribute('role','button');z.setAttribute('aria-label',d.title+' 파일 선택 또는 끌어 놓기');
+ z.innerHTML='<span class="dz-ic">'+ICON+'</span><div class="dz-tx"><b>'+d.title+'</b>을 여기로 끌어 놓거나 <button type="button" class="dz-btn">파일 선택</button><div class="dz-s">'+d.hint+'</div><div class="dz-f"></div></div>';
+ const old=inp.closest('.upload-zone'),lab=inp.closest('label');
+ if(old){old.before(z);old.style.setProperty('display','none','important')}else if(lab){const tb=lab.closest('.toolbar');(tb||lab).before(z);lab.remove();if(tb&&!tb.children.length)tb.remove()}else inp.before(z);
+ inp.style.display='none';z.appendChild(inp);
+ const pick=()=>inp.click();z.querySelector('.dz-btn').addEventListener('click',e=>{e.stopPropagation();pick()});
+ z.addEventListener('click',e=>{if(e.target===inp)return;pick()});z.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}});
+ inp.addEventListener('change',()=>{const f=inp.files&&inp.files[0];if(f)z.querySelector('.dz-f').textContent='선택한 파일: '+f.name});
+ ['dragenter','dragover'].forEach(t=>z.addEventListener(t,e=>{e.preventDefault();e.stopPropagation();z.classList.add('over')}));
+ ['dragleave','dragend'].forEach(t=>z.addEventListener(t,e=>{if(!z.contains(e.relatedTarget))z.classList.remove('over')}));
+ z.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();z.classList.remove('over');const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(!f)return;z.querySelector('.dz-f').textContent='끌어 놓은 파일: '+f.name;try{d.go(f)}catch(err){alert('파일을 읽지 못했습니다: '+(err&&err.message||err))}});
+})}
+/* 칸 밖에 떨어뜨려도 브라우저가 파일을 열어 버리지 않게 */
+['dragover','drop'].forEach(t=>addEventListener(t,e=>{if(typeof active!=='undefined'&&active==='upload'&&!(e.target.closest&&e.target.closest('.dz')))e.preventDefault()}));
+document.head.insertAdjacentHTML('beforeend','<style>.dz{display:flex;align-items:center;gap:14px;padding:16px 18px;margin:6px 0 4px;border:1.5px dashed var(--line-strong,#c5cdd9);border-radius:12px;background:var(--surface-2,#f3f6fa);color:var(--ink-2,#4c525b);cursor:pointer;transition:background .15s,border-color .15s;min-height:84px}.dz:hover,.dz:focus-visible{border-color:var(--brand,#1b2559);outline:none}.dz.over{border-color:var(--brand,#1b2559);background:#e8eefc}.dz-ic{flex:0 0 auto;color:var(--muted,#8a92a6);display:flex}.dz.over .dz-ic{color:var(--brand,#1b2559)}.dz-tx{flex:1;min-width:0;line-height:1.6}.dz-tx b{color:var(--ink,#20242b)}.dz-btn{margin-left:4px;min-height:0!important;height:32px;padding:0 12px!important;font-size:13px!important}.dz-s{font-size:12.5px;color:var(--muted,#8a92a6)}.dz-f{font-size:12.5px;color:#17703c}.dz-f:empty{display:none}'+(window.__SH_SERVER?'.upl-paste{display:none!important}':'')+'</style>');
+const _r=window.render;window.render=function(){const r=_r.apply(this,arguments);try{build()}catch(e){}return r};try{build()}catch(e){}
 })();
 </script><script>/* V1.2: 새로 고침해도 로그인 유지 — 이 탭(sessionStorage)에만 아이디·보던 화면을 기억(서버로 보내지 않음, 로그아웃하거나 탭을 닫으면 지워짐) */
 (function(){var K='sh_login_session';
