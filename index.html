@@ -2957,4 +2957,12 @@ const _r=window.render;window.render=function(){_r.apply(this,arguments);try{fix
 function top(){document.querySelectorAll('section:not(.hidden)').forEach(s=>{const d=[...s.children].find(c=>c.matches('details.hint-fold'));if(d&&s.firstElementChild!==d)s.prepend(d)})}
 const _r=window.render;window.render=function(){const r=_r.apply(this,arguments);try{top()}catch(e){}return r};
 })();
+
+/* V3.0: 거르기 칸 통일 마무리 — 표준품 목록의 'N종 · N개 입고번호 표시'를 다른 표처럼 표 아래(작은 글씨)로, 제목 글자와 거르기 상자 높이 맞춤 */
+(function(){
+document.head.insertAdjacentHTML('beforeend','<style>@media (min-width:1241px){#inventory thead th .head-filter{margin-top:0!important}}</style>');
+function mv(){const c=document.getElementById('masterCount');if(!c)return;const w=c.parentElement&&[...c.parentElement.children].find(x=>x.classList.contains('tablewrap'));if(w&&c.compareDocumentPosition(w)&Node.DOCUMENT_POSITION_FOLLOWING){w.after(c)}c.classList.add('small');c.style.margin='8px 0 0'}
+const _r=window.render;window.render=function(){const r=_r.apply(this,arguments);try{mv()}catch(e){}return r};
+new MutationObserver(()=>{try{mv()}catch(e){}}).observe(document.body,{childList:true,subtree:true});
+})();
 </script></body></html>
