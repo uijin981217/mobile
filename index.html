@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.0</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.1</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -451,7 +451,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V3.0 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V3.1 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2042,7 +2042,7 @@ function annexBuild(g,o){const logo=(document.querySelector('img.kptr')||{}).src
  const usedS=new Set(rows.filter(r=>r.ss).map(r=>r.ss));const legS=(SC.low&&SC.low.on&&usedS.has(SC.low.c)?`<i style="background:${SC.low.c}"></i>재고 알림 기준 이하`:'')+(SC.zero&&SC.zero.on&&usedS.has(SC.zero.c)?`<i style="background:${SC.zero.c}"></i>재고 0`:'');
  const leg=legE||legS?`<div class="aleg">${legE}${legE&&legS?'<span style="margin:0 4px 0 10px;color:#999">|</span>':''}${legS}${legS?'<span style="margin-left:6px">(재고량)</span>':''}</div>`:'';
  const page=(i,n,body,cls)=>`<div class="apage${cls||''}"><div class="ahd">${logo?`<img src="${logo}" alt="KPTR 한국의약품시험연구원">`:'<b>KPTR 한국의약품시험연구원</b>'}<span class="pg">page ${i} of ${n}</span></div><h1 class="at">표준품 관리내역</h1>
- <div class="meta${o.sign?' sg':''}">${o.sign?`<span>부서명 : ${esc(o.dept)}</span><span>작성일 : ${dot(o.date)}</span><span>작성자 : ${i===1?'<i class="sgs" data-f="Author" style="width:42mm"></i>':''}</span><span>확인일 : ${i===1?'<i class="sgs" data-f="ReviewDate" style="width:26mm"></i>':''}</span><span>확인자 : ${i===1?'<i class="sgs" data-f="Reviewer" style="width:42mm"></i>':''}</span>`:`<span>부서명 : ${esc(o.dept)}</span><span>작성일 : ${dot(o.date)}</span><span>작성자 :</span><span>확인일 :</span><span>확인자 :</span>`}</div>
+ ${i!==1?'':`<div class="meta${o.sign?' sg':''}">`}${i!==1?'':o.sign?`<span>부서명 : ${esc(o.dept)}</span><span>작성일 : ${dot(o.date)}</span><span>작성자 : ${i===1?'<i class="sgs" data-f="Author" style="width:42mm"></i>':''}</span><span>확인일 : ${i===1?'<i class="sgs" data-f="ReviewDate" style="width:26mm"></i>':''}</span><span>확인자 : ${i===1?'<i class="sgs" data-f="Reviewer" style="width:42mm"></i>':''}</span>`:`<span>부서명 : ${esc(o.dept)}</span><span>작성일 : ${dot(o.date)}</span><span>작성자 :</span><span>확인일 :</span><span>확인자 :</span>`}${i!==1?'':'</div>'}
  <table class="a${W==='auto'?' auto':''}">${headHtml(W)}<tbody>${body}</tbody></table><div class="adoc">S-P-GO011-F1-V04</div>${leg}</div>`;
  const trs=rows.map(r=>`<tr>${tdHtml(r)}</tr>`);let W='auto';
  const f=document.createElement('iframe');f.style.cssText='position:absolute;left:-10000px;top:0;width:297mm;height:400mm;visibility:hidden;border:0';document.body.appendChild(f);
@@ -2051,9 +2051,9 @@ function annexBuild(g,o){const logo=(document.querySelector('img.kptr')||{}).src
   const pg=d.querySelector('.apage'),tb=pg.querySelector('tbody'),mm=d.getElementById('mm').offsetHeight/210;
   /* V12.3: 먼저 내용 길이로 칸 너비를 자동으로 정하고(짧은 값은 한 줄), 그 너비를 모든 쪽에 똑같이 씀 */
   {const tbl=pg.querySelector('table'),ths=[...tbl.querySelectorAll('thead th')],tw=tbl.getBoundingClientRect().width;W=ths.map(t=>Math.round(t.getBoundingClientRect().width/tw*1000)/10);const cg=d.createElement('colgroup');cg.innerHTML=W.map(w=>`<col style="width:${w}%">`).join('');tbl.insertBefore(cg,tbl.firstChild);tbl.classList.remove('auto')}
-  const top=tb.getBoundingClientRect().top-pg.getBoundingClientRect().top,avail=210*mm-top-14*mm;
+  const top=tb.getBoundingClientRect().top-pg.getBoundingClientRect().top,avail=210*mm-top-14*mm;/* V3.1: 2쪽부터는 부서명·작성일·서명 줄이 없어 그만큼 줄이 더 들어감 */const me=pg.querySelector('.meta'),mh=me?(()=>{const s=d.defaultView.getComputedStyle(me);return me.getBoundingClientRect().height+parseFloat(s.marginTop)+parseFloat(s.marginBottom)})():0;
   const hs=[...tb.rows].map(r=>r.getBoundingClientRect().height);
-  if(hs.length){chunks=[];let cur=[],used=0;hs.forEach((h,i)=>{if(cur.length&&used+h>avail){chunks.push(cur);cur=[];used=0}cur.push(trs[i]);used+=h});chunks.push(cur)}}catch(e){}
+  if(hs.length){chunks=[];let cur=[],used=0;hs.forEach((h,i)=>{const lim=chunks.length?avail+mh:avail;if(cur.length&&used+h>lim){chunks.push(cur);cur=[];used=0}cur.push(trs[i]);used+=h});chunks.push(cur)}}catch(e){}
  f.remove();const n=chunks.length;
  return {pages:n,html:chunks.map((c,i)=>page(i+1,n,c.join(''),i===n-1?' last':'')).join('')}}
 /* V9.4: 파일 이름 통일 — '2026년 10월 BPT 표준품 정기점검 (냉동)', '2026년 10월 MEC 표준품 관리내역' */
