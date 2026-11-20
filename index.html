@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.1</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.2</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap"><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -451,11 +451,19 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V3.1 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V3.2 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
 // 테스트 계정은 동일 브라우저의 로컬 저장소에만 보관됩니다.
+/* V3.2: 큰 저장 자료(사용기록 등 수 MB)를 표의 줄마다 다시 읽고 풀지 않도록 — 저장할 때만 새로 읽는 캐시 */
+(function(){const S=Storage.prototype,oS=S.setItem,oR=S.removeItem,oC=S.clear,ver={},C={};
+ window.lsTouch=function(k){ver[k]=(ver[k]||0)+1};
+ S.setItem=function(k,v){if(this===localStorage)lsTouch(String(k));return oS.call(this,k,v)};
+ S.removeItem=function(k){if(this===localStorage)lsTouch(String(k));return oR.call(this,k)};
+ S.clear=function(){if(this===localStorage)for(const k in ver)lsTouch(k);for(const k in C)delete C[k];return oC.call(this)};
+ window.lsJSON=function(k){const c=C[k],v=ver[k]||0;if(c&&c.v===v)return c.o;let o=null;try{o=JSON.parse(localStorage.getItem(k)||'null')}catch(e){o=null}C[k]={v,o};return o};
+})();
 const accountStoreKey='standardhub_v2_demo_accounts_20261030';
 /* 소속 실 목록(회원가입·계정별 권한 현황). 새 실은 여기에 추가 */
 const DEPTS=['바이오의약1실','바이오의약2실','바이오의약3실','시험전략기획실'];
@@ -1615,7 +1623,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLayer()});
 /* ===== V2.2 사용 추이: 사용기록 Excel로 표준품별 사용량 확인 ===== */
 (function(){
 const KEY='standardhub_v22_usage';
-function load(){try{const o=JSON.parse(localStorage.getItem(KEY)||'null');if(o&&o.data)return o}catch(e){}return null}
+function load(){try{const o=window.lsJSON?lsJSON(KEY):JSON.parse(localStorage.getItem(KEY)||'null');if(o&&o.data)return o}catch(e){}return null}
+/* 고쳐서 저장할 때는 캐시가 아닌 새 사본 */function loadFresh(){try{const o=JSON.parse(localStorage.getItem(KEY)||'null');if(o&&o.data)return o}catch(e){}return null}
 function save(o){try{if(o)localStorage.setItem(KEY,JSON.stringify(o));else localStorage.removeItem(KEY);return true}catch(e){return false}}
 let pending=null,openBase=null,q='',jf='',gf='',sf='',stf='';
 
@@ -1770,7 +1779,7 @@ window.usageFile=function(inp){const f=inp.files&&inp.files[0];if(f)usagePreview
 window.usagePaste=function(){const t=(document.getElementById('usagePasteBox')||{}).value||'';if(!t.trim()){document.getElementById('usageResult').innerHTML='<p class="danger">붙여넣은 내용이 없습니다.</p>';return}usagePreview({name:'붙여넣기',pasted:t})};
 window.usageCancel=function(){pending=null;const o=document.getElementById('usageResult');if(o)o.innerHTML=''};
 window.usageApply=function(){
-  if(!pending)return;const p=pending,old=load()||{data:{},from:p.from,to:p.to};
+  if(!pending)return;const p=pending,old=loadFresh()||{data:{},from:p.from,to:p.to};
   /* 같은 기간의 기존 기록은 지우고 새로 넣음 — V13.0: 내 담당 표준품 것만(다른 담당자 기록은 그대로) */
   const mine=myBases(),snap=usageCut(old,[...mine].filter(b=>old.data[b]),p.from,p.to,false);
   const uid='u'+Date.now();window.undoPut&&undoPut(uid,{kind:'사용기록',keys:[...mine],from:p.from,to:p.to,before:snap,had:Object.keys(old.data).filter(b=>mine.has(b))});
@@ -1785,7 +1794,7 @@ window.usageApply=function(){
 function usageCut(o,bases,from,to,del){const out={};bases.forEach(b=>{const B=o.data[b];if(!B)return;const c={name:B.name,lots:{}};
   if(B.pur){c.pur={};Object.keys(B.pur).forEach(d=>{if(d>=from&&d<=to){c.pur[d]=B.pur[d];if(del)delete B.pur[d]}})}
   Object.keys(B.lots).forEach(l=>Object.keys(B.lots[l]).forEach(un=>{const U=B.lots[l][un];Object.keys(U).forEach(d=>{if(d>=from&&d<=to){((c.lots[l]=c.lots[l]||{})[un]=c.lots[l][un]||{})[d]=U[d];if(del)delete U[d]}})}));out[b]=JSON.parse(JSON.stringify(c))});return out}
-window.usageUndo=function(r){const o=load();if(!o)return false;usageCut(o,r.keys.filter(b=>o.data[b]),r.from,r.to,true);
+window.usageUndo=function(r){const o=loadFresh();if(!o)return false;usageCut(o,r.keys.filter(b=>o.data[b]),r.from,r.to,true);
   Object.keys(r.before||{}).forEach(b=>{const src=r.before[b],dst=o.data[b]=o.data[b]||{name:src.name,lots:{}};if(src.pur)dst.pur=Object.assign(dst.pur||{},src.pur);Object.keys(src.lots).forEach(l=>{const L=dst.lots[l]=dst.lots[l]||{};Object.keys(src.lots[l]).forEach(un=>{L[un]=Object.assign(L[un]||{},src.lots[l][un])})})});
   r.keys.forEach(b=>{if(!(r.had||[]).includes(b))delete o.data[b]});return save(o)};
 window.usageClear=function(){askConfirm({title:'사용기록 지우기',message:'저장된 사용기록을 모두 지웁니다. 표준품 재고 정보는 그대로입니다. 계속할까요?',ok:'지우기',danger:true,onOk:function(){save(null);pending=null;alert('사용기록을 지웠습니다.');render()}})};
