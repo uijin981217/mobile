@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.7</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.8</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V3.7 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V3.8 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -775,7 +775,7 @@ function undoBlock(id,sc){const a=undoAll(),r=a[id];if(!r)return 'none';const ks
  return Object.keys(a).some(k=>{const x=a[k];if(k===id||x.kind!==r.kind||x.ts<=r.ts)return false;if(r.kind==='사용기록'&&(x.to<r.from||x.from>r.to))return false;return (x.keys||[]).some(c=>ks.has(c))})?'later':''}
 /* V13.1: 삭제는 '내가 담당한 표준품' 부분만 — 담당 그룹이 없는 관리자는 보기만 */
 function grpOf(k,r){const s=stocks.find(x=>x.code===k)||stocks.find(x=>masterOf(x.code)===k)||(r&&r.prev&&r.prev[k]&&r.prev[k].stock);if(s&&s.group)return s.group;const m=String(k).match(/^PB\.([^.]+)\./i);return m?m[1].toUpperCase():''}
-function undoScope(r,u){u=u||user();const G=new Set(u.groups||[]);if(!G.size||!r)return [];return (r.keys||[]).filter(k=>G.has(grpOf(k,r)))}
+function undoScope(r,u){u=u||user();const G=new Set(u.groups||[]);if(!G.size||!r)return [];/* V3.7: 검체 그룹(GSK-프리오릭스)만 맡은 사람도 자기 검체 표준품은 되돌릴 수 있게 */const sub=k=>{try{const s=stocks.find(x=>x.code===k)||stocks.find(x=>masterOf(x.code)===k)||(r.prev&&r.prev[k]&&r.prev[k].stock);return !!(s&&window.subsOf&&subsOf(s).some(g=>G.has(g)))}catch(e){return false}};return (r.keys||[]).filter(k=>G.has(grpOf(k,r))||sub(k))}
 window.undoScope=undoScope;
 function canUndo(id,owner){const u=user(),r=undoAll()[id];if(!r||!(u.admin||owner===u.id))return false;return undoScope(r,u).length>0}
 window.uploadUndo=function(id){const all=undoAll(),r=all[id];if(!r)return;const u=user();
@@ -2080,7 +2080,7 @@ function annexRows(g,cust){const PN=lj(PNK,{}),UN=usage(),SN=savedNames(),SKIP=l
   const disp=gv(r,'폐기 일자')||gv(r,'폐기일')||gv(r,'폐기 일시')||gv(r,'폐기 일');
   const n=stdName(base,UN,SN);
   return Object.assign([s.code,iso(gv(r,'입고 일자'))||gv(r,'입고 일자'),cust,prod,n,spec,iq?iq+(iu?' '+iu:''):'',gv(r,'제조 회사'),gv(r,'제조 번호'),pv&&Number(String(pv).replace(/,/g,''))!==0?pv+(pu&&pu!=='%'?' '+pu:''):'',gv(r,'보관 조건')||s.storage||'',getInventoryValue(s,'보관 장소')||'',s.exp||'',perUseText(base)||'N/A',(s.qty??'')+(s.unit?' '+s.unit:''),disp?(iso(disp)||disp):'',NOTES[s.code]||''/* 비고: 입고번호별 표준품 이슈(담당자 입력) — Excel 비고는 가져오지 않음 */],{base,qn:Number(s.qty)})})}
-const tdHtml=r=>r.map((v,i)=>`<td${/* V10.2: 모든 칸 가운데 정렬(전에는 제품명·표준품명·보관장소·비고만 왼쪽) */false?'':[0,1,2,5,6,9,10,11,12,13,14,15].includes(i)?' class="n'+(i===12&&r.ec?' '+r.ec:'')+'"'+(i===12&&r.es?' style="background:'+r.es+'"':'')+(i===14&&r.ss?' style="background:'+r.ss+';font-weight:700"':''):''}>${String(v??'').trim()?esc(i===10?String(v).replace(/\s*~\s*/g,'~').replace(/\s+\(/g,'('):v).replace(/\s+(°C|℃)/g,'&nbsp;$1'):'N/A'}</td>`).join('');
+const tdHtml=r=>r.map((v,i)=>`<td${/* V10.2: 모든 칸 가운데 정렬(전에는 제품명·표준품명·보관장소·비고만 왼쪽) */false?'':/* V3.8: 제조번호·짧은 제품명·짧은 비고도 한 줄 */([0,1,2,5,6,8,9,10,11,12,13,14,15].includes(i)||(i===3&&String(v??'').length<=12)||(i===7&&String(v??'').replace(/^\((주|유|재)\)\s+/,'').length<=20)||(i===16&&String(v??'').length<=9))?' class="n'+(i===12&&r.ec?' '+r.ec:'')+'"'+(i===12&&r.es?' style="background:'+r.es+'"':'')+(i===14&&r.ss?' style="background:'+r.ss+';font-weight:700"':''):''}>${String(v??'').trim()?esc(i===10?String(v).replace(/\s*~\s*/g,'~').replace(/\s+\(/g,'('):i===7?String(v).replace(/^\((주|유|재)\)\s+/,'($1)'):v).replace(/\s+(°C|℃)/g,'&nbsp;$1'):'N/A'}</td>`).join('');
 /* V12.3: W가 'auto'면 칸 너비 없이(내용 길이로 자동), 배열이면 그 너비(%) */const headHtml=W=>`${W==='auto'?'':`<colgroup>${(Array.isArray(W)?W:COLS.map(c=>c[1])).map(w=>`<col style="width:${w}%">`).join('')}</colgroup>`}<thead><tr>${COLS.map(c=>`<th class="hn">${c[0].split('\n').map(esc).join('<br>')}</th>`).join('')}</tr></thead>`;
 function annexTable(rows){return `<table class="a">${headHtml()}<tbody>${rows.map(r=>`<tr>${tdHtml(r)}</tr>`).join('')}</tbody></table>`}
 const ANX='.apage{page:annex;box-sizing:border-box;width:297mm;height:210mm;padding:7mm 9mm 0;position:relative;overflow:hidden;break-after:page;font-family:Arial,"Malgun Gothic",sans-serif;color:#1a1a2b}.apage.last{break-after:auto}.apage.measure{height:auto;overflow:visible}.ahd{display:flex;align-items:flex-end}.ahd img{height:18px}.ahd .pg{margin-left:auto;font-size:10px}.at{text-align:center;font-size:17px;font-weight:500;margin:0 0 4px}.meta{display:flex;justify-content:flex-end;gap:34px;font-size:11px;margin:0 6px 5px 0}.meta span{min-width:70px}.meta.sg{align-items:flex-end}.meta.sg span{display:inline-flex;align-items:flex-end;white-space:nowrap}.meta .sgs{display:inline-block;height:14mm;margin-left:3px;border-bottom:1px solid #888}.adoc{position:absolute;left:10mm;bottom:6mm;font-size:10px}.aleg{position:absolute;right:10mm;bottom:6mm;font-size:10px;display:flex;align-items:center;gap:4px}.aleg i{display:inline-block;width:14px;height:10px;border:1px solid #444;margin-left:10px}.aleg i.x-soon{background:#ffe08a}.aleg i.x-exp{background:#f8c4c0}.a td.x-soon{background:#ffe08a;color:#1a1a1a;font-weight:700}.a td.x-exp{background:#f8c4c0;color:#a11a12;font-weight:700}.apage.measure .aleg{position:static}.apage.measure .adoc{position:static;margin-top:4px}@page annex{size:A4 landscape;margin:0}';
@@ -2107,7 +2107,7 @@ function annexBuild(g,o){const logo=(document.querySelector('img.kptr')||{}).src
  try{const d=f.contentDocument;d.open();d.write('<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:Arial,"Malgun Gothic",sans-serif;margin:0}table{border-collapse:collapse;width:100%;font-size:12px}th,td{border:1px solid #c5cad8;padding:6px 8px;text-align:left;vertical-align:top}th{background:#eceff6}'+ACSS+ANX+'</style></head><body>'+page(1,1,trs.join(''),' measure')+'<div id="mm" style="height:210mm"></div></body></html>');d.close();
   const pg=d.querySelector('.apage'),tb=pg.querySelector('tbody'),mm=d.getElementById('mm').offsetHeight/210;
   /* V12.3: 먼저 내용 길이로 칸 너비를 자동으로 정하고(짧은 값은 한 줄), 그 너비를 모든 쪽에 똑같이 씀 */
-  {const tbl=pg.querySelector('table'),ths=[...tbl.querySelectorAll('thead th')],tw=tbl.getBoundingClientRect().width;W=ths.map(t=>Math.round(t.getBoundingClientRect().width/tw*1000)/10);const cg=d.createElement('colgroup');cg.innerHTML=W.map(w=>`<col style="width:${w}%">`).join('');tbl.insertBefore(cg,tbl.firstChild);tbl.classList.remove('auto')}
+  {const tbl=pg.querySelector('table'),ths=[...tbl.querySelectorAll('thead th')],tw=tbl.getBoundingClientRect().width;W=ths.map(t=>Math.round(t.getBoundingClientRect().width/tw*1000)/10);/* V3.8: 비고 칸은 9%까지만 — 남는 폭은 표준품명에(비고가 길면 표준품명이 서너 줄로 꺾이던 것) */if(W.length>16&&W[16]>9){W[4]=Math.round((W[4]+W[16]-9)*10)/10;W[16]=9}const cg=d.createElement('colgroup');cg.innerHTML=W.map(w=>`<col style="width:${w}%">`).join('');tbl.insertBefore(cg,tbl.firstChild);tbl.classList.remove('auto')}
   const top=tb.getBoundingClientRect().top-pg.getBoundingClientRect().top,avail=210*mm-top-14*mm;/* V3.1: 2쪽부터는 부서명·작성일·서명 줄이 없어 그만큼 줄이 더 들어감 */const me=pg.querySelector('.meta'),mh=me?(()=>{const s=d.defaultView.getComputedStyle(me);return me.getBoundingClientRect().height+parseFloat(s.marginTop)+parseFloat(s.marginBottom)})():0;
   const hs=[...tb.rows].map(r=>r.getBoundingClientRect().height);
   if(hs.length){chunks=[];let cur=[],used=0;hs.forEach((h,i)=>{const lim=chunks.length?avail+mh:avail;if(cur.length&&used+h>lim){chunks.push(cur);cur=[];used=0}cur.push(trs[i]);used+=h});chunks.push(cur)}}catch(e){}
@@ -2942,12 +2942,12 @@ window.perUseOf=function(base){
 function remain(r){const pu=perUseOf(r.base);if(!(r.units.length===1&&r.units[0].unit!=='미확인'))return {err:'단위 확인 필요',pu};if(!pu)return {err:'1회 사용량 필요'};
  const su=r.units[0].unit;let q=Number(r.units[0].qty)||0;if(su!==pu.u){const a=ui(su),b=ui(pu.u);if(!a||!b||a.fam!==b.fam)return {err:'단위 확인 필요',pu};q=q*a.f/b.f}
  return {n:Math.floor(q/pu.v*10)/10,pu}}
-const groupOf=r=>(r.items[0]||{}).group||'';
+/* V3.7: 검체로 나눈 의뢰사는 검체 그룹(GSK-프리오릭스) 단위로 — 그룹 전체 기준이 다른 검체 담당자 표준품까지 바꾸지 않게 */const pgOf=r=>(r.items[0]||{}).group||'';const groupOf=r=>{const s=r.items[0]||{};let sb=[];try{sb=window.subsOf?subsOf(s):[]}catch(e){}return sb.length===1&&!/-검체 미지정$/.test(sb[0])?sb[0]:(s.group||'')};
 /* 재고 알림 판정: 표준품별 직접 기준 > 그룹 기준 > 월평균 사용량 */
 const _ov=clientAlertOverview;
 clientAlertOverview=function(){const d=_ov();const S=clientThresholds(),G=lj(GK,{});
  d.rows.forEach(r=>{const ex=S[r.base],g=groupOf(r);r.remain=remain(r);
-  const rule=ex?(ex.type==='uses'?ex:null):(G[g]&&G[g].type==='uses'?Object.assign({group:g},G[g]):null);
+  const gk=G[g]?g:(G[pgOf(r)]?pgOf(r):g);const rule=ex?(ex.type==='uses'?ex:null):(G[gk]&&G[gk].type==='uses'?Object.assign({group:gk},G[gk]):null);
   if(!rule)return;
   r.cfg={type:'uses',value:Number(rule.value),unit:'회',group:rule.group||null,by:rule.by,at:rule.at};r.valid=true;
   if(r.remain.err){r.matched=false;r.triggered=false;r.status=r.remain.err}else{r.matched=true;r.triggered=r.remain.n<=r.cfg.value;r.status=r.triggered?'재고 부족':'정상'}});
@@ -2988,16 +2988,16 @@ saveClientAlert=function(base){const t=(document.getElementById('clientThreshold
  try{addClientHistory(base,before,{value:'남은 '+val,unit:'회'})}catch(e){}render()};
 window.saveClientAlert=saveClientAlert;
 /* 그룹 전체 기준 */
-function groupBar(){const rows=clientAlertOverview().rows,G=lj(GK,{});const gs=[...new Set(rows.map(groupOf).filter(Boolean))].sort();if(!gs.length)return '';
+function groupBar(){const rows=clientAlertOverview().rows,G=lj(GK,{}),u=user();const gs=[...new Set([...rows.map(groupOf),...rows.map(pgOf).filter(g=>u.admin||(u.groups||[]).includes(g))].filter(Boolean))].sort();if(!gs.length)return '';
  const chips=Object.keys(G).filter(g=>gs.includes(g)).map(g=>'<span class="ga-chip"><b>'+esc(g)+'</b> 남은 '+esc(G[g].value)+'회 이하 <button onclick="groupAlertClear(\''+esc(g)+'\')" title="그룹 기준 지우기">×</button></span>').join('');
  return `<div class="panel" id="grpAlert"><h3 style="margin:0 0 4px">그룹 전체 기준</h3><p class="muted small" style="margin:0 0 10px">의뢰사(그룹)의 모든 표준품에 '남은 사용 횟수' 기준을 한 번에 넣습니다. 나중에 들어오는 표준품에도 자동으로 붙고, 표준품별로 따로 정한 기준이 있으면 그것이 먼저입니다. 남은 횟수 = 현재 재고 ÷ 1회 사용량(직접 입력, 없으면 최근 6개월 사용기록 중 가장 많이 쓴 양).</p>
  <div class="ga-row"><select id="gaG">${gs.map(g=>`<option value="${esc(g)}">${esc(g)}${G[g]?' (지금 '+esc(G[g].value)+'회)':''}</option>`).join('')}</select><span>남은 사용 횟수</span><input id="gaN" type="number" min="0" step="1" placeholder="3" style="width:72px;text-align:center"><span>회 이하면 알림</span><button class="primary" onclick="groupAlertApply()">그룹 전체에 적용</button></div>${chips?'<div class="ga-chips">'+chips+'</div>':''}</div>`}
 window.groupAlertApply=function(){const g=(document.getElementById('gaG')||{}).value,n=Number((document.getElementById('gaN')||{}).value);if(!g)return;if(!(Number.isFinite(n)&&n>=0)||(document.getElementById('gaN')||{}).value==='')return alert('남은 사용 횟수를 0 이상 숫자로 입력해 주세요.');
- const rows=clientAlertOverview().rows.filter(r=>groupOf(r)===g),S=clientThresholds(),own=rows.filter(r=>S[r.base]);
+ const inG=r=>groupOf(r)===g||pgOf(r)===g;const rows=clientAlertOverview().rows.filter(inG),S=clientThresholds(),own=rows.filter(r=>S[r.base]);
  const save=over=>{const G=lj(GK,{}),before=G[g];G[g]={type:'uses',value:n,by:user().id,at:new Date().toLocaleString('ko-KR')};try{localStorage.setItem(GK,JSON.stringify(G))}catch(e){return alert('저장하지 못했습니다.')}
   if(over&&own.length){const T=clientThresholds();own.forEach(r=>delete T[r.base]);try{localStorage.setItem(clientAlertKey,JSON.stringify(T))}catch(e){}}
   try{addClientHistory('그룹 '+g,before?{value:'남은 '+before.value,unit:'회'}:null,{value:'남은 '+n,unit:'회'})}catch(e){}
-  const now=clientAlertOverview().rows.filter(r=>groupOf(r)===g),need=now.filter(r=>r.status==='1회 사용량 필요').length;
+  const now=clientAlertOverview().rows.filter(inG),need=now.filter(r=>r.status==='1회 사용량 필요').length;
   alert(g+' 그룹 '+now.length+'종에 \'남은 '+n+'회 이하\' 기준을 넣었습니다.'+(need?' 1회 사용량이 없는 '+need+'종은 사용 추이에서 입력해 주세요.':''));render()};
  if(!own.length)return save(false);
  askConfirm({title:'따로 정한 기준이 있어요',message:g+' 표준품 중 '+own.length+'종은 표준품별로 따로 정한 기준이 있습니다.\n'+own.slice(0,8).map(r=>'· '+r.base+' — '+(r.cfg&&r.cfg.type==='uses'?'남은 '+r.cfg.value+'회':r.cfg?r.cfg.value+' '+r.cfg.unit:'')+' 이하').join('\n')+(own.length>8?'\n…':'')+'\n\n[그룹 기준으로 바꾸기]: 이것들도 모두 남은 '+n+'회로\n[따로 정한 것 그대로]: 나머지 표준품에만 적용',ok:'그룹 기준으로 바꾸기',onOk:()=>save(true)});
@@ -3586,7 +3586,7 @@ window.grpViewDrop=function(g){const m=me();if(!m)return;m.viewGroups=(m.viewGro
 const VDAYS=183,vEnd=d=>{const x=new Date(d+'T00:00:00');x.setDate(x.getDate()+VDAYS);return x.toISOString().slice(0,10)};
 function viewExpire(){const today=new Date().toISOString().slice(0,10);let ch=false;users.forEach(u=>{if(!(u.viewGroups||[]).length||!u.viewSince)return;const keep=u.viewGroups.filter(g=>!(u.viewSince[g]&&vEnd(u.viewSince[g])<=today));if(keep.length!==u.viewGroups.length){u.viewGroups.filter(g=>!keep.includes(g)).forEach(g=>delete u.viewSince[g]);u.viewGroups=keep;ch=true}});if(ch){try{saveDemoAccounts()}catch(e){}}}
 /* 보기만 그룹: 표준품 목록·사용 추이에서만 보이게 */
-const _ac=window.accessible;window.accessible=function(s,u){const r=_ac.apply(this,arguments);if(r)return r;try{const uu=u||user();if(uu&&uu.status==='approved'&&s&&s.group&&!/^BPT/i.test(s.group)&&(uu.groups||[]).some(g=>String(g).indexOf(s.group+'-')===0)){const sb=window.subsOf?subsOf(s):[];if(!sb.length||(sb.length===1&&sb[0]===s.group+'-검체 미지정'))return true}}catch(e){}try{const uu=u||user(),a=typeof active!=='undefined'?active:'';if(uu&&uu.status==='approved'&&(uu.viewGroups||[]).length&&/^(inventory|usage)$/.test(a))return uu.viewGroups.includes(s.group)||(window.subsOf&&subsOf(s).some(g=>uu.viewGroups.includes(g)))}catch(e){}return false};
+const _ac=window.accessible;window.accessible=function(s,u){const r=_ac.apply(this,arguments);if(r)return r;try{const uu=u||user(),a=typeof active!=='undefined'?active:'';if(uu&&uu.status==='approved'&&(uu.viewGroups||[]).length&&/^(inventory|usage)$/.test(a))return uu.viewGroups.includes(s.group)||(window.subsOf&&subsOf(s).some(g=>uu.viewGroups.includes(g)))}catch(e){}return false};
 /* ---- 오늘 할 일 ---- */
 function rows(){const u=user(),r=[];const id=String(u.id);
  hv().filter(x=>x.status==='wait'&&x.to===id).forEach(x=>r.push(['#2b5bd7',nameOf(x.from)+'님이 '+x.g+'을(를) 넘겼습니다','받으면 내 담당이 되고 넘긴 분은 보기만 합니다',`<button type="button" onclick="grpTake('${H(x.id)}',false)">안 받기</button><button type="button" class="primary" onclick="grpTake('${H(x.id)}',true)">받기 →</button>`]));
