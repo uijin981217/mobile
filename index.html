@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.5</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.6</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -427,6 +427,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 /* V11.5: 비고 줄은 실제 PDF 비고 칸이 좁으니 짧게 */#inNotes .nt-r .nt-v{flex:0 1 360px!important;max-width:360px}#inNotes .nt-allrow{padding-left:320px;margin:2px 0 4px!important}#inNotes .nt-allrow .nt-all{flex:0 1 360px!important;max-width:360px;height:30px;font-size:13px}@media(max-width:800px){#inNotes .nt-allrow{padding-left:0}}
 .ln-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ln-ks{display:flex;gap:4px;flex:0 0 auto}.ln-chip{display:inline-flex!important;align-items:center;margin:0!important;cursor:pointer;font-weight:400!important}.ln-chip input{position:absolute;opacity:0;width:1px!important;height:1px}.ln-chip span{display:inline-block;padding:3px 9px;border:1px solid #dfe3e9;border-radius:999px;font-size:12px;color:#6b7280;background:#fff;white-space:nowrap}.ln-chip input:checked+span{background:#20242b;border-color:#20242b;color:#fff}.ln-chip input:focus-visible+span{outline:2px solid #6b8afd;outline-offset:1px}.dp-box{margin-top:12px;border-top:1px solid var(--line);padding-top:8px}.dp-box summary{cursor:pointer;padding:4px 0}.dp-list{max-height:260px;overflow-y:auto;padding:4px 0 2px 4px;scrollbar-gutter:stable}.dp-r{display:flex!important;align-items:center;gap:12px;margin:0!important;padding:4px 0;font-weight:400!important;font-size:13px;cursor:pointer}.dp-r input{width:auto!important;margin:0!important}.dp-c{font-family:var(--mono,monospace);width:150px;flex:0 0 150px}.dp-e{width:130px;flex:0 0 130px;color:#4c525b}.dp-w{color:#b45309;width:90px;flex:0 0 90px}.dp-d{color:#17703c;font-size:12px}
 /* V11.9: 선택 탭이 굵은 글꼴(맑은 고딕 Bold)로 바뀌며 글씨체가 달라 보이고 옆 버튼이 밀리던 문제 — 굵기는 그대로(500), 글자 테두리로만 살짝 진하게 */#subTabs button.active{font-weight:500!important;-webkit-text-stroke:0;color:#20242b!important}header.hdr3>nav button.active,nav button.active{font-weight:500!important;-webkit-text-stroke:0;color:#20242b!important}#subTabs button:not(.active){color:#6b7280}/* V12.0: 글자 테두리 효과는 맑은 고딕에서 깨져 보여 뺌 — 선택은 바탕·밑줄·글자색으로만 */
+/* V3.5 추정 표시 */#inspLayer .pn-gtag{font-size:11px;color:#2b5bd7;background:#eef3ff;border:1px solid #c9d7fb;border-radius:999px;padding:0 7px;white-space:nowrap}
 /* V12.4: 관리내역 제품명·표준품명 상자 — 다 정해지면 한 줄로 접힘 */#inspLayer .pn-box{margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}#inspLayer .pn-box.warn{border-color:#e0a100}#inspLayer .pn-box.pn-mini{background:transparent;padding:6px 2px;border:0;border-top:1px solid var(--line);border-radius:0}#inspLayer .pn-box summary{cursor:pointer}#inspLayer .pn-more{margin-top:6px}#inspLayer .pn-more summary{cursor:pointer}#inspLayer .pn-box .in-pn,#inspLayer .pn-box .in-nm{height:32px;min-height:0;padding:4px 10px;font-size:13.5px}#inspLayer .pn-box div[style*="margin:6px 0"]{margin:4px 0!important}
 #inspLayer .s-on{display:inline-flex!important;align-items:center;gap:6px;margin:0!important;font-weight:400!important;width:150px;white-space:nowrap}#inspLayer .s-on input{width:auto!important;margin:0!important}
 </style><style>/* V1.6: 표준품 목록 표가 회사 PC(맑은 고딕)에서 오른쪽으로 넘쳐 잘려 보이던 것 — 제목 칸 선택 상자를 글자 아래로, 안쪽 표 여백 줄임, 긴 값은 칸 안에서 줄바꿈 */
@@ -482,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V3.5 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V3.6 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2031,7 +2032,7 @@ function listOf(g){return activeMine().filter(s=>s.group===g||(window.subsOf&&su
 /* V3.5: 사용기록은 저장될 때만 다시 읽음(lsJSON) — 검체별 나누기 추천에서 표준품마다 0.8MB를 다시 읽어 3초씩 멈추던 것. 읽기 전용으로만 씀 */
 const usage=()=>((window.lsJSON?lsJSON('standardhub_v22_usage'):lj('standardhub_v22_usage',{}))||{}).data||{};
 const savedNames=()=>lj(NK,{});
-function stdName(base,UN,SN){return (SN||savedNames())[base]||(window.labelName&&labelName(base))||((UN||usage())[base]||{}).name||''}
+function stdName(base,UN,SN){return (SN||savedNames())[base]||(window.labelName&&labelName(base))||((UN||usage())[base]||{}).name||(window.guessStd&&guessStd(base))||''}
 function nameFn(){const UN=usage(),SN=savedNames();return s=>{const u=stdName(baseCode(s),UN,SN);if(u)return u;return s.name&&s.name!==s.code?s.name:'-'}}
 function curMon(){let v=Number(lj('standardhub_v22_alert_months',3));return (Number.isInteger(v)&&v>=1&&v<=24)?v:3}
 
@@ -2062,9 +2063,10 @@ const PNK='standardhub_v22_prod_names';
 /* V12.1: 제품명 정리 — 쉼표로 나눠 각각 지금 규칙(사전·제형 떼기)으로 줄이고 같은 이름은 하나로. 예전에 저장된 '퍼고베리스, 루베리스, 퍼고베리스펜주, 루베리스' → '퍼고베리스, 루베리스' */
 function prodClean(v){const out=[];String(v||'').split(/\s*[,，]\s*/).map(x=>x.trim()).filter(Boolean).forEach(x=>{const y=(typeof prodName==='function'?prodName(x):x)||x;if(y&&y!=='-'&&!out.includes(y))out.push(y)});return out.join(', ')}
 window.prodClean=prodClean;
-window.autoProdB=function(b){try{return autoProd(b,usage())}catch(e){return ''}};function autoProd(base,UN){const P=(UN[base]||{}).pur||{},set=new Set();Object.values(P).forEach(d=>Object.keys(d).forEach(k=>{const kk=k.split('\t'),rs0=(!kk[0]||kk[0]==='-')&&window.splitByNum?splitByNum(kk[1]||''):null,x0=rs0?rs0[0]:kk[0],x=window.normSample?normSample(String(x0).replace(/\/\s*\d+\s*\.+\s*[가-힣A-Za-z].*$/,'')):x0;if(x&&x!=='-')set.add(prodName(x));else{const f=window.dictFind&&dictFind(k.replace('\t',' '));if(f)set.add(f)}}));return [...set].join(', ')}
+window.autoProdB=function(b){try{return autoProd(b,usage())}catch(e){return ''}};function autoProd(base,UN){const r0=autoProd0(base,UN);return r0||(window.guessProd?guessProd(base):'')}
+window.autoProd0B=function(b){try{return autoProd0(b,usage())}catch(e){return ''}};function autoProd0(base,UN){const P=(UN[base]||{}).pur||{},set=new Set();Object.values(P).forEach(d=>Object.keys(d).forEach(k=>{const kk=k.split('\t'),rs0=(!kk[0]||kk[0]==='-')&&window.splitByNum?splitByNum(kk[1]||''):null,x0=rs0?rs0[0]:kk[0],x=window.normSample?normSample(String(x0).replace(/\/\s*\d+\s*\.+\s*[가-힣A-Za-z].*$/,'')):x0;if(x&&x!=='-')set.add(prodName(x));else{const f=window.dictFind&&dictFind(k.replace('\t',' '));if(f)set.add(f)}}));return [...set].join(', ')}
 function annexRows(g,cust){const PN=lj(PNK,{}),UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),NOTES=lj(LK,{}),client=!isB(g);
- return listOf(g).filter(s=>!SKIP[baseCode(s)]&&!(window.labelGone&&labelGone(s.code))&&!(window.dispDone&&dispDone(s.code))).map(s=>{const r=detailData[s.id]||{},base=baseCode(s);
+ return listOf(g).filter(s=>!SKIP[baseCode(s)]&&!(window.labelGone&&labelGone(s.code))&&!(window.nlGone&&nlGone(s))&&!(window.dispDone&&dispDone(s.code))).map(s=>{const r=detailData[s.id]||{},base=baseCode(s);
   const sub=client&&window.splitName?splitName(g):'';let prod=client?((sub&&sub!=='검체 미지정'?sub:'')||prodClean(PN[base])||autoProd(base,UN)||'N/A'):'KPTR';
   const pk=Number(gv(r,'패키지 수'))||1,ct=Number(gv(r,'패키지 별 용기 수'))||1,tv=gv(r,'전체 용량'),tu=gv(r,'전체 용량 단위'),iu0=gv(r,'입고 수량 단위');
   const tn=Number(String(tv).replace(/,/g,''));const spec=iu0;/* 규격 = 입고 단위만 (예: vial, 개, mg) */
@@ -2181,7 +2183,7 @@ function ntExp(s){const e=String(s.exp||'').slice(0,10);if(!/^\d{4}-\d\d-\d\d$/.
  const d0=(val('inDate')||today()),T=(typeof myTiers==='function'?myTiers():[]).slice().sort((a,b)=>a.m-b.m);let tag='';
  if(e<d0)tag='<i class="nt-b nt-over">지남</i>';else for(const t of T){const L=new Date(d0+'T00:00:00');L.setMonth(L.getMonth()+t.m);const ls=L.getFullYear()+'-'+String(L.getMonth()+1).padStart(2,'0')+'-'+String(L.getDate()).padStart(2,'0');if(e<=ls){tag='<i class="nt-b" style="background:'+t.c+'">'+t.m+'개월 이내</i>';break}}
  return '<span class="nt-exp">'+e+tag+'</span>'}
-function notesBox(){const g=val('inG'),box=document.getElementById('inNotes');if(!box)return;const N=lj(LK,{}),SKIP=lj(SK,{}),nm=nameFn(),lots=listOf(g).filter(s=>!SKIP[baseCode(s)]&&!(window.labelGone&&labelGone(s.code))&&!(window.dispDone&&dispDone(s.code)));
+function notesBox(){const g=val('inG'),box=document.getElementById('inNotes');if(!box)return;const N=lj(LK,{}),SKIP=lj(SK,{}),nm=nameFn(),lots=listOf(g).filter(s=>!(window.nlGone&&nlGone(s))&&!SKIP[baseCode(s)]&&!(window.labelGone&&labelGone(s.code))&&!(window.dispDone&&dispDone(s.code)));
  /* V5.6: 표준품(기본번호)별로 접어서 보여 줌 + 찾기 + 같은 표준품 전체에 한 번에 쓰기 */
  const by=new Map();lots.forEach(s=>{const b=baseCode(s);if(!by.has(b))by.set(b,[]);by.get(b).push(s)});
  const nn=[...by.values()].flat().filter(s=>N[s.code]).length;
@@ -2212,13 +2214,17 @@ window.ntAll=function(btn){const d=btn.closest('details'),v=d.querySelector('.nt
 window.noteSet=function(code,v){const N=lj(LK,{});v=String(v||'').trim();if(v&&!ntNone(v))N[code]=v;else delete N[code];try{localStorage.setItem(LK,JSON.stringify(N))}catch(e){return alert('이 브라우저에서는 저장할 수 없습니다.')}notesBox()};
 window.noteAdd=function(){const c=val('ntCode'),t=val('ntText').trim();if(!t)return alert('비고 내용을 입력해 주세요.');noteSet(c,t)};
 window.inspFill=function(){notesBox();dispBox();lnBox();if(document.getElementById('inTiers')&&!document.getElementById('tRows'))tiersBox();const g=val('inG'),m=lf()[g]||{};document.getElementById('inCust').value=m.cust||defCust(g);document.getElementById('inTarget').value=m.target||defTarget(g);document.getElementById('inDept').value=m.dept||'';try{draftLoad()}catch(e){}
- const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),allB=[...new Set(listOf(g).map(baseCode))].sort(),autoNm=b=>(window.labelName&&labelName(b))||(UN[b]||{}).name||'',miss=allB.filter(b=>!autoNm(b)),box=document.getElementById('inNames');if(!box)return;
- const PN=lj(PNK,{}),pbox=document.getElementById('inProds');if(pbox){const bs=isB(g)?[]:[...new Set(listOf(g).map(baseCode))].sort();
+ const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),allB=[...new Set(listOf(g).filter(s=>!(window.nlGone&&nlGone(s))).map(baseCode))].sort(),autoNm=b=>(window.labelName&&labelName(b))||(UN[b]||{}).name||(window.guessStd&&guessStd(b))||'',miss=allB.filter(b=>!autoNm(b)),box=document.getElementById('inNames');if(!box)return;
+ const PN=lj(PNK,{}),pbox=document.getElementById('inProds');if(pbox){const bs=isB(g)?[]:[...new Set(listOf(g).filter(s=>!(window.nlGone&&nlGone(s))).map(baseCode))].sort();
   const row=(b,au)=>`<div style="display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap"><span style="min-width:110px;font-family:var(--mono,monospace)">${esc(b)}</span><input class="in-pn" data-base="${esc(b)}" data-auto="${esc(au)}" value="${esc(prodClean(PN[b]||'')===prodClean(au)?'':prodClean(PN[b]||''))}" placeholder="${esc(au||'제품명 입력 (비우면 N/A)')}" style="margin:0;flex:1;min-width:140px"></div>`;
   /* V12.4: 한 번 입력해 기억된 제품명은 접어 둠 — 아직 아무 이름도 없는 것만 펼쳐서 '입력해 주세요' */
-  const miss=bs.filter(b=>!autoProd(b,UN)&&!prodClean(PN[b]||'')),typed=bs.filter(b=>!autoProd(b,UN)&&prodClean(PN[b]||'')),found=bs.filter(b=>autoProd(b,UN));
+  const miss=bs.filter(b=>!autoProd(b,UN)&&!prodClean(PN[b]||'')),typed=bs.filter(b=>!autoProd(b,UN)&&prodClean(PN[b]||'')),found0=bs.filter(b=>autoProd(b,UN));
+  /* V3.5: 사용기록이 아니라 비고·Working 표준품 등으로 추정한 제품명은 따로 보여 줌(직접 입력해 둔 것은 제외) */
+  const guessed=found0.filter(b=>window.autoProd0B&&!autoProd0B(b)&&!prodClean(PN[b]||'')),found=found0.filter(b=>!guessed.includes(b));
+  const grow=b=>row(b,autoProd(b,UN)).replace('<input class="in-pn"','<span class="pn-gtag">추정</span><input class="in-pn"');
+  const gbox=guessed.length?`<div class="pn-guess"><p style="margin:8px 0 2px;font-weight:600;color:#2b5bd7">추정한 제품명 ${guessed.length}종 — 맞는지 확인해 주세요</p><p class="muted small" style="margin:0 0 4px">사용기록이 없어 재고 Excel '비고', Working·원 표준품, 같은 의뢰사의 같은 Cat No. 등에서 짐작했습니다. 맞으면 그대로 두고(흐린 글씨가 그대로 들어갑니다), 틀리면 칸에 고쳐 적어 주세요.</p>${guessed.map(grow).join('')}</div>`:'';
   const rest=[...typed.map(b=>row(b,'')),...found.map(b=>row(b,autoProd(b,UN)))];
-  pbox.innerHTML=bs.length?(miss.length?`<div class="pn-box warn"><b>관리내역 제품명</b> <span class="muted small" style="font-weight:400">(= 검체명 · 이 표준품으로 시험하는 의뢰사 제품, 예: 스카이리치)</span><p style="margin:6px 0 4px;font-weight:600;color:#b45309">⚠ 제품명을 모르는 표준품 ${miss.length}종 — 입력해 주세요</p><p class="muted small" style="margin:0 0 6px">사용기록(Excel)에서 못 찾았습니다. 한 번 입력하면 기억하고, 다음부터는 접혀 있습니다.</p>${miss.map(b=>row(b,'')).join('')}${rest.length?`<details class="pn-more"><summary class="muted small">입력·자동으로 정해진 제품명 ${rest.length}종 보기 · 고치기</summary>${rest.join('')}</details>`:''}</div>`
+  pbox.innerHTML=bs.length?(miss.length||guessed.length?`<div class="pn-box${miss.length?' warn':''}"><b>관리내역 제품명</b> <span class="muted small" style="font-weight:400">(= 검체명 · 이 표준품으로 시험하는 의뢰사 제품, 예: 스카이리치)</span>${miss.length?`<p style="margin:6px 0 4px;font-weight:600;color:#b45309">⚠ 제품명을 모르는 표준품 ${miss.length}종 — 입력해 주세요</p><p class="muted small" style="margin:0 0 6px">사용기록·재고 Excel 비고 어디에서도 단서를 못 찾았습니다. 한 번 입력하면 기억하고, 다음부터는 접혀 있습니다.</p>${miss.map(b=>row(b,'')).join('')}`:''}${gbox}${rest.length?`<details class="pn-more"><summary class="muted small">입력·자동으로 정해진 제품명 ${rest.length}종 보기 · 고치기</summary>${rest.join('')}</details>`:''}</div>`
    :`<details class="pn-box pn-mini"><summary><b>관리내역 제품명</b> <span class="muted small" style="font-weight:400">(= 검체명 · 이 표준품으로 시험하는 의뢰사 제품, 예: 스카이리치)</span> <span class="muted small">${bs.length}종 모두 정해짐${typed.length?` (직접 입력 ${typed.length}종)`:''} · 보기 · 고치기</span></summary>${rest.join('')}</details>`):''}
  /* V2.8: 표준품명 칸을 모든 표준품에 — 라벨·사용기록 이름으로 미리 채우고, 고친(또는 확인한) 이름은 저장되어 라벨 정보가 바뀌거나 지워져도 그대로(직접 입력 이름이 1순위) */
  const nrow=b=>`<div style="display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap"><span style="min-width:110px;font-family:var(--mono,monospace)">${esc(b)}</span><input class="in-nm" data-base="${esc(b)}" value="${esc(SN[b]||autoNm(b))}" placeholder="비우면 N/A" style="margin:0;flex:1;min-width:140px"><label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-weight:400;white-space:nowrap"><input class="in-skip" data-base="${esc(b)}" type="checkbox" ${SKIP[b]?'checked':''} style="width:auto;margin:0">관리내역에서 빼기</label></div>`;
@@ -2288,7 +2294,7 @@ window.makeInspection=function(mode){
  <tr><th>유효기한</th><td colspan="5" class="lst" style="height:120px"><div class="cw">${blk('임박',soon,s=>ln(s))}<br><br>${blk('만료',exp,s=>ln(s))}</div></td></tr>
  <tr><th>라벨상태</th><td colspan="5">${st(rv('inLab'),rv('inLabRe'))}</td></tr>
  <tr><th>보관상태<br>(보관위치,<br>밀봉여부 등)</th><td colspan="5">${st(rv('inSto'),rv('inStoRe'))}</td></tr>
- <tr><th>추가 구입<br>(요청)<br>필요 표준품</th><td colspan="5">${tx(val('inBuy')+lnx('buy'))}</td></tr>
+ <tr><th>추가 구입<br>(요청)<br>필요 표준품</th><td colspan="5">${tx(val('inBuy')+lnx('buy')+(window.buyx?buyx():''))}</td></tr>
  <tr><th>Re-test 필요<br>표준품</th><td colspan="5">${tx(val('inRetest')+lnx('retest'))}</td></tr>
  <tr><th>폐기 표준품</th><td colspan="5" class="lst" style="height:100px"><div class="cw">${blk2('유효기한 만료',[...exp.map(s=>ln(s,Number(s.qty)===0?' · 재고 0':'')),...DL.filter(x=>x.expired).map(dl)])}<br><br>${blk2('소진',[...empty.filter(s=>!exp.includes(s)).map(s=>ln(s,' · 재고 0')),...DL.filter(x=>!x.expired).map(dl)])}</div></td></tr>
  <tr><th>기타<br>특이사항</th><td colspan="5" class="lst" style="height:120px"><div class="cw">[입고 예정]<br>${tx(val('inPlan')+lnx('plan'))}<br><br>${blk('입고',inM,s=>ln(s,' · 입고 '+dot(iso((detailData[s.id]||{})['입고 일자']))))}<br><br>[기타]<br>${tx(val('inEtc')+lnx('etc'))}</div></td></tr>
@@ -2911,7 +2917,7 @@ const lj=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?
 const ui=u=>{try{return window.unitInfoG?unitInfoG(u):null}catch(e){return null}};
 const r2=x=>Math.round(x*100)/100;
 function catOf(items){for(const s of items||[]){const r=(window.detailData&&detailData[s.id])||(typeof detailData!=='undefined'?detailData[s.id]:null)||{};const c=String(r['Cat No.']||'').trim();if(c)return c}return ''}
-function nameOf(base){return (lj(NK,{})[base]||'')||(window.labelName&&labelName(base))||(window.usageNameOf&&usageNameOf(base))||''}
+function nameOf(base){return (lj(NK,{})[base]||'')||(window.labelName&&labelName(base))||(window.usageNameOf&&usageNameOf(base))||(window.guessStd&&guessStd(base))||''}
 window.stdName=nameOf;
 window.stdLabel=function(base,items){const n=nameOf(base),c=catOf(items);return n?(c?n+' ('+c+')':n):(c?'N/A ('+c+')':'N/A')};
 /* 1회 사용량: 직접 입력이 먼저, 없으면 최근 6개월 사용기록에서 날짜별 (쓴 양 ÷ 횟수) 중 가장 큰 값 — 한 번만 튄 큰 값(중앙값의 2배 넘음)은 뺌 */
@@ -3381,5 +3387,59 @@ const css=document.createElement('style');css.textContent=`#overview .ov-fold{pa
 #overview .ov-fold>summary::-webkit-details-marker{display:none}#overview .ov-fold>summary::before{content:'▸';color:#6b7280;font-size:12px;width:10px}#overview .ov-fold[open]>summary::before{content:'▾'}
 #overview .ov-fold>summary h3{margin:0!important;display:inline}#overview .ov-fold[open]>summary{border-bottom:1px solid var(--line,#e5e8ee)}#overview .ov-fold>:not(summary){margin-left:20px;margin-right:20px}#overview .ov-fold[open]{padding-bottom:14px!important}
 #overview>.page-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}#overview .ov-lbl{font-weight:600;font-size:13px;margin-right:4px;color:#20242b}`;document.head.appendChild(css);
+})();
+</script><script>/* V3.5: 관리내역 제품명·표준품명 자동 채우기 넓히기 — 사용기록·라벨로 못 찾은 표준품을 다른 단서로 추정(입력 창에서 고칠 수 있음).
+   제품명(guessProd): ① 검체별 나누기에서 정한 검체 ② 재고 Excel '비고'·'용도'에 적힌 제품 이름(사전) ③ 표준품명 안의 제품 이름(사전)
+   ④ Working(W)·원 표준품끼리, 비고에 적힌 다른 관리번호 ⑤ 같은 표준품명·같은 Cat No.의 다른 표준품 ⑥ 그 의뢰사 제품이 하나뿐이면 그 제품
+   표준품명(guessStd): Working(W)·원 표준품끼리 → 비고에 적힌 다른 관리번호 → 같은 Cat No.의 다른 표준품 */
+(function(){
+let IX=null,KEY='',GC=new Map(),SC=new Map();
+const realStd=b=>{try{const n=JSON.parse(localStorage.getItem('standardhub_v22_std_names')||'{}')[b];return n||(window.labelName&&labelName(b))||(window.usageNameOf&&usageNameOf(b))||''}catch(e){return ''}};
+function ix(){const k=stocks.length+'|'+(localStorage.getItem('standardhub_v22_split')||'').length+'|'+((window.lsJSON&&lsJSON('standardhub_v22_usage'))?1:0)+'|'+(localStorage.getItem('standardhub_v22_label_info')||'').length;
+ if(IX&&KEY===k)return IX;KEY=k;const lots={},cat={},nm={},prod={},cl={};
+ stocks.forEach(s=>{const b=masterOf(s.code);(lots[b]=lots[b]||[]).push(s)});
+ Object.keys(lots).forEach(b=>{const L=lots[b],g=L[0].group;const c=L.map(s=>String((detailData[s.id]||{})['Cat No.']||s.cat||'').trim().toUpperCase()).find(x=>x&&x!=='-'&&x!=='N/A');if(c)(cat[c]=cat[c]||[]).push(b);
+  const n=realStd(b).trim().toLowerCase();if(n)(nm[n]=nm[n]||[]).push(b);const p=window.autoProd0B?autoProd0B(b):'';prod[b]=p;if(p)(cl[g]=cl[g]||new Set()).add(p)});
+ IX={lots,cat,nm,prod,cl};GC=new Map();SC=new Map();return IX}
+const txt=(b,f)=>{const L=(ix().lots[b]||[]);return L.map(s=>String((detailData[s.id]||{})[f]||'')).join(' \n ')};
+const pair=b=>{const m=String(b).match(/^(PB\.[A-Z0-9]+\.)(W?)(\d.*)$/i);if(!m)return [];const o=m[2]?m[1]+m[3]:m[1]+'W'+m[3];return [o,m[2]?m[1]+m[3].replace(/^0+(?=\d{3})/,''):m[1]+'W0'+m[3]].filter((x,i,a)=>a.indexOf(x)===i)};
+const refs=b=>[...new Set((txt(b,'비고').match(/PB\.[A-Z0-9]+\.[A-Z]?\d+/gi)||[]).map(x=>x.toUpperCase()))].filter(x=>x!==b&&ix().lots[x]);
+const one=s=>String(s||'').split(/\s*,\s*/).filter(Boolean)[0]||'';
+window.guessProd=function(b,d){const I0=ix();if(!d&&GC.has(b))return GC.get(b);const v=gp(b,d||0);if(!d)GC.set(b,v);return v};
+function gp(b,d){try{const I=ix();const L=I.lots[b];if(!L)return '';const g=L[0].group;
+ if(window.subsOf){const sub=[...new Set(L.flatMap(s=>subsOf(s)))].map(x=>window.splitName?splitName(x):'').filter(x=>x&&x!=='검체 미지정');if(sub.length)return sub.join(', ')}
+ const df=window.dictFind;if(df){for(const f of ['비고','용도']){const p=df(txt(b,f));if(p)return p}const p2=df(realStd(b));if(p2)return p2}
+ for(const o of [...pair(b),...refs(b)]){if(I.prod[o])return I.prod[o];if(!d){const q=gp(o,1);if(q)return q}}
+ const same=o=>o!==b&&I.lots[o]&&I.lots[o][0].group===g;const n=realStd(b).trim().toLowerCase();if(n)for(const o of (I.nm[n]||[]))if(same(o)&&I.prod[o])return I.prod[o];
+ for(const c in I.cat)if(I.cat[c].includes(b))for(const o of I.cat[c])if(same(o)&&I.prod[o])return I.prod[o];
+ const s=I.cl[g];if(s&&s.size===1)return [...s][0];return ''}catch(e){return ''}}
+/* V3.6(사용자 확인): 관리내역·입력 창에서 빼는 입고 — 재고 0 + 유효기한 지남 + 라벨 정보 없음(LIMS '라벨 출력 여부' N이라 라벨 Excel에 안 나옴). 다 쓰고 폐기한 것으로 봄. 정기점검 양식의 만료·폐기 목록에는 그대로 나옴 */
+window.nlGone=function(s){try{if(!s||Number(s.qty)!==0||expireState(s)!=='만료')return false;const lab=(window.lsJSON?lsJSON('standardhub_v22_label_info'):JSON.parse(localStorage.getItem('standardhub_v22_label_info')||'null'))||{};if(lab.lots&&lab.lots[s.code])return false;
+ return String((detailData[s.id]||{})['라벨 출력 여부']||'').trim().toUpperCase()==='N'}catch(e){return false}};
+window.guessStd=function(b){const I0=ix();if(SC.has(b))return SC.get(b);const v=gs0(b);SC.set(b,v);return v};
+function gs0(b){try{const I=ix();if(!I.lots[b])return '';for(const o of [...pair(b),...refs(b)]){const n=realStd(o);if(n)return n}
+ const g=I.lots[b][0].group;for(const c in I.cat)if(I.cat[c].includes(b))for(const o of I.cat[c]){if(o===b||I.lots[o][0].group!==g)continue;const n=realStd(o);if(n)return n}return ''}catch(e){return ''}}
+})();
+</script><script>/* V3.6: 정기점검 '추가 구입(요청) 필요 표준품' 후보 — 재고 알림 기준(직접 정한 기준, 없으면 월평균 사용량) 이하로 떨어진 표준품을 자동으로 모아 칩으로.
+   기본은 모두 체크 → 양식에 '관리번호 : 표준품명 — 재고 N (기준 N 이하)'로 들어감. 체크를 푼 것은 그룹·달별로 기억(standardhub_v22_buy_skip) */
+(function(){
+const BK='standardhub_v22_buy_skip';
+const lj=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
+const num=v=>{const n=Number(v);return Number.isFinite(n)?String(Math.round(n*100)/100):String(v)};
+const key=()=>{const g=(document.getElementById('inG')||{}).value||'',d=(document.getElementById('inDate')||{}).value||new Date().toISOString().slice(0,10);return g+'|'+d.slice(0,7)};
+function cands(g){let rows=[];try{rows=clientAlertOverview().rows.filter(r=>r.triggered)}catch(e){return []}
+ return rows.filter(r=>{const s=(r.items||[])[0];if(!s)return false;if(s.group===g)return true;try{return window.subsOf&&subsOf(s).includes(g)}catch(e){return false}})
+  .map(r=>{const u=(r.cfg&&r.cfg.unit)||((r.units||[])[0]||{}).unit||'',nm=(window.stdName&&stdName(r.base))||'';
+   const out=r.base+(nm?' : '+nm:'')+' — 재고 '+num(r.current)+' '+u;return {base:r.base,out,txt:out+' (기준 '+num(r.cfg&&r.cfg.value)+' '+((r.cfg&&r.cfg.unit)||u)+' 이하)'}})}
+window.buyBox=function(){const host=document.getElementById('inLotNotes');if(!host)return;let box=document.getElementById('inBuyCand');
+ if(!box){box=document.createElement('div');box.id='inBuyCand';host.parentNode.insertBefore(box,host)}
+ const g=(document.getElementById('inG')||{}).value||'';const cs=cands(g),skip=new Set(lj(BK,{})[key()]||[]);
+ if(!cs.length){box.innerHTML='<p class="muted small" style="margin:12px 0 0;border-top:1px solid var(--line);padding-top:8px"><b style="color:#20242b">재고 부족 — 요청 후보</b> — 재고 알림 기준 이하인 표준품이 없습니다.</p>';return}
+ box.innerHTML=`<details class="dp-box" open><summary><b>재고 부족 — 요청 후보</b> <span class="muted small"><span class="buy-cnt"></span> — 재고 알림 기준 이하인 표준품. 체크한 것이 '추가 구입 (요청) 필요 표준품' 칸에 들어갑니다</span></summary><div class="dp-list">${cs.map(c=>`<label class="dp-r buy-r" style="cursor:pointer"><input type="checkbox" class="buy-k" data-base="${esc(c.base)}" data-t="${esc(c.out)}"${skip.has(c.base)?'':' checked'} onchange="buySave()" style="width:auto;margin:0"><span>${esc(c.txt)}</span></label>`).join('')}</div></details>`;buyCnt()};
+function buyCnt(){const b=document.getElementById('inBuyCand');if(!b)return;const a=b.querySelectorAll('.buy-k'),n=[...a].filter(x=>x.checked).length;const c=b.querySelector('.buy-cnt');if(c)c.textContent=n+' / '+a.length+'종 넣음'}
+window.buySave=function(){const o=lj(BK,{}),k=key();o[k]=[...document.querySelectorAll('#inBuyCand .buy-k')].filter(x=>!x.checked).map(x=>x.dataset.base);if(!o[k].length)delete o[k];try{localStorage.setItem(BK,JSON.stringify(o))}catch(e){}buyCnt()};
+window.buyx=function(){const a=[...document.querySelectorAll('#inBuyCand .buy-k')].filter(x=>x.checked).map(x=>x.dataset.t);return a.length?'\n'+a.join('\n'):''};
+const _f=window.inspFill;if(_f)window.inspFill=function(){const r=_f.apply(this,arguments);try{if(document.getElementById('inBuy'))buyBox()}catch(e){console.error(e)}return r};
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='inDate'&&document.getElementById('inBuyCand'))buyBox()});
 })();
 </script></body></html>
