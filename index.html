@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.9</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.4</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -440,7 +440,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 /* V3.5: 표준품 목록 제목 칸 거르기 상자는 창 폭과 상관없이 제목 글자 아래로(회사 PC 맑은 고딕에서 표가 패널보다 넓어져 오른쪽 '유효기한 상태'가 잘리던 것) */html body #inventory thead th{vertical-align:bottom!important}html body #inventory thead th .head-filter{display:block!important;margin:4px 0 0!important;width:100%!important;min-width:72px!important;max-width:120px!important}html body #inventory tr.master-toggle-row>td:nth-child(3){white-space:normal!important;word-break:keep-all}
 /* V3.5: 글자 통일 — 웹 글꼴(IBM Plex, 회사 망에서 PC마다 받아지기도·막히기도 함)·고정폭 글꼴(관리번호·숫자, 회사 PC에서는 Consolas)을 빼고 맑은 고딕 하나로. 숫자는 폭 고정(tabular-nums).
    크기·굵기 규칙: 화면 제목 18/600 · 칸 제목(h3) 15/600 · 표 제목 12.5/600 · 표 내용 13 · 버튼·하위 탭 13/500 · 입력 칸·접기 제목 13.5 · 설명 12.5 · 작은 글 12 · 굵게는 600 하나 */
-body,.shell,.shell button,.shell input,.shell select,.shell textarea{font-family:var(--font)}html body #inventory tr.master-toggle-row>td:nth-child(8){white-space:normal!important}html body #inventory tr.master-toggle-row>td:nth-child(8) .tag{white-space:normal!important;font-size:12px;padding:2px 8px;line-height:1.4;display:inline-block}
+body,.shell,.shell button,.shell input,.shell select,.shell textarea{font-family:var(--font)}html body #inventory tr.master-toggle-row>td:nth-child(8){white-space:normal!important}html body #inventory tr.master-toggle-row>td:nth-child(8) .tag{white-space:normal!important;font-size:12px;padding:2px 8px;line-height:1.4;display:inline-block}/* V4.2: 유효기한 상태 칩은 늘 한 줄 — 만료·임박이 같이 있으면 '만료 1 · 임박 2'로 짧게 */html body #inventory tr.master-toggle-row>td:nth-child(8),html body #inventory tr.master-toggle-row>td:nth-child(8) .tag{white-space:nowrap!important}html body #inventory tr.master-toggle-row>td:nth-child(3){white-space:normal!important;word-break:keep-all;overflow-wrap:normal}html body #inventory tr.master-toggle-row>td:first-child{overflow-wrap:anywhere}html body #inventory tr.master-toggle-row>td:first-child b{overflow-wrap:normal;white-space:nowrap}
 .shell{font-variant-numeric:tabular-nums}
 .shell h2{font-size:18px!important;font-weight:600!important}
 .shell h3{font-size:15px!important;font-weight:600!important;line-height:1.4}
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V3.9 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.4 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -603,7 +603,7 @@ function drawMasters(){let q=(document.getElementById('masterQuery')?.value||'')
 const earliest=items=>masterEarliest(items)||'9999-12-31';const qty=items=>items.reduce((n,s)=>n+(Number(s.qty)||0),0);if(sort==='expiryAsc')arr.sort((a,b)=>earliest(a[1]).localeCompare(earliest(b[1])));if(sort==='expiryDesc')arr.sort((a,b)=>earliest(b[1]).localeCompare(earliest(a[1])));if(sort==='qtyAsc')arr.sort((a,b)=>qty(a[1])-qty(b[1]));if(sort==='qtyDesc')arr.sort((a,b)=>qty(b[1])-qty(a[1]));
 document.getElementById('masterCount').textContent=`${arr.length}종 · ${arr.reduce((a,x)=>a+x[1].length,0)}개 입고번호 표시 (폐기 완료 제외)`;
 /* V3.7: 처음엔 150종만 그림(전에는 1,260종을 모두 그린 뒤 숨겨서 표준품 메뉴가 가장 느렸음) — 검색하면 전체, [나머지 더 보기]로 모두 */const LIM=150,more=(!q&&!window._invAll&&arr.length>LIM+30)?arr.length-LIM:0;
-document.getElementById('masterRows').innerHTML=(more?arr.slice(0,LIM):arr).map(([code,items])=>{let s=items[0],expiredCount=items.filter(x=>expireState(x)==='만료').length,soonCount=items.filter(x=>expireState(x)==='3개월 이내').length,missingCount=items.filter(x=>!Number.isFinite(dayGap(x.exp))).length,needsCount=expiredCount+soonCount,ex=expiredCount?`만료\u00a0${expiredCount}건${soonCount?`\u00a0· 임박\u00a0${soonCount}건`:''}`:soonCount?`임박\u00a0${soonCount}건`:missingCount?`기한\u00a0없음\u00a0${missingCount}건`:'정상',open=expandedMasters.has(code),condition=[...new Set(items.map(inventoryStorage))].join(' / '),firstExpiry=masterEarliest(items)||'—';return `<tr class="master-toggle-row" onclick="toggleMaster('${code}')" style="cursor:pointer;background:${open?'#edf3f9':''}" title="클릭하여 입고번호 ${open?'접기':'펼치기'}"><td><b style="display:inline-block;width:19px;color:#526579">${open?'▾':'▸'}</b><b>${esc(code)}</b></td><td><span class="storage-text">${esc(condition)}</span></td><td>${esc(getInventoryValue(s,'제조 회사')||'—')}</td><td>${esc(getInventoryValue(s,'Cat No.')||'—')}</td><td>${items.length}건</td><td>${esc(getInventoryValue(s,'보관 장소')||'—')}</td><td><b>${esc(firstExpiry)}</b></td><td><span class="tag ${expiredCount?'red':soonCount?'gold':''}">${esc(ex)}</span></td></tr>${open?`<tr class="receipt-inline"><td colspan="8" style="padding:12px 14px 18px 32px;background:#f5f8fb"><div style="font-weight:700;margin:0 0 9px;color:#3e5369">${esc(code)} · 입고번호별 현황 (${items.length}건, 폐기 완료 제외)</div><div class="tablewrap"><table style="background:white"><thead><tr><th>입고번호</th><th>보관 조건</th><th>입고일</th><th>제조번호</th><th>유효기한</th><th>입고량</th><th>실재고</th><th>폐기 상태</th></tr></thead><tbody>${items.map(x=>{let r=detailData[x.id]||{},status=disposalState(x),expiry=expireState(x);return `<tr><td><b>${esc(x.code)}</b></td><td>${esc(inventoryStorage(x))}</td><td>${esc(r['입고 일자']||'—')}</td><td>${esc(r['제조 번호']||'—')}</td><td><b>${esc(x.exp||'—')}</b> ${expiry?'<span class="tag gold">'+esc(expiry)+'</span>':!Number.isFinite(dayGap(x.exp))?'<span class="tag">날짜 확인 필요</span>':''}</td><td>${esc(String(r['전체 용량']||r['입고 수량']||'—'))} ${esc(r['전체 용량 단위']||r['입고 수량 단위']||'')}</td><td>${esc(String(x.qty))} ${esc(x.unit)}</td><td>${status==='partial'?'일부 폐기':status==='unknown'?'확인 필요':'미폐기'}</td></tr>`}).join('')}</tbody></table></div></td></tr>`:''}`}).join('')+(more?`<tr class="inv-more"><td colspan="8" style="text-align:center;padding:12px"><button type="button" onclick="event.stopPropagation();window._invAll=1;drawMasters()">나머지 ${more}종 더 보기</button> <span class="small muted">(앞 ${LIM}종만 보이는 중 · 검색하면 전체에서 찾음)</span></td></tr>`:'')||'<tr><td colspan="8">조건에 맞는 표준품이 없습니다.</td></tr>';
+document.getElementById('masterRows').innerHTML=(more?arr.slice(0,LIM):arr).map(([code,items])=>{let s=items[0],expiredCount=items.filter(x=>expireState(x)==='만료').length,soonCount=items.filter(x=>expireState(x)==='3개월 이내').length,missingCount=items.filter(x=>!Number.isFinite(dayGap(x.exp))).length,needsCount=expiredCount+soonCount,ex=expiredCount?(soonCount?`만료\u00a0${expiredCount}\u00a0·\u00a0임박\u00a0${soonCount}`:`만료\u00a0${expiredCount}건`):soonCount?`임박\u00a0${soonCount}건`:missingCount?`기한\u00a0없음\u00a0${missingCount}건`:'정상',open=expandedMasters.has(code),condition=[...new Set(items.map(inventoryStorage))].join(' / '),firstExpiry=masterEarliest(items)||'—';return `<tr class="master-toggle-row" onclick="toggleMaster('${code}')" style="cursor:pointer;background:${open?'#edf3f9':''}" title="클릭하여 입고번호 ${open?'접기':'펼치기'}"><td><b style="display:inline-block;width:19px;color:#526579">${open?'▾':'▸'}</b><b>${esc(code)}</b></td><td><span class="storage-text">${esc(condition)}</span></td><td>${(mf=>/\s/.test(mf)?esc(mf):'<span style="white-space:nowrap">'+esc(mf)+'</span>')(String(getInventoryValue(s,'제조 회사')||'—').replace(/^\((주|유|재)\)\s+/,'($1)'))}</td><td>${esc(getInventoryValue(s,'Cat No.')||'—')}</td><td>${items.length}건</td><td>${esc(getInventoryValue(s,'보관 장소')||'—')}</td><td><b>${esc(firstExpiry)}</b></td><td><span class="tag ${expiredCount?'red':soonCount?'gold':''}"${expiredCount&&soonCount?` title="유효기한 만료 ${expiredCount}건 · 임박 ${soonCount}건"`:''}>${esc(ex)}</span></td></tr>${open?`<tr class="receipt-inline"><td colspan="8" style="padding:12px 14px 18px 32px;background:#f5f8fb"><div style="font-weight:700;margin:0 0 9px;color:#3e5369">${esc(code)} · 입고번호별 현황 (${items.length}건, 폐기 완료 제외)</div><div class="tablewrap"><table style="background:white"><thead><tr><th>입고번호</th><th>보관 조건</th><th>입고일</th><th>제조번호</th><th>유효기한</th><th>입고량</th><th>실재고</th><th>폐기 상태</th></tr></thead><tbody>${items.map(x=>{let r=detailData[x.id]||{},status=disposalState(x),expiry=expireState(x);return `<tr><td><b>${esc(x.code)}</b></td><td>${esc(inventoryStorage(x))}</td><td>${esc(r['입고 일자']||'—')}</td><td>${esc(r['제조 번호']||'—')}</td><td><b>${esc(x.exp||'—')}</b> ${expiry?'<span class="tag gold">'+esc(expiry)+'</span>':!Number.isFinite(dayGap(x.exp))?'<span class="tag">날짜 확인 필요</span>':''}</td><td>${esc(String(r['전체 용량']||r['입고 수량']||'—'))} ${esc(r['전체 용량 단위']||r['입고 수량 단위']||'')}</td><td>${esc(String(x.qty))} ${esc(x.unit)}</td><td>${status==='partial'?'일부 폐기':status==='unknown'?'확인 필요':'미폐기'}</td></tr>`}).join('')}</tbody></table></div></td></tr>`:''}`}).join('')+(more?`<tr class="inv-more"><td colspan="8" style="text-align:center;padding:12px"><button type="button" onclick="event.stopPropagation();window._invAll=1;drawMasters()">나머지 ${more}종 더 보기</button> <span class="small muted">(앞 ${LIM}종만 보이는 중 · 검색하면 전체에서 찾음)</span></td></tr>`:'')||'<tr><td colspan="8">조건에 맞는 표준품이 없습니다.</td></tr>';
 }
 function showMaster(code,scroll=true){let items=activeMine().filter(s=>baseCode(s)===code);if(!items.length)return;selectedBase=code;let first=items[0];document.getElementById('detailPanel').innerHTML=`<div class="panel" style="border:2px solid #b8c5d2"><div class="toolbar" style="justify-content:space-between"><div><h3 style="margin:0">${esc(code)} · 입고번호별 상세</h3><p class="muted">제조사 ${esc(getInventoryValue(first,'제조 회사')||'—')} · Cat No. ${esc(getInventoryValue(first,'Cat No.')||'—')} · 입고번호 ${items.length}건</p></div><button onclick="selectedBase=null;document.getElementById('detailPanel').innerHTML=''">닫기 ✕</button></div><div class="tablewrap"><table><thead><tr><th>입고번호</th><th>입고일</th><th>제조번호</th><th>유효기한</th><th>입고량</th><th>실재고</th><th>라벨 총 수량</th><th>폐기 라벨 수량</th><th>폐기 상태</th></tr></thead><tbody>${items.map(s=>{let r=detailData[s.id],status=disposalState(s);return `<tr><td><b>${esc(s.code)}</b></td><td>${esc(r['입고 일자']||'—')}</td><td>${esc(r['제조 번호']||'—')}</td><td>${esc(s.exp||'—')} ${expireState(s)?'<span class="tag gold">'+expireState(s)+'</span>':''}</td><td>${esc(String(r['전체 용량']||r['입고 수량']||'—'))} ${esc(r['전체 용량 단위']||r['입고 수량 단위']||'')}</td><td>${s.qty} ${esc(s.unit)}</td><td>${esc(r['라벨 총 수량']||'—')}</td><td>${esc(r['폐기 라벨 수량']||'0')}</td><td>${status==='partial'?'일부 폐기':status==='unknown'?'확인 필요':'미폐기'}</td></tr>`}).join('')}</tbody></table></div></div>`;if(scroll)document.getElementById('detailPanel').scrollIntoView({behavior:'smooth',block:'nearest'});}
 const disposalDateStorageKey='standardhub_v2_disposal_dates';
@@ -2226,9 +2226,9 @@ window.inspFill=function(){notesBox();dispBox();lnBox();if(document.getElementBy
   /* V12.4: 한 번 입력해 기억된 제품명은 접어 둠 — 아직 아무 이름도 없는 것만 펼쳐서 '입력해 주세요' */
   const miss=bs.filter(b=>!autoProd(b,UN)&&!prodClean(PN[b]||'')),typed=bs.filter(b=>!autoProd(b,UN)&&prodClean(PN[b]||'')),found0=bs.filter(b=>autoProd(b,UN));
   /* V3.5: 사용기록이 아니라 비고·Working 표준품 등으로 추정한 제품명은 따로 보여 줌(직접 입력해 둔 것은 제외) */
-  const guessed=found0.filter(b=>window.autoProd0B&&!autoProd0B(b)&&!prodClean(PN[b]||'')),found=found0.filter(b=>!guessed.includes(b));
+  const OKP=lj('standardhub_v22_prod_ok',{}),guessed=found0.filter(b=>window.autoProd0B&&!autoProd0B(b)&&!prodClean(PN[b]||'')&&!OKP[b]),found=found0.filter(b=>!guessed.includes(b));
   const grow=b=>row(b,autoProd(b,UN)).replace('<input class="in-pn"','<span class="pn-gtag">추정</span><input class="in-pn"');
-  const gbox=guessed.length?`<div class="pn-guess"><p style="margin:8px 0 2px;font-weight:600;color:#2b5bd7">추정한 제품명 ${guessed.length}종 — 맞는지 확인해 주세요</p><p class="muted small" style="margin:0 0 4px">사용기록이 없어 재고 Excel '비고', Working·원 표준품, 같은 의뢰사의 같은 Cat No. 등에서 짐작했습니다. 맞으면 그대로 두고(흐린 글씨가 그대로 들어갑니다), 틀리면 칸에 고쳐 적어 주세요.</p>${guessed.map(grow).join('')}</div>`:'';
+  const gbox=guessed.length?`<div class="pn-guess"><p style="margin:8px 0 2px;font-weight:600;color:#2b5bd7">추정한 제품명 ${guessed.length}종 — 맞는지 확인해 주세요</p><p class="muted small" style="margin:0 0 4px">사용기록이 없어 재고 Excel '비고', Working·원 표준품, 같은 의뢰사의 같은 Cat No. 등에서 짐작했습니다. 틀린 것만 칸에 고쳐 적고 [모두 맞음]을 누르면 다음 달부터는 묻지 않습니다.</p>${guessed.map(grow).join('')}<div style="margin:6px 0 2px"><button type="button" class="primary" onclick="pnGuessOk()" style="height:32px">추정한 제품명 모두 맞음 — 다음부터 안 묻기</button></div></div>`:'';
   const rest=[...typed.map(b=>row(b,'')),...found.map(b=>row(b,autoProd(b,UN)))];
   pbox.innerHTML=bs.length?(miss.length||guessed.length?`<div class="pn-box${miss.length?' warn':''}"><b>관리내역 제품명</b> <span class="muted small" style="font-weight:400">(= 검체명 · 이 표준품으로 시험하는 의뢰사 제품, 예: 스카이리치)</span>${miss.length?`<p style="margin:6px 0 4px;font-weight:600;color:#b45309">⚠ 제품명을 모르는 표준품 ${miss.length}종 — 입력해 주세요</p><p class="muted small" style="margin:0 0 6px">사용기록·재고 Excel 비고 어디에서도 단서를 못 찾았습니다. 한 번 입력하면 기억하고, 다음부터는 접혀 있습니다.</p>${miss.map(b=>row(b,'')).join('')}`:''}${gbox}${rest.length?`<details class="pn-more"><summary class="muted small">입력·자동으로 정해진 제품명 ${rest.length}종 보기 · 고치기</summary>${rest.join('')}</details>`:''}</div>`
    :`<details class="pn-box pn-mini"><summary><b>관리내역 제품명</b> <span class="muted small" style="font-weight:400">(= 검체명 · 이 표준품으로 시험하는 의뢰사 제품, 예: 스카이리치)</span> <span class="muted small">${bs.length}종 모두 정해짐${typed.length?` (직접 입력 ${typed.length}종)`:''} · 보기 · 고치기</span></summary>${rest.join('')}</details>`):''}
@@ -2254,6 +2254,7 @@ window.openInspection=function(mode){
  <label>${annexOnly?'작성일':'점검일 (= 관리내역 작성일)'}<input id="inDate" type="date" value="${today()}"></label>
  <div${ins}><label>유효기한 임박 기준 <span class="muted small">${annexOnly?"(작성일부터)":"(점검일부터)"}</span><span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap"><input id="inMon" type="number" min="1" max="24" step="1" value="${curMon()}" style="width:68px;text-align:center;margin:0" title="1~24개월">개월 이내</span></label></div>
  </div>
+ ${(()=>{/* V4.1: 몇 월 점검인지 — 지난달 점검을 이번 달에 늦게 하는 경우 */const d=new Date(),cy=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');d.setDate(1);d.setMonth(d.getMonth()-1);const py=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const pick=window._inspYm===py?py:cy;window._inspYm='';const r=(v,l)=>`<label style="display:inline-flex;align-items:center;gap:5px;margin:0;font-weight:400;white-space:nowrap"><input type="radio" name="inYm" value="${v}" ${v===pick?'checked':''} onchange="inYmHint()" style="width:auto;margin:0">${l}</label>`;return `<div id="inYmBox" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:2px 0 10px"><b style="font-weight:600">몇 월 ${annexOnly?'관리내역':'점검'}인가요?</b>${r(cy,Number(cy.slice(5))+'월 (이번 달)')}${r(py,Number(py.slice(5))+'월 (지난달 — 늦게 하는 경우)')}<span id="inYmHint" class="muted small"></span></div>`})()}
  <div class="rs-box"${ins}><div class="rs-row"><b>라벨상태</b><span class="rs-g">${radio('inLab','정상','손상')}</span><span class="rs-sep">/</span><span class="muted small rs-l">손상 시 재출력</span><span class="rs-g">${radio('inLabRe','아니오','예')}</span></div><div class="rs-row"><b>보관상태 <span class="muted small" style="font-weight:400">(보관위치, 밀봉여부 등)</span></b><span class="rs-g">${radio('inSto','정상','손상')}</span><span class="rs-sep">/</span><span class="muted small rs-l">손상 시 재출력</span><span class="rs-g">${radio('inStoRe','아니오','예')}</span></div></div>
  <div class="in-grid in-ta"${ins}>${ta('inBuy','추가 구입 (요청) 필요 표준품')}${ta('inRetest','Re-test 필요 표준품')}${ta('inPlan','기타 · 입고 예정')}${ta('inEtc','기타 · 기타')}</div>
  ${annexOnly?'<div id="inTiers"></div><div id="inProds"></div><div id="inNames"></div><div id="inNotes"></div>':'<div id="inDisp"></div><div id="inLotNotes"></div>'}
@@ -2262,7 +2263,7 @@ window.openInspection=function(mode){
 
 window.makeInspection=function(mode){
  {const em=[...document.querySelectorAll('#inspLayer .in-pn')].filter(i=>!i.dataset.auto&&!i.value.trim());if(em.length&&!window.__pnOk){return askConfirm({title:'제품명이 비어 있습니다',message:'자동으로 못 찾은 표준품 '+em.length+'종의 제품명이 비어 있어 관리내역에 N/A로 나갑니다.\n'+em.map(i=>i.dataset.base).join(', ')+'\n\n그대로 만들까요?',ok:'그대로 만들기',onOk:()=>{window.__pnOk=1;try{makeInspection(mode)}finally{window.__pnOk=0}}})}}
- const g=val('inG'),cust=val('inCust').trim(),dept=val('inDept').trim(),date=val('inDate')||today(),ym=date.slice(0,7);
+ const g=val('inG'),cust=val('inCust').trim(),dept=val('inDept').trim(),date=val('inDate')||today(),ym=((document.querySelector('input[name=inYm]:checked')||{}).value)||date.slice(0,7);
  inspSave(mode);const all=lf();
  const css0='<style>*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{margin:0;padding:0}.fpage,.apage{font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",sans-serif}.doc{font-size:10px;margin-top:6px}.fpage{padding:12mm 12mm 0}@page{size:A4 portrait;margin:0}'+ACSS+ANX+'</style>';
  const monA=(m=>Number.isInteger(m)&&m>=1&&m<=24?m:3)(Math.round(Number(val('inMon'))));const tiersA=mode==='annex'?readTiers():null,stockA=mode==='annex'?readStock():null;const AB=annexBuild(g,{cust,dept,date,mon:monA,tiers:tiersA,stock:stockA}),annex=AB.html;
@@ -2797,14 +2798,14 @@ window.signCopy=function(id){const r=reqs().find(x=>x.id===id);if(!r)return;cons
 /* 대시보드 맨 위 '서명 현황' */
 function panel(){const id=myId(),u=me();if(!u||u.status==='guest')return '';
  const list=mine().sort((a,b)=>(a.status==='requested'?0:1)-(b.status==='requested'?0:1)||String(b.at).localeCompare(String(a.at)));
- const isLead=Object.values(leads()).includes(id);if(!list.length&&!isLead)return '';
+ const isLead=Object.values(leads()).includes(id);/* V4.1: 확인 완료된 것은 표에 안 남기고 머리의 ✅ 알림으로만 — 기다리는 요청이 없으면 칸도 숨김 */if(!list.some(r=>r.status==='requested'))return '';
  const open=list.filter(r=>r.status==='requested'),done=list.filter(r=>r.status==='done').slice(0,8);
  const row=r=>{const toMe=r.to===id&&r.status==='requested',byMe=r.by===id;
   const chip=r.status==='done'?`<span class="sg-chip ok">확인 완료 · ${fmt(r.doneAt)}</span>`:toMe?'<span class="sg-chip me">내 확인 필요</span>':'<span class="sg-chip wait">실장님 확인 대기</span>';
   return `<tr${toMe?' class="sg-me"':''}><td><b>${KIND[r.kind]}</b> · ${esc(r.g)}<div class="muted small">${esc(r.ym)}</div></td><td>${esc(uName(r.by))}<div class="muted small">${fmt(r.at)}</div></td><td>${esc(uName(r.to))}</td><td><code class="sg-path" title="${esc(r.path)}">${esc(short(r.path))}</code> <button class="sm" onclick="signCopy('${r.id}')">경로 복사</button></td><td>${chip}</td><td class="sg-act">${toMe?`<button class="primary sm" onclick="signDone('${r.id}')">확인 서명 완료</button>`:''}${r.status==='done'&&(r.to===id||u.admin)?`<button class="sm" onclick="signUndo('${r.id}')">되돌리기</button>`:''}${r.status==='requested'&&(byMe||u.admin)?`<button class="sm" onclick="signCancel('${r.id}')">요청 취소</button>`:''}</td></tr>`};
  const n=open.filter(r=>r.to===id).length;
  return `<div class="panel sg-panel" id="signPanel"><h3>서명 현황 ${n?`<span class="sg-chip me">내 확인 필요 ${n}건</span>`:''}</h3><p class="muted small" style="margin:2px 0 8px">점검자가 Adobe로 서명한 PDF를 NAS에 저장하고 요청하면 그 실 실장님께 표시됩니다. 실장님은 [경로 복사] → 파일 탐색기에 붙여넣기 → 확인일 입력 · 확인자 서명 → 저장 후 [확인 서명 완료]를 눌러 주세요.</p>
- ${list.length?`<div class="tablewrap"><table><thead><tr><th>문서</th><th>점검자</th><th>확인자(실장)</th><th>NAS 경로</th><th>상태</th><th></th></tr></thead><tbody>${open.concat(done).map(row).join('')}</tbody></table></div>`:'<p class="muted">아직 받은 요청이 없습니다.</p>'}</div>`}
+ ${list.length?`<div class="tablewrap"><table><thead><tr><th>문서</th><th>점검자</th><th>확인자(실장)</th><th>NAS 경로</th><th>상태</th><th></th></tr></thead><tbody>${open.map(row).join('')}</tbody></table></div>`:'<p class="muted">아직 받은 요청이 없습니다.</p>'}</div>`}
 function bell(){if(!SV())return;const tb=document.querySelector('header .toolbar #sessionName');if(!tb)return;const bar=tb.parentNode;let b=document.getElementById('signBell');
  const u=me(),n=u&&u.status!=='guest'?todo().length:0,wait=u&&u.status!=='guest'?reqs().filter(r=>r.by===myId()&&r.status==='requested').length:0;
  if(!n&&!wait){if(b)b.remove();return}
@@ -2819,7 +2820,7 @@ window.setLead=function(d,id){const L=leads();if(id)L[d]=id;else delete L[d];if(
 
 const R3=window.render;
 window.render=function(){R3();if(!SV())return;try{
- if(active==='dashboard'||active==='overview'){const el=document.getElementById(active),h=panel();if(el&&h&&!el.querySelector('#signPanel')){const head=el.querySelector('.page-head');const w=document.createElement('div');w.innerHTML=h;const p=w.firstChild;if(head&&head.nextSibling&&head.parentNode===el)el.insertBefore(p,el.firstChild);else el.insertBefore(p,el.firstChild)}}
+ if(active==='dashboard'||active==='overview'){const el=document.getElementById(active),h=panel();/* V4.1: 남아 있던 칸은 지우고 새로 */const old=el&&el.querySelector('#signPanel');if(old)old.remove();if(el&&h&&!el.querySelector('#signPanel')){const head=el.querySelector('.page-head');const w=document.createElement('div');w.innerHTML=h;const p=w.firstChild;if(head&&head.nextSibling&&head.parentNode===el)el.insertBefore(p,el.firstChild);else el.insertBefore(p,el.firstChild)}}
  
  bell()}catch(e){console.warn(e)}};
 /* 로그인했을 때 · 다른 사람이 요청했을 때(서버에서 30초마다 확인) 알림 */
@@ -2962,11 +2963,13 @@ window.alertFilter=function(){const v=id=>{const e=document.getElementById(id);r
 window.alertReset=function(){AF.q=AF.g=AF.k=AF.s='';const e=document.getElementById('alQ');if(e)e.value='';const el=document.getElementById('clientAlertRows');if(el)el.innerHTML=clientAlertTable(clientAlertOverview().rows)};
 clientAlertTable=function(rows){const S=clientThresholds(),G=lj(GK,{});
  const kw=AF.q.trim().toLowerCase();
- const all=rows,shown=rows.filter(r=>(!AF.g||groupOf(r)===AF.g)&&(!AF.k||kindOf(r)===AF.k)&&(!AF.s||r.status===AF.s)&&(!kw||(r.base+' '+stdLabel(r.base,r.items)+' '+r.items.map(s=>s.name||'').join(' ')).toLowerCase().includes(kw)));
+ /* V4.0: 표준품 거르기 — 검체로 나눈 의뢰사는 검체마다(여러 검체에 쓰는 표준품은 그 검체들 모두에), 검체가 안 정해진 것은 'GSK · 검체 미지정'으로(전에는 그냥 'GSK'라 무엇인지 알 수 없었음) */
+ const rgOf=r=>{const s=r.items[0]||{};let sb=[];try{sb=window.subsOf?subsOf(s):[]}catch(e){}return sb.length?sb:[s.group||'']};
+ const all=rows,shown=rows.filter(r=>(!AF.g||rgOf(r).includes(AF.g))&&(!AF.k||kindOf(r)===AF.k)&&(!AF.s||r.status===AF.s)&&(!kw||(r.base+' '+stdLabel(r.base,r.items)+' '+r.items.map(s=>s.name||'').join(' ')).toLowerCase().includes(kw)));
  const opt=(arr,cur,first)=>`<option value="">${first}</option>`+arr.map(x=>`<option${x===cur?' selected':''}>${esc(x)}</option>`).join('');
- const gs=[...new Set(all.map(groupOf).filter(Boolean))].sort(),ks=['직접 기준','그룹 기준','월평균 사용량','미설정'].filter(k=>all.some(r=>kindOf(r)===k)),ss=[...new Set(all.map(r=>r.status).filter(Boolean))];
+ const U=user(),gOk=g=>{const i=String(g).indexOf('-');return U.admin||!(i>0&&window.splitName&&splitName(g)!==undefined&&splitName(g))||(U.groups||[]).includes(g)||(U.groups||[]).includes(g.slice(0,i))};const gs=[...new Set(all.flatMap(rgOf).filter(Boolean))].filter(gOk).sort((a,b)=>a.localeCompare(b)),gLbl=g=>/-검체 미지정$/.test(g)?g.replace(/-검체 미지정$/,' · 검체 미지정'):g,ks=['직접 기준','그룹 기준','월평균 사용량','미설정'].filter(k=>all.some(r=>kindOf(r)===k)),ss=[...new Set(all.map(r=>r.status).filter(Boolean))];
  const nw='style="white-space:nowrap"';
- return `<div class="tablewrap"><table class="al-list"><thead><tr><th>표준품<select id="alG" class="head-filter" onchange="alertFilter()">${opt(gs,AF.g,'그룹 전체')}</select></th><th ${nw}>현재 사용 가능 재고</th><th ${nw}>1회 사용량</th><th ${nw}>남은 횟수</th><th ${nw}>알림 기준<select id="alK" class="head-filter" onchange="alertFilter()">${opt(ks,AF.k,'전체')}</select></th><th ${nw}>상태<select id="alS" class="head-filter" onchange="alertFilter()">${opt(ss,AF.s,'전체')}</select></th><th>설정</th></tr></thead><tbody>${shown.map(r=>{const rm=r.remain||remain(r),pu=rm.pu;
+ return `<div class="tablewrap"><table class="al-list"><thead><tr><th>표준품<select id="alG" class="head-filter" onchange="alertFilter()"><option value="">그룹 전체</option>${gs.map(g=>`<option value="${esc(g)}"${g===AF.g?' selected':''}>${esc(gLbl(g))}</option>`).join('')}</select></th><th ${nw}>현재 사용 가능 재고</th><th ${nw}>1회 사용량</th><th ${nw}>남은 횟수</th><th ${nw}>알림 기준<select id="alK" class="head-filter" onchange="alertFilter()">${opt(ks,AF.k,'전체')}</select></th><th ${nw}>상태<select id="alS" class="head-filter" onchange="alertFilter()">${opt(ss,AF.s,'전체')}</select></th><th>설정</th></tr></thead><tbody>${shown.map(r=>{const rm=r.remain||remain(r),pu=rm.pu;
   const puT=pu?esc(pu.v)+' '+esc(pu.u)+' <span class="muted small">('+esc(String(pu.src).replace(' 기록',''))+')</span>':'<span class="muted">-</span>';
   const nT=rm.n!=null?'약 '+esc(rm.n)+'회':'<span class="muted">-</span>';
   const st=r.status==='1회 사용량 필요'?'1회 사용량 필요 <a href="#" onclick="go(\'usage\');return false" class="small">입력 →</a>':esc(r.status);
@@ -2988,10 +2991,10 @@ saveClientAlert=function(base){const t=(document.getElementById('clientThreshold
  try{addClientHistory(base,before,{value:'남은 '+val,unit:'회'})}catch(e){}render()};
 window.saveClientAlert=saveClientAlert;
 /* 그룹 전체 기준 */
-function groupBar(){const rows=clientAlertOverview().rows,G=lj(GK,{}),u=user();const gs=[...new Set([...rows.map(groupOf),...rows.map(pgOf).filter(g=>u.admin||(u.groups||[]).includes(g))].filter(Boolean))].sort();if(!gs.length)return '';
+function groupBar(){const rows=clientAlertOverview().rows,G=lj(GK,{}),u=user();const own=g=>u.admin||(u.groups||[]).includes(g)||!(window.splitName&&rows.some(r=>pgOf(r)===g&&groupOf(r)!==g));/* V4.0: 검체로 나눈 의뢰사 전체(GSK)는 의뢰사 전체를 맡은 사람·관리자만 */const gs=[...new Set([...rows.map(groupOf),...rows.map(pgOf)].filter(Boolean))].filter(g=>String(g).includes('-')?true:own(g)).sort();if(!gs.length)return '';
  const chips=Object.keys(G).filter(g=>gs.includes(g)).map(g=>'<span class="ga-chip"><b>'+esc(g)+'</b> 남은 '+esc(G[g].value)+'회 이하 <button onclick="groupAlertClear(\''+esc(g)+'\')" title="그룹 기준 지우기">×</button></span>').join('');
  return `<div class="panel" id="grpAlert"><h3 style="margin:0 0 4px">그룹 전체 기준</h3><p class="muted small" style="margin:0 0 10px">의뢰사(그룹)의 모든 표준품에 '남은 사용 횟수' 기준을 한 번에 넣습니다. 나중에 들어오는 표준품에도 자동으로 붙고, 표준품별로 따로 정한 기준이 있으면 그것이 먼저입니다. 남은 횟수 = 현재 재고 ÷ 1회 사용량(직접 입력, 없으면 최근 6개월 사용기록 중 가장 많이 쓴 양).</p>
- <div class="ga-row"><select id="gaG">${gs.map(g=>`<option value="${esc(g)}">${esc(g)}${G[g]?' (지금 '+esc(G[g].value)+'회)':''}</option>`).join('')}</select><span>남은 사용 횟수</span><input id="gaN" type="number" min="0" step="1" placeholder="3" style="width:72px;text-align:center"><span>회 이하면 알림</span><button class="primary" onclick="groupAlertApply()">그룹 전체에 적용</button></div>${chips?'<div class="ga-chips">'+chips+'</div>':''}</div>`}
+ <div class="ga-row"><select id="gaG">${gs.map(g=>`<option value="${esc(g)}">${esc(g)}${gs.some(x=>x.indexOf(g+'-')===0)?' 전체 (모든 검체)':''}${G[g]?' (지금 '+esc(G[g].value)+'회)':''}</option>`).join('')}</select><span>남은 사용 횟수</span><input id="gaN" type="number" min="0" step="1" placeholder="3" style="width:72px;text-align:center"><span>회 이하면 알림</span><button class="primary" onclick="groupAlertApply()">그룹 전체에 적용</button></div>${chips?'<div class="ga-chips">'+chips+'</div>':''}</div>`}
 window.groupAlertApply=function(){const g=(document.getElementById('gaG')||{}).value,n=Number((document.getElementById('gaN')||{}).value);if(!g)return;if(!(Number.isFinite(n)&&n>=0)||(document.getElementById('gaN')||{}).value==='')return alert('남은 사용 횟수를 0 이상 숫자로 입력해 주세요.');
  const inG=r=>groupOf(r)===g||pgOf(r)===g;const rows=clientAlertOverview().rows.filter(inG),S=clientThresholds(),own=rows.filter(r=>S[r.base]);
  const save=over=>{const G=lj(GK,{}),before=G[g];G[g]={type:'uses',value:n,by:user().id,at:new Date().toLocaleString('ko-KR')};try{localStorage.setItem(GK,JSON.stringify(G))}catch(e){return alert('저장하지 못했습니다.')}
@@ -3348,15 +3351,18 @@ function rows(){const u=user();let L=[];try{L=activeMine()}catch(e){}const st=s=
  const now=new Date(),ym=now.toISOString().slice(0,7),mo=now.getMonth()+1,mk=lj(MK,{});
  /* 정기점검 대상 그룹: 검체로 나눈 의뢰사는 검체 그룹별(GSK-프리오릭스…), 담당자는 배정받은 범위만 */
  const has=g=>u.admin||(u.groups||[]).includes(g),gs=[...new Set(L.flatMap(s=>{const sub=(window.subsOf?subsOf(s):[]).filter(g=>!/-검체 미지정$/.test(g));if(window.docOne&&docOne(s.group))return has(s.group)?[s.group]:[];if(!sub.length)return [s.group];return has(s.group)?sub:sub.filter(has)}).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
- if(gs.length){
+ /* V4.1: 지난달 점검이 늦어 이번 달에 하는 경우 — 지난달에 이 사이트로 서류를 만든 적이 있고 아직 안 끝났으면 '10월 … (늦음)' 줄도 */
+ const SV=!!window.__SH_SERVER,R={none:0,made:1,wait:2,done:3};
+ const mRow=(ym,late)=>{const mo=Number(ym.slice(5)),rq=SV&&window.signReqs?signReqs().filter(r=>r.ym===ym):[];
   /* 그룹 완료 = 정기점검·관리내역 둘 다 실장님 '확인 서명 완료'(합친 PDF 요청은 둘 다로 셈). 서명 요청이 없는 파일판은 둘 다 만들면 완료 */
-  const SV=!!window.__SH_SERVER,rq=SV&&window.signReqs?signReqs().filter(r=>r.ym===ym):[],R={none:0,made:1,wait:2,done:3};
   const one=(g,k)=>{const rs=rq.filter(r=>r.g===g&&(r.kind===k||r.kind==='both'));if(!SV)return mk[g+'|'+ym+'|'+k]?'done':'none';
    return rs.some(r=>r.status==='done')?'done':rs.some(r=>r.status==='requested')?'wait':mk[g+'|'+ym+'|'+k]?'made':'none'};
   const st=g=>{const a=one(g,'form'),b=one(g,'annex');return R[a]<=R[b]?a:b};
-  const c={done:0,wait:0,made:0,none:0};gs.forEach(g=>c[st(g)]++);const left=gs.length-c.done,todo=gs.filter(g=>st(g)==='none'||st(g)==='made');
+  const c={done:0,wait:0,made:0,none:0};gs.forEach(g=>c[st(g)]++);const left=gs.length-c.done,todo=gs.filter(g=>st(g)==='none'||st(g)==='made');if(late&&!left)return;
   const parts=[c.done?'완료 '+c.done:'',c.wait?'실장님 확인 대기 '+c.wait:'',c.made?'만들었지만 요청 전 '+c.made:'',c.none?'아직 안 만듦 '+c.none:''].filter(Boolean).join(' · ');
-  out.push([left?'b':'k',mo+'월 정기점검·관리내역 ('+(left?'미완료 '+left+'건':'완료')+')',left?parts+(todo.length?' — '+todo.slice(0,5).join(', ')+(todo.length>5?' 외 '+(todo.length-5)+'개':''):''):'정기점검·관리내역 모두 실장님 확인 서명까지 끝났습니다','정기점검 양식','openInspection(\'form\')'])}
+  out.push([late?'r':left?'b':'k',mo+'월 정기점검·관리내역 ('+(late?'늦음 · ':'')+(left?'미완료 '+left+'건':'완료')+')',left?parts+(todo.length?' — '+todo.slice(0,5).join(', ')+(todo.length>5?' 외 '+(todo.length-5)+'개':''):''):'정기점검·관리내역 모두 실장님 확인 서명까지 끝났습니다','정기점검 양식',"window._inspYm='"+ym+"';openInspection('form')"])};
+ if(gs.length){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-1);const py=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  const used=Object.keys(mk).some(k=>k.split('|')[1]===py)||(SV&&window.signReqs&&signReqs().some(r=>r.ym===py));if(used)mRow(py,true);mRow(ym,false)}
  const logs=[...lj('standardhub_v22_upload_log',[]),...Object.values(lj('standardhub_v22_upload_undo',{}))].filter(x=>x&&x.ts&&(u.admin||String(x.owner||x.by||'')===String(u.id)));
  const last=logs.length?Math.max(...logs.map(x=>x.ts)):0,days=last?Math.floor((Date.now()-last)/864e5):null;
  if(!(window.leadDepts&&leadDepts(u).length)&&(days===null||days>=7))out.push(['b',days===null?'LIMS 자료를 아직 올리지 않았습니다':'LIMS 자료를 올린 지 '+days+'일','재고·사용기록·라벨 Excel을 새로 올려 주세요','Excel 업로드','goGroup(\'data\')']);
@@ -3444,7 +3450,7 @@ function gs0(b){try{const I=ix();if(!I.lots[b])return '';for(const o of [...pair
 const BK='standardhub_v22_buy_skip';
 const lj=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
 const num=v=>{const n=Number(v);return Number.isFinite(n)?String(Math.round(n*100)/100):String(v)};
-const key=()=>{const g=(document.getElementById('inG')||{}).value||'',d=(document.getElementById('inDate')||{}).value||new Date().toISOString().slice(0,10);return g+'|'+d.slice(0,7)};
+const key=()=>{const g=(document.getElementById('inG')||{}).value||'',d=(document.getElementById('inDate')||{}).value||new Date().toISOString().slice(0,10),y=(document.querySelector('input[name=inYm]:checked')||{}).value;return g+'|'+(y||d.slice(0,7))};
 function cands(g){let rows=[];try{rows=clientAlertOverview().rows.filter(r=>r.triggered)}catch(e){return []}
  return rows.filter(r=>{const s=(r.items||[])[0];if(!s)return false;if(s.group===g)return true;try{return window.subsOf&&subsOf(s).includes(g)}catch(e){return false}})
   .map(r=>{const u=(r.cfg&&r.cfg.unit)||((r.units||[])[0]||{}).unit||'',nm=(window.stdName&&stdName(r.base))||'';
@@ -3701,6 +3707,108 @@ window.shCollectMerge=async function(){if(!FILES.length)return alert('합칠 PDF
   alert(FILES.length-bad.length+'개 파일('+out.getPageCount()+'쪽)을 합쳤습니다.'+(bad.length?' 못 읽은 파일: '+bad.join(', '):''))}
  catch(e){console.error(e);alert('합치지 못했습니다: '+(e&&e.message||e))}
  finally{if(btn){btn.disabled=false;btn.textContent='합친 PDF 받기'}}};
+})();
+</script><script>/* V4.1: '몇 월 점검인가요?' 안내 */
+window.inYmHint=function(){const h=document.getElementById('inYmHint');if(!h)return;const y=(document.querySelector('input[name=inYm]:checked')||{}).value||'',d=new Date(),cy=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+ h.textContent=y&&y!==cy?Number(y.slice(5))+'월 점검으로 만듭니다 — 파일 이름·이번 달 입고·완료 표시는 '+Number(y.slice(5))+'월로, 점검일은 실제로 점검한 날짜로 적힙니다.':''};
+document.addEventListener('change',e=>{if(e.target&&e.target.name==='inYm'&&document.getElementById('inBuyCand')&&window.buyBox)buyBox()});
+const _of=window.inspFill;if(_of)window.inspFill=function(){const r=_of.apply(this,arguments);try{inYmHint()}catch(e){}return r};
+</script><script>/* V4.1: 실장님이 [확인 서명 완료]를 누르면 요청한 사람 머리(계정 이름 옆)에 '✅ 확인 완료 N' — 누르면 목록, [확인]하면 사라짐.
+   본 것은 standardhub_v22_sign_seen {아이디:[요청 id]}에 기억(서버판만, 서명 요청이 있는 곳). 대시보드 '서명 현황'에는 기다리는 요청만 남음. */
+(function(){const SK='standardhub_v22_sign_seen',KIND={form:'정기점검',annex:'관리내역',both:'정기점검+관리내역'};
+const lj=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
+const H=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>{try{const u=user();return u&&u.status!=='guest'?String(u.id):''}catch(e){return ''}};
+const uName=id=>{const u=users.find(x=>String(x.id)===String(id));return u?u.name:id};
+function fresh(){const id=uid();if(!id||!window.__SH_SERVER||!window.signReqs)return [];const seen=new Set(lj(SK,{})[id]||[]);return signReqs().filter(r=>r.status==='done'&&r.by===id&&!seen.has(r.id)).sort((a,b)=>String(b.doneAt||'').localeCompare(String(a.doneAt||'')))}
+const when=t=>{if(!t)return '';const d=new Date(t),p=n=>String(n).padStart(2,'0');return (d.getMonth()+1)+'.'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())};
+let known=null,knownU='';
+function draw(){const tb=document.querySelector('header .toolbar #sessionName');let b=document.getElementById('doneBell');const L=fresh();if(knownU!==uid()){knownU=uid();known=new Set(L.map(r=>r.id))}
+ if(!tb||!L.length){if(b)b.remove();const p=document.getElementById('donePop');if(p&&!L.length)p.remove();return}
+ if(!b){b=document.createElement('button');b.id='doneBell';b.type='button';b.onclick=pop;tb.parentNode.insertBefore(b,tb.parentNode.querySelector(':scope > button'))}
+ b.innerHTML='✅ 확인 완료 <i class="sg-badge" style="background:#2f9e5b">'+L.length+'</i>';b.title='실장님이 확인 서명을 마친 내 요청'}
+function pop(){let p=document.getElementById('donePop');if(p){p.remove();return}const L=fresh(),b=document.getElementById('doneBell');if(!b)return;const r=b.getBoundingClientRect();
+ p=document.createElement('div');p.id='donePop';p.style.cssText='position:fixed;z-index:300;top:'+(r.bottom+6)+'px;right:'+Math.max(12,innerWidth-r.right)+'px;width:min(420px,92vw);background:#fff;border:1px solid #dfe3e9;border-radius:12px;box-shadow:0 10px 30px #0002;padding:12px 14px';
+ p.innerHTML='<b style="font-weight:600">실장님 확인 서명 완료</b><div style="margin:8px 0;max-height:300px;overflow:auto">'+L.map(x=>'<div style="padding:7px 0;border-bottom:1px solid #eef0f3"><b style="font-weight:600">'+H(KIND[x.kind]||x.kind)+'</b> · '+H(x.g)+' <span class="muted small">'+H(x.ym)+'</span><div class="muted small">'+H(uName(x.to))+' 실장님 · '+H(when(x.doneAt))+'</div></div>').join('')+'</div><div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" onclick="document.getElementById(\'donePop\').remove()">닫기</button><button type="button" class="primary" onclick="signSeenAll()">확인</button></div>';
+ document.body.appendChild(p);setTimeout(()=>document.addEventListener('click',function c(e){if(!p.contains(e.target)&&e.target.id!=='doneBell'&&!e.target.closest('#doneBell')){p.remove();document.removeEventListener('click',c)}}),0)}
+window.signSeenAll=function(){const id=uid();if(!id)return;const S=lj(SK,{}),cur=new Set(S[id]||[]);fresh().forEach(r=>cur.add(r.id));const keep=new Set((window.signReqs?signReqs():[]).map(r=>r.id));S[id]=[...cur].filter(x=>keep.has(x));try{localStorage.setItem(SK,JSON.stringify(S))}catch(e){}const p=document.getElementById('donePop');if(p)p.remove();draw()};
+const _r=window.render;window.render=function(){const x=_r.apply(this,arguments);try{draw()}catch(e){}return x};
+window.addEventListener('sh-live',()=>{try{draw();if(!known)return;const nw=fresh().filter(r=>!known.has(r.id));nw.forEach(r=>known.add(r.id));if(nw.length)alert('✅ 실장님이 확인 서명을 마쳤습니다: '+nw.map(r=>(KIND[r.kind]||r.kind)+' '+r.g+' '+r.ym).join(', '))}catch(e){}});
+})();
+</script><script>/* V4.3: 화면 덜 복잡하게 — 기능은 그대로 두고 자리만 정리(그린 뒤 옮김).
+   (1) '이 화면 안내' 접기 줄 → 하위 탭 줄 오른쪽 작은 [? 도움말] (누르면 그 아래 말풍선)
+   (2) 표준품 목록: [점검용 목록 출력]·[폐기 이력 보기]·'지정 날짜까지 유효기한 만료 예정 조회' → [⋯ 더 보기] 하나로
+   (3) 재고 알림 기준 '그룹 전체 기준' 큰 칸 → 한 줄(누르면 펼침, 정해 둔 기준 칩은 접혀도 보임), 긴 설명은 짧게
+   (4) Excel 업로드 칸마다 긴 설명 → 한 줄(원래 설명은 마우스를 올리면)
+   (5) 정기점검·관리내역 입력 창: 매달 같은 칸(고객사·부서명·점검대상 표준품) → '기본 정보 ▸ ABB · 바이오의약1실'로 접음(비어 있으면 펼침), 관리내역 '색 표시 설정'도 접음 */
+(function(){
+const css=document.createElement('style');css.textContent=`
+.shell{position:relative}
+.sh-help{position:absolute;z-index:30;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
+.sh-help>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 11px;border:1px solid var(--line,#dfe3e9);border-radius:999px;background:#fff;font-size:12.5px;color:#4c525b;white-space:nowrap}
+.sh-help>summary::-webkit-details-marker{display:none}.sh-help>summary::before{content:"?";display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#20242b;color:#fff;font-size:11px;font-weight:600}
+.sh-help[open]>summary{background:#f2f4f7}
+.sh-help>:not(summary){position:absolute;right:0;top:36px;width:min(460px,86vw);background:#fff;border:1px solid #dfe3e9;border-radius:12px;box-shadow:0 10px 30px #0002;padding:12px 14px;font-size:12.5px;line-height:1.6;color:#4c525b}
+.inv-more-wrap{position:relative;display:inline-block}.inv-more-pop{position:absolute;right:0;top:calc(100% + 6px);z-index:25;background:#fff;border:1px solid #dfe3e9;border-radius:12px;box-shadow:0 10px 30px #0002;padding:10px;display:flex;flex-direction:column;gap:6px;min-width:220px}
+.inv-more-pop[hidden]{display:none!important}.inv-more-pop>button{justify-content:flex-start;text-align:left;width:100%}.inv-more-pop details.fold-box{margin:4px 0 0!important;min-width:360px}
+#grpAlert.ga-fold{padding-top:12px;padding-bottom:12px}#grpAlert.ga-fold>h3{cursor:pointer;display:flex;align-items:center;gap:8px;margin:0!important}#grpAlert.ga-fold>h3::before{content:"▸";font-size:12px;color:#6b7280;transition:transform .15s}#grpAlert.ga-fold.open>h3::before{transform:rotate(90deg)}
+#grpAlert.ga-fold:not(.open)>p,#grpAlert.ga-fold:not(.open)>.ga-row{display:none}#grpAlert.ga-fold .ga-chips{margin-top:8px}
+#grpAlert.ga-fold>h3 .ga-sub{font-weight:400;font-size:12.5px;color:#6b7280}
+details.in-basic{margin:0 0 10px;border:1px solid #e5e8ee;border-radius:10px;padding:8px 12px;background:#fafbfc}details.in-basic>summary{cursor:pointer;font-size:13.5px}details.in-basic>summary b{font-weight:600}details.in-basic>summary span{color:#6b7280;margin-left:6px}
+details.in-basic[open]>summary{margin-bottom:8px}details.in-fold{margin:6px 0 10px}details.in-fold>summary{cursor:pointer;font-size:13.5px}details.in-fold>summary b{font-weight:600}`;document.head.appendChild(css);
+/* (1) 도움말 */
+function help(){const a=typeof active!=='undefined'?active:'';const sec=document.getElementById(a);document.querySelectorAll('.shell>details.sh-help').forEach(d=>{if(d.dataset.sec!==a)d.remove()});if(!sec)return;
+ const h=sec.querySelector(':scope>details.hint');const shell=document.querySelector('body>.shell')||sec.parentNode;
+ if(h){document.querySelectorAll('.shell>details.sh-help').forEach(d=>d.remove());h.classList.add('sh-help');h.classList.remove('hint-fold');h.dataset.sec=a;const s=h.querySelector('summary');if(s)s.textContent='도움말';h.open=false;shell.appendChild(h)}
+ const d=shell.querySelector(':scope>details.sh-help');if(!d)return;const st=document.getElementById('subTabs'),sr=shell.getBoundingClientRect();
+ let top;if(st&&st.offsetParent){const r=st.getBoundingClientRect();top=r.top-sr.top+(r.height-30)/2}else{const r=sec.getBoundingClientRect();top=r.top-sr.top}
+ d.style.top=Math.round(top)+'px';d.style.right='0px'}
+document.addEventListener('click',e=>{const d=document.querySelector('.shell>details.sh-help[open]');if(d&&!d.contains(e.target))d.open=false});
+/* (2) 표준품 목록 더 보기 */
+function invMore(){const sec=document.getElementById('inventory');if(!sec||sec.querySelector('.inv-more-wrap'))return;const bar=sec.querySelector('.panel .inv-filterbar');if(!bar)return;
+ const bs=[...bar.querySelectorAll(':scope>button')].filter(b=>/점검용 목록 출력|폐기 이력 보기/.test(b.textContent));const fold=sec.querySelector(':scope>details.fold-box');if(!bs.length&&!fold)return;
+ const w=document.createElement('span');w.className='inv-more-wrap';w.innerHTML='<button type="button" class="inv-more-btn">⋯ 더 보기</button><div class="inv-more-pop" hidden></div>';const pop=w.querySelector('.inv-more-pop');
+ bs.forEach(b=>pop.appendChild(b));if(fold)pop.appendChild(fold);bar.appendChild(w);
+ w.querySelector('.inv-more-btn').onclick=e=>{e.stopPropagation();pop.hidden=!pop.hidden};pop.addEventListener('click',e=>{if(e.target.closest('button')&&!e.target.closest('details'))setTimeout(()=>{pop.hidden=true},0)})}
+document.addEventListener('click',e=>{document.querySelectorAll('.inv-more-pop:not([hidden])').forEach(p=>{if(!p.parentNode.contains(e.target))p.hidden=true})});
+/* (3) 그룹 전체 기준 접기 */
+function gaFold(){const g=document.getElementById('grpAlert');if(!g||g.classList.contains('ga-fold'))return;g.classList.add('ga-fold');if(window._gaOpen)g.classList.add('open');
+ const h=g.querySelector(':scope>h3'),p=g.querySelector(':scope>p');if(p){h&&(h.title=p.textContent);p.textContent="고른 그룹의 모든 표준품에 '남은 사용 횟수 N회 이하면 알림'을 한 번에 넣습니다. 표준품별로 따로 정한 기준이 먼저입니다."}
+ if(h){h.innerHTML='그룹 전체 기준 <span class="ga-sub">— 그룹의 모든 표준품에 기준을 한 번에</span>';h.onclick=()=>{g.classList.toggle('open');window._gaOpen=g.classList.contains('open')}}}
+/* (4) Excel 업로드 설명 한 줄 */
+const UPL={'재고 Excel':'LIMS 입고 목록 Excel — 새 입고번호는 더하고, 있던 것은 새 값으로 바꿉니다.','사용기록':'LIMS 시험 자원 사용 목록 Excel — 내 표준품만 골라 반영합니다.','라벨 정보':'LIMS 라벨 목록 Excel — 표준품명과 폐기 정보가 여기서 나옵니다.','구매 정보':'구매 팀 발주 목록 Excel — 최근 구매가를 붙입니다(단가는 허용받은 분만).'};
+function upl(){const sec=document.getElementById('upload');if(!sec)return;sec.querySelectorAll('.upl-grid>.panel').forEach(pn=>{const h=pn.querySelector(':scope>h3'),p=pn.querySelector(':scope>p.muted');if(!h||!p||p.dataset.short)return;const k=Object.keys(UPL).find(k=>h.textContent.includes(k));if(!k)return;p.title=p.textContent;p.textContent=UPL[k];p.dataset.short='1'})}
+function run(){try{help()}catch(e){}try{invMore()}catch(e){}try{gaFold()}catch(e){}try{upl()}catch(e){}}
+const _r=window.render;window.render=function(){const x=_r.apply(this,arguments);run();return x};
+new MutationObserver(()=>{if(document.getElementById('grpAlert')&&!document.querySelector('#grpAlert.ga-fold'))gaFold();const s=document.getElementById('inventory');if(s&&!s.classList.contains('hidden')&&!s.querySelector('.inv-more-wrap'))invMore()}).observe(document.body,{childList:true,subtree:true});
+addEventListener('resize',()=>{try{help()}catch(e){}});
+/* (5) 입력 창 단순하게 */
+function basic(){const l=document.getElementById('inspLayer');if(!l||l.querySelector('details.in-basic'))return;const top=l.querySelector('.in-top');if(!top)return;
+ const pick=id=>{const el=document.getElementById(id);if(!el)return null;let n=el.closest('.in-top>*');return n};const items=['inCust','inDept','inTarget'].map(pick).filter(Boolean);if(!items.length)return;
+ const d=document.createElement('details');d.className='in-basic';d.innerHTML='<summary><b>기본 정보</b><span></span></summary><div class="in-grid in-top'+(top.classList.contains('a4')?' a4':'')+'"></div>';const g=d.querySelector('div');items.forEach(n=>g.appendChild(n));top.after(d);
+ const sum=()=>{const v=id=>((document.getElementById(id)||{}).value||'').trim();const parts=[v('inCust'),v('inDept')].filter(Boolean);d.querySelector('summary span').textContent=parts.length?'▸ '+parts.join(' · ')+'  (매달 같음 · 눌러서 고치기)':'— 처음 한 번 적어 주세요';if(!v('inCust')||!v('inDept'))d.open=true};
+ sum();l.addEventListener('input',e=>{if(e.target.closest('details.in-basic'))sum()});l.addEventListener('change',e=>{if(e.target.id==='inG')setTimeout(sum,0)});
+ const tiers=document.getElementById('inTiers');if(tiers&&!tiers.closest('details.in-fold')){const f=document.createElement('details');f.className='in-fold';f.innerHTML='<summary><b>관리내역 색 표시 설정</b> <span class="muted small">— 유효기한·재고량 칸 색(한 번 정하면 그대로)</span></summary>';tiers.before(f);f.appendChild(tiers)}}
+const _oi=window.openInspection;if(_oi)window.openInspection=function(){const r=_oi.apply(this,arguments);try{basic()}catch(e){console.error(e)}return r};
+})();
+</script><script>/* V4.4: (1) 관리내역 입력 창 '추정한 제품명' [모두 맞음] — 한 번 확인한 추정 이름은 standardhub_v22_prod_ok {기본번호:이름}에 기억해 다음부터 안 물음(고쳐 적은 칸은 그 이름이 저장됨).
+   (2) 머리 계정 이름 옆에 '담당: ABB · MEC'(많으면 '외 N', 마우스를 올리면 전체, 누르면 내 계정). 관리자는 '전체', 실장은 '○실 전체'.
+   (3) 내 계정 화면: 로그인한 사람에게는 회원가입·로그인 버튼과 긴 안내를 빼고 '이름 · 아이디 · 소속 실 · 담당'만 한 줄로(그 아래 '내 담당 그룹' 넘기기·이름 바꾸기는 그대로). */
+(function(){
+const H=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+window.pnGuessOk=function(){const OK=(()=>{try{return JSON.parse(localStorage.getItem('standardhub_v22_prod_ok'))||{}}catch(e){return {}}})();let n=0;
+ document.querySelectorAll('#inProds .pn-guess .in-pn').forEach(i=>{if(!i.value.trim()&&i.dataset.auto){OK[i.dataset.base]=i.dataset.auto;n++}});
+ try{localStorage.setItem('standardhub_v22_prod_ok',JSON.stringify(OK))}catch(e){return alert('저장하지 못했습니다.')}try{window.inspSave&&inspSave('annex')}catch(e){}try{inspFill()}catch(e){}alert('추정한 제품명을 확인했습니다. 다음부터는 묻지 않아요.')};
+function grpText(u){if(!u||u.status==='guest')return null;if(u.admin)return {s:'전체 (관리자)',all:'모든 표준품'};let L=[];try{L=window.leadDepts?leadDepts(u):[]}catch(e){}if(L.length)return {s:L.join(', ')+' 전체',all:L.join(', ')+' 전체 (실장 · 보기 전용)'};
+ if(u.status!=='approved')return {s:'승인 대기',all:'관리자 승인 대기'};const real=users.find(x=>String(x.id)===String(u.id))||u;const g=(real.groups||[]).slice(),it=(real.items||[]).length;
+ if(!g.length&&!it)return {s:'없음',all:'담당 그룹이 없습니다 — 관리자에게 배정을 요청해 주세요'};const all=[...g,...(it?['개별 지정 '+it+'건']:[])];return {s:all.length>3?all.slice(0,3).join(' · ')+' 외 '+(all.length-3):all.join(' · '),all:all.join(' · ')}}
+function hdr(){const n=document.querySelector('header .toolbar #sessionName');if(!n)return;let s=document.getElementById('hdrGroups');let u;try{u=user()}catch(e){}const g=grpText(u);
+ if(!g){if(s)s.remove();return}if(!s){s=document.createElement('button');s.id='hdrGroups';s.type='button';s.style.cssText='border:0;background:none;padding:0 4px;height:auto;min-height:0;font:400 12.5px/20px inherit;color:#6b7280;cursor:pointer;box-shadow:none';s.onclick=()=>go('signup');n.after(s)}
+ s.textContent='담당: '+g.s;s.title=g.all+' — 누르면 내 계정'}
+function acct(){const sec=document.getElementById('signup');if(!sec||sec.dataset.tidy)return;let u;try{u=user()}catch(e){}if(!u||u.status==='guest')return;const p=sec.querySelector('.panel');if(!p)return;const g=grpText(u);
+ const real=users.find(x=>String(x.id)===String(u.id))||u;sec.dataset.tidy='1';const h2=sec.querySelector(':scope>h2');if(h2)h2.style.display='none';
+ p.innerHTML='<h3 style="margin:0 0 6px">내 계정</h3><p style="margin:0;font-size:14px"><b style="font-weight:600">'+H(real.name||u.name)+'</b> <span class="muted">('+H(u.id)+')'+(real.dept?' · '+H(real.dept):'')+'</span></p><p style="margin:6px 0 0;font-size:13.5px">담당: <b style="font-weight:600">'+H(g?g.all:'-')+'</b></p>'+(u.status==='pending'?'<p class="muted small" style="margin:6px 0 0">관리자가 승인하면 표준품이 보입니다.</p>':'')}
+const _r=window.render;window.render=function(){const x=_r.apply(this,arguments);try{hdr()}catch(e){}try{if(typeof active!=='undefined'&&active==='signup'){const s=document.getElementById('signup');if(s)delete s.dataset.tidy;acct()}}catch(e){console.error(e)}return x};
 })();
 </script><script type="text/plain" id="pdflibSrc">/* pdf-lib 1.17.1 (MIT License, Copyright (c) 2019 Andrew Dillon) — 의뢰사 서류 취합의 PDF 합치기에서만 읽어 씀(외부 접속 없음) */
 !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t=t||self).PDFLib={})}(this,(function(t){"use strict";
