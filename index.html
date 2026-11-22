@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.6</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V3.7</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,14 +483,14 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V3.6 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V3.7 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
 // 테스트 계정은 동일 브라우저의 로컬 저장소에만 보관됩니다.
 /* V3.2: 큰 저장 자료(사용기록 등 수 MB)를 표의 줄마다 다시 읽고 풀지 않도록 — 저장할 때만 새로 읽는 캐시 */
 (function(){const S=Storage.prototype,oS=S.setItem,oR=S.removeItem,oC=S.clear,ver={},C={};
- window.lsTouch=function(k){ver[k]=(ver[k]||0)+1};
+ window.lsTouch=function(k){ver[k]=(ver[k]||0)+1;window.lsAllVer=(window.lsAllVer||0)+1};
  S.setItem=function(k,v){if(this===localStorage)lsTouch(String(k));return oS.call(this,k,v)};
  S.removeItem=function(k){if(this===localStorage)lsTouch(String(k));return oR.call(this,k)};
  S.clear=function(){if(this===localStorage)for(const k in ver)lsTouch(k);for(const k in C)delete C[k];return oC.call(this)};
@@ -602,7 +602,8 @@ function toggleMaster(code){if(expandedMasters.has(code))expandedMasters.delete(
 function drawMasters(){let q=(document.getElementById('masterQuery')?.value||'').trim().toLowerCase(),f=document.getElementById('masterFilter')?.value||'',storage=document.getElementById('masterStorage')?.value||'',sort=masterSortMode,arr=groupMasters(activeMine()).filter(([code,items])=>(!q||[code,...items.flatMap(s=>[s.code,getInventoryValue(s,'제조 회사'),getInventoryValue(s,'Cat No.'),getInventoryValue(s,'제조 번호')])].some(v=>String(v||'').toLowerCase().includes(q)))&&(!storage||items.some(s=>inventoryStorage(s)===storage))&&(!f||items.some(s=>f==='soon'?expireState(s)==='3개월 이내':f==='expired'?expireState(s)==='만료':f==='zero'?s.qty===0:disposalState(s)==='partial')));
 const earliest=items=>masterEarliest(items)||'9999-12-31';const qty=items=>items.reduce((n,s)=>n+(Number(s.qty)||0),0);if(sort==='expiryAsc')arr.sort((a,b)=>earliest(a[1]).localeCompare(earliest(b[1])));if(sort==='expiryDesc')arr.sort((a,b)=>earliest(b[1]).localeCompare(earliest(a[1])));if(sort==='qtyAsc')arr.sort((a,b)=>qty(a[1])-qty(b[1]));if(sort==='qtyDesc')arr.sort((a,b)=>qty(b[1])-qty(a[1]));
 document.getElementById('masterCount').textContent=`${arr.length}종 · ${arr.reduce((a,x)=>a+x[1].length,0)}개 입고번호 표시 (폐기 완료 제외)`;
-document.getElementById('masterRows').innerHTML=arr.map(([code,items])=>{let s=items[0],expiredCount=items.filter(x=>expireState(x)==='만료').length,soonCount=items.filter(x=>expireState(x)==='3개월 이내').length,missingCount=items.filter(x=>!Number.isFinite(dayGap(x.exp))).length,needsCount=expiredCount+soonCount,ex=expiredCount?`만료\u00a0${expiredCount}건${soonCount?`\u00a0· 임박\u00a0${soonCount}건`:''}`:soonCount?`임박\u00a0${soonCount}건`:missingCount?`기한\u00a0없음\u00a0${missingCount}건`:'정상',open=expandedMasters.has(code),condition=[...new Set(items.map(inventoryStorage))].join(' / '),firstExpiry=masterEarliest(items)||'—';return `<tr class="master-toggle-row" onclick="toggleMaster('${code}')" style="cursor:pointer;background:${open?'#edf3f9':''}" title="클릭하여 입고번호 ${open?'접기':'펼치기'}"><td><b style="display:inline-block;width:19px;color:#526579">${open?'▾':'▸'}</b><b>${esc(code)}</b></td><td><span class="storage-text">${esc(condition)}</span></td><td>${esc(getInventoryValue(s,'제조 회사')||'—')}</td><td>${esc(getInventoryValue(s,'Cat No.')||'—')}</td><td>${items.length}건</td><td>${esc(getInventoryValue(s,'보관 장소')||'—')}</td><td><b>${esc(firstExpiry)}</b></td><td><span class="tag ${expiredCount?'red':soonCount?'gold':''}">${esc(ex)}</span></td></tr>${open?`<tr class="receipt-inline"><td colspan="8" style="padding:12px 14px 18px 32px;background:#f5f8fb"><div style="font-weight:700;margin:0 0 9px;color:#3e5369">${esc(code)} · 입고번호별 현황 (${items.length}건, 폐기 완료 제외)</div><div class="tablewrap"><table style="background:white"><thead><tr><th>입고번호</th><th>보관 조건</th><th>입고일</th><th>제조번호</th><th>유효기한</th><th>입고량</th><th>실재고</th><th>폐기 상태</th></tr></thead><tbody>${items.map(x=>{let r=detailData[x.id]||{},status=disposalState(x),expiry=expireState(x);return `<tr><td><b>${esc(x.code)}</b></td><td>${esc(inventoryStorage(x))}</td><td>${esc(r['입고 일자']||'—')}</td><td>${esc(r['제조 번호']||'—')}</td><td><b>${esc(x.exp||'—')}</b> ${expiry?'<span class="tag gold">'+esc(expiry)+'</span>':!Number.isFinite(dayGap(x.exp))?'<span class="tag">날짜 확인 필요</span>':''}</td><td>${esc(String(r['전체 용량']||r['입고 수량']||'—'))} ${esc(r['전체 용량 단위']||r['입고 수량 단위']||'')}</td><td>${esc(String(x.qty))} ${esc(x.unit)}</td><td>${status==='partial'?'일부 폐기':status==='unknown'?'확인 필요':'미폐기'}</td></tr>`}).join('')}</tbody></table></div></td></tr>`:''}`}).join('')||'<tr><td colspan="8">조건에 맞는 표준품이 없습니다.</td></tr>';
+/* V3.7: 처음엔 150종만 그림(전에는 1,260종을 모두 그린 뒤 숨겨서 표준품 메뉴가 가장 느렸음) — 검색하면 전체, [나머지 더 보기]로 모두 */const LIM=150,more=(!q&&!window._invAll&&arr.length>LIM+30)?arr.length-LIM:0;
+document.getElementById('masterRows').innerHTML=(more?arr.slice(0,LIM):arr).map(([code,items])=>{let s=items[0],expiredCount=items.filter(x=>expireState(x)==='만료').length,soonCount=items.filter(x=>expireState(x)==='3개월 이내').length,missingCount=items.filter(x=>!Number.isFinite(dayGap(x.exp))).length,needsCount=expiredCount+soonCount,ex=expiredCount?`만료\u00a0${expiredCount}건${soonCount?`\u00a0· 임박\u00a0${soonCount}건`:''}`:soonCount?`임박\u00a0${soonCount}건`:missingCount?`기한\u00a0없음\u00a0${missingCount}건`:'정상',open=expandedMasters.has(code),condition=[...new Set(items.map(inventoryStorage))].join(' / '),firstExpiry=masterEarliest(items)||'—';return `<tr class="master-toggle-row" onclick="toggleMaster('${code}')" style="cursor:pointer;background:${open?'#edf3f9':''}" title="클릭하여 입고번호 ${open?'접기':'펼치기'}"><td><b style="display:inline-block;width:19px;color:#526579">${open?'▾':'▸'}</b><b>${esc(code)}</b></td><td><span class="storage-text">${esc(condition)}</span></td><td>${esc(getInventoryValue(s,'제조 회사')||'—')}</td><td>${esc(getInventoryValue(s,'Cat No.')||'—')}</td><td>${items.length}건</td><td>${esc(getInventoryValue(s,'보관 장소')||'—')}</td><td><b>${esc(firstExpiry)}</b></td><td><span class="tag ${expiredCount?'red':soonCount?'gold':''}">${esc(ex)}</span></td></tr>${open?`<tr class="receipt-inline"><td colspan="8" style="padding:12px 14px 18px 32px;background:#f5f8fb"><div style="font-weight:700;margin:0 0 9px;color:#3e5369">${esc(code)} · 입고번호별 현황 (${items.length}건, 폐기 완료 제외)</div><div class="tablewrap"><table style="background:white"><thead><tr><th>입고번호</th><th>보관 조건</th><th>입고일</th><th>제조번호</th><th>유효기한</th><th>입고량</th><th>실재고</th><th>폐기 상태</th></tr></thead><tbody>${items.map(x=>{let r=detailData[x.id]||{},status=disposalState(x),expiry=expireState(x);return `<tr><td><b>${esc(x.code)}</b></td><td>${esc(inventoryStorage(x))}</td><td>${esc(r['입고 일자']||'—')}</td><td>${esc(r['제조 번호']||'—')}</td><td><b>${esc(x.exp||'—')}</b> ${expiry?'<span class="tag gold">'+esc(expiry)+'</span>':!Number.isFinite(dayGap(x.exp))?'<span class="tag">날짜 확인 필요</span>':''}</td><td>${esc(String(r['전체 용량']||r['입고 수량']||'—'))} ${esc(r['전체 용량 단위']||r['입고 수량 단위']||'')}</td><td>${esc(String(x.qty))} ${esc(x.unit)}</td><td>${status==='partial'?'일부 폐기':status==='unknown'?'확인 필요':'미폐기'}</td></tr>`}).join('')}</tbody></table></div></td></tr>`:''}`}).join('')+(more?`<tr class="inv-more"><td colspan="8" style="text-align:center;padding:12px"><button type="button" onclick="event.stopPropagation();window._invAll=1;drawMasters()">나머지 ${more}종 더 보기</button> <span class="small muted">(앞 ${LIM}종만 보이는 중 · 검색하면 전체에서 찾음)</span></td></tr>`:'')||'<tr><td colspan="8">조건에 맞는 표준품이 없습니다.</td></tr>';
 }
 function showMaster(code,scroll=true){let items=activeMine().filter(s=>baseCode(s)===code);if(!items.length)return;selectedBase=code;let first=items[0];document.getElementById('detailPanel').innerHTML=`<div class="panel" style="border:2px solid #b8c5d2"><div class="toolbar" style="justify-content:space-between"><div><h3 style="margin:0">${esc(code)} · 입고번호별 상세</h3><p class="muted">제조사 ${esc(getInventoryValue(first,'제조 회사')||'—')} · Cat No. ${esc(getInventoryValue(first,'Cat No.')||'—')} · 입고번호 ${items.length}건</p></div><button onclick="selectedBase=null;document.getElementById('detailPanel').innerHTML=''">닫기 ✕</button></div><div class="tablewrap"><table><thead><tr><th>입고번호</th><th>입고일</th><th>제조번호</th><th>유효기한</th><th>입고량</th><th>실재고</th><th>라벨 총 수량</th><th>폐기 라벨 수량</th><th>폐기 상태</th></tr></thead><tbody>${items.map(s=>{let r=detailData[s.id],status=disposalState(s);return `<tr><td><b>${esc(s.code)}</b></td><td>${esc(r['입고 일자']||'—')}</td><td>${esc(r['제조 번호']||'—')}</td><td>${esc(s.exp||'—')} ${expireState(s)?'<span class="tag gold">'+expireState(s)+'</span>':''}</td><td>${esc(String(r['전체 용량']||r['입고 수량']||'—'))} ${esc(r['전체 용량 단위']||r['입고 수량 단위']||'')}</td><td>${s.qty} ${esc(s.unit)}</td><td>${esc(r['라벨 총 수량']||'—')}</td><td>${esc(r['폐기 라벨 수량']||'0')}</td><td>${status==='partial'?'일부 폐기':status==='unknown'?'확인 필요':'미폐기'}</td></tr>`}).join('')}</tbody></table></div></div>`;if(scroll)document.getElementById('detailPanel').scrollIntoView({behavior:'smooth',block:'nearest'});}
 const disposalDateStorageKey='standardhub_v2_disposal_dates';
@@ -1030,7 +1031,11 @@ const _vt=visibleTabs;
 window.visibleTabs=function(u){return _vt(u).filter(t=>t!=='analysis'&&t!=='purchase'&&t!=='check')};
 
 /* 2) 대시보드: '재고 부족 예상(BPT) · 분석 준비 중' 제거. 의뢰사 표준품이 없으면 해당 탭도 숨김 */
-const _dash=dash;
+/* V3.7: 확인 항목 — 접혀 있는 표준품의 입고번호 줄은 펼칠 때 그림(관리자는 수천 줄을 미리 그려 대시보드가 느렸음) */
+const LZ=window._LZ=window._LZ||{g:0,m:{}};
+function lzDash(h){const g=++LZ.g;LZ.m[g]=[];delete LZ.m[g-6];return h.replace(/<details class="expiry-group">([\s\S]*?)<div class="expiry-group-items">([\s\S]*?)<\/div><\/details>/g,(m,head,inner)=>{const i=LZ.m[g].push(inner)-1;return '<details class="expiry-group">'+head+'<div class="expiry-group-items" data-lz="'+g+':'+i+'"></div></details>'})}
+document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.open||!d.matches||!d.matches('details.expiry-group'))return;const x=d.querySelector('.expiry-group-items[data-lz]');if(!x)return;const [g,i]=x.dataset.lz.split(':');x.innerHTML=(LZ.m[g]||[])[+i]||'';x.removeAttribute('data-lz')},true);
+const _dash=(()=>{const f=dash;return function(){return lzDash(f.apply(this,arguments))}})();
 window.dash=function(){
  const hasClient=clientMasters().length>0;
  if(!hasClient&&dashboardAlertTab==='low')dashboardAlertTab='soon';
@@ -1052,7 +1057,7 @@ window.showDisposalHistory=function(){selectedBase=null;const arr=disposedMine()
 
 /* 4) 데이터 기준일 배너 */
 document.querySelector('nav').insertAdjacentHTML('beforebegin','<div id="dataBasis"></div>');
-function lastUpload(){const st=lj(UK,null),h=st&&st.history;return h&&h.length?h[h.length-1]:null}
+function lastUpload(){const st=window.lsJSON?lsJSON(UK):lj(UK,null),h=st&&st.history;return h&&h.length?h[h.length-1]:null}
 window.setDataBasis=function(){const cur=lj(BK,'');const v=prompt('이 화면의 데이터를 LIMS에서 추출한 날짜를 입력하세요 (YYYY-MM-DD)',cur||new Date().toISOString().slice(0,10));if(v===null)return;const t=v.trim();if(t&&!/^\d{4}-\d{2}-\d{2}$/.test(t)||t&&isNaN(new Date(t+'T00:00:00')))return alert('YYYY-MM-DD 형식으로 입력해 주세요.');try{localStorage.setItem(BK,JSON.stringify(t))}catch(e){alert('이 브라우저에서는 저장하지 못했습니다.')}updateBasis()};
 function updateBasis(){
  const el=document.getElementById('dataBasis');if(!el)return;const u=user();
@@ -1248,9 +1253,10 @@ document.title='StandardHub';
 /* 보관 온도 · 상태 칩 */
 const TM={'초저온':'t-ultra','냉동':'t-frozen','냉장':'t-cold','실온':'t-room'};
 const TR=/^(초저온|냉동|냉장|실온)(\s*[\/,·]\s*(초저온|냉동|냉장|실온))*$/;
+/* V3.7: 칩이 될 수 있는 글자만 자세히 봄 */const CHIPRE=/^(초저온|냉동|냉장|실온|만료|임박|정상|유효기한 확인 필요|30일 이내|재고 0 · 폐기 미완료)/;
 function chipify(root){
- root.querySelectorAll('td,.storage-text,.muted,b,span').forEach(el=>{
-  if(el.children.length||el.dataset.chip||el.closest('.tc,.sp'))return;const t=el.textContent.trim();
+ /* V3.7: 이미 본 칸은 건너뜀(표준품 목록을 그릴 때마다 모든 칸을 다시 보던 것) */root.querySelectorAll('td:not([data-cp]),.storage-text:not([data-cp]),.muted:not([data-cp]),b:not([data-cp]),span:not([data-cp])').forEach(el=>{el.dataset.cp='1';
+  if(el.children.length||el.dataset.chip)return;const t=el.textContent.trim();if(!t||(!el.classList.contains('tag')&&!CHIPRE.test(t))||el.closest('.tc,.sp'))return;
   if(el.classList.contains('tag')){if(/^만료/.test(t)){el.classList.add('red');el.classList.remove('gold')}else if(/임박|이내|확인 필요/.test(t)){el.classList.add('gold');el.classList.remove('red')}else if(t==='정상')el.classList.add('ok')}
   if(TR.test(t)){el.dataset.chip='1';el.innerHTML=t.split(/\s*[\/,·]\s*/).map(x=>`<span class="tc ${TM[x]}">${x}</span>`).join(' ');return}
   if(el.tagName==='TD'){
@@ -1442,7 +1448,7 @@ const _r10=window.render;window.render=function(){_r10();decorate()};
 (function(){
 const UK='standardhub_v2_excel_upload_records_v1';
 function state(){try{return JSON.parse(localStorage.getItem(UK)||'null')}catch(e){return null}}
-function lastTs(){const h=(state()||{}).history||[];const x=h[h.length-1];return x&&x.ts?x.ts:0}
+function lastTs(){const h=((window.lsJSON?lsJSON(UK):state())||{}).history||[];const x=h[h.length-1];return x&&x.ts?x.ts:0}
 const _apply=window.applyExcelUpload;
 window.applyExcelUpload=function(){
   const before=((state()||{}).history||[]).length;
@@ -2020,7 +2026,7 @@ try{const N=JSON.parse(localStorage.getItem(LK)||'{}'),ks=Object.keys(N).filter(
 const lj=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')||d}catch(e){return d}};
 const lf=()=>lj(FK,{}),sf=o=>{try{localStorage.setItem(FK,JSON.stringify(o))}catch(e){}};
 const isB=g=>/^BPT-/.test(g||'');
-function targets(){const u=user();return [...new Set(activeMine().flatMap(s=>{const sb=window.subsOf?subsOf(s):[];if(!sb.length)return [s.group];if(u.admin||u.groups.includes(s.group))return sb;return sb.filter(g=>u.groups.includes(g))}))].sort((a,b)=>(isB(b)-isB(a))||a.localeCompare(b))}
+function targets(){const u=user();return [...new Set(activeMine().flatMap(s=>{const sb=window.subsOf?subsOf(s):[];if(!sb.length)return [s.group];if(window.docOne&&docOne(s.group))return (u.admin||u.groups.includes(s.group))?[s.group]:[];if(u.admin||u.groups.includes(s.group))return sb;return sb.filter(g=>u.groups.includes(g))}))].sort((a,b)=>(isB(b)-isB(a))||a.localeCompare(b))}
 /* V3.5: 검체 그룹(GSK-프리오릭스)은 회사명을 의뢰사(GSK) 것으로 — 의뢰사 그룹에 적어 둔 회사명이 있으면 그것 */const subP=g=>{const s=window.splitName&&splitName(g);return s?{c:g.slice(0,g.length-s.length-1),s}:null};const defCust=g=>{if(isB(g))return 'KPTR';const sp=subP(g);if(sp){try{const m=lf()[sp.c]||{};if(m.cust)return m.cust}catch(e){}return sp.c}return g}, defTarget=g=>{if(isB(g))return '바이오의약본부 '+g.slice(4)+' 표준품';const sp=subP(g);return sp?sp.c+' 의뢰사 표준품 ('+sp.s+')':g+' 의뢰사 표준품'};
 function iso(v){v=String(v||'').trim();const m=v.match(/(\d{4})[.\-\/]\s*(\d{1,2})[.\-\/]\s*(\d{1,2})/);if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
  if(/^\d{5}(\.\d+)?$/.test(v))return new Date(Date.UTC(1899,11,30)+Math.floor(Number(v))*86400000).toISOString().slice(0,10);return ''}
@@ -3129,7 +3135,7 @@ new MutationObserver(()=>{try{mv()}catch(e){}}).observe(document.body,{childList
    정하는 순서: 표준품별 직접 지정(여러 검체 가능) → 관리번호 세 번째 마디 첫 글자 규칙(GSK: PB.GSK.O… → 프리오릭스, W는 규칙 없음) → '검체 미지정' */
 (function(){
 const K='standardhub_v22_split';
-const cfg=()=>{const o=(window.lsJSON?lsJSON(K):JSON.parse(localStorage.getItem(K)||'null'))||{};return {clients:o.clients||{},map:o.map||{}}};
+const cfg=()=>{const o=(window.lsJSON?lsJSON(K):JSON.parse(localStorage.getItem(K)||'null'))||{};return {clients:o.clients||{},map:o.map||{},off:o.off||{}}};
 const letterOf=code=>{const m=String((String(code).split('.')[2])||'').match(/^([A-Za-z])/);return m?m[1].toUpperCase():''};
 const UNSET='검체 미지정';
 /* 검체 이름을 제품명 규칙으로 하나로 — 예전에 저장된 'Nucala AI'·'Beprovirsen'도 누칼라·힙사고로 합쳐짐. 사전에 없는 이름은 적은 그대로 */
@@ -3143,12 +3149,13 @@ const sug=b=>String((window.autoProdB&&autoProdB(b))||'').split(/\s*,\s*/).map(x
 /* 승인·권한 담당자 배정 목록에 검체 그룹이 보이도록 groups에 넣고, 없어진 검체 그룹은 뺌 */
 function syncGroups(){const c=cfg(),cls=Object.keys(c.clients);if(typeof groups==='undefined')return;
  const want=new Set();stocks.forEach(s=>{if(cls.includes(s.group))subsOf(s).forEach(g=>want.add(g))});
+ /* V3.7: 담당자가 회원가입·검체 정하기에서 적은 검체(clients[의뢰사].names)는 재고가 없어도 그룹으로 */cls.forEach(cl=>{const o=c.clients[cl]||{};[...(o.names||[]),...Object.values(o.letters||{}).flatMap(v=>String(v).split(/\s*,\s*/))].forEach(n=>{const v=nm(n);if(v)want.add(cl+'-'+v)})});
  const CG=(typeof CLIENT_GROUPS!=='undefined'?CLIENT_GROUPS:[]);for(let i=groups.length-1;i>=0;i--){const g=groups[i],cl=String(g).split('-')[0];if(g.includes('-')&&(cls.includes(cl)||CG.includes(cl))&&!want.has(g))groups.splice(i,1)}
  want.forEach(g=>{if(!groups.includes(g))groups.push(g)});
  /* 계정에 남은 예전 검체 그룹 이름 정리: 이름이 합쳐졌으면 새 이름으로(GSK-Bepirovirsen → GSK-힙사고), 더 이상 없는 검체 그룹은 뺌 */
  if(typeof users==='undefined'||!stocks.length)return;let ch=false;
  users.forEach(u=>{if(!Array.isArray(u.groups))return;const out=[];u.groups.forEach(g=>{const i=String(g).indexOf('-'),cl=i>0?g.slice(0,i):'';if(!cl||!cls.includes(cl)){out.push(g);return}
-   const n=cl+'-'+(nm(g.slice(i+1))||g.slice(i+1));if(want.has(n)){if(!out.includes(n))out.push(n)}});
+   const n=cl+'-'+(nm(g.slice(i+1))||g.slice(i+1));/* V3.7: 이름이 합쳐진 것만 바꾸고, 지금 목록에 없는 검체 그룹도 계정에서 지우지 않음(설정을 잠깐 바꿔도 담당이 풀리지 않게) */const v=want.has(n)?n:g;if(!out.includes(v))out.push(v)});
   if(out.join('\n')!==u.groups.join('\n')){u.groups=out;ch=true}});
  if(ch){try{saveDemoAccounts()}catch(e){}}}
 function save(o){try{localStorage.setItem(K,JSON.stringify(o));return true}catch(e){alert('저장하지 못했습니다.');return false}}
@@ -3161,8 +3168,9 @@ function panel(){const c=cfg(),cls=Object.keys(c.clients),opts=ALL();
   const need=bases.filter(b=>!useL||letterOf(b)==='W'||!letterOf(b)||!LT[letterOf(b)]||(c.map[b]&&c.map[b].length));
   const unset=st.filter(s=>subsOf(s)[0]===cl+'-'+UNSET).map(s=>masterOf(s.code)),nU=new Set(unset).size;
   const bRows=need.map(b=>{const s=sug(b),cur=nmL((c.map[b]||[]).join(',')).join(', ');return `<tr><td><b>${esc(b)}</b><div class="muted small">${esc((window.stdName&&stdName(b))||'')}</div></td><td class="muted">${esc(s.join(', ')||'-')}</td><td><input class="sp-b" data-c="${cl}" data-b="${esc(b)}" data-s="${esc(s.join(', '))}" value="${esc(cur)}" placeholder="${useL&&letterOf(b)!=='W'&&LT[letterOf(b)]?esc(LT[letterOf(b)])+' (관리번호 규칙)':'예: 프리오릭스, 싱그릭스'}" style="margin:0;width:100%;min-width:200px"></td></tr>`}).join('');
-  const subs=[...new Set(st.flatMap(s=>subsOf(s)))].filter(g=>g!==cl+'-'+UNSET).sort();
+  const subs=[...new Set([...st.flatMap(s=>subsOf(s)),...(cl0.names||[]).map(n=>cl+'-'+nm(n)).filter(g=>g!==cl+'-')])].filter(g=>g!==cl+'-'+UNSET).sort();
   return `<details class="sp-c" open style="margin:10px 0;border:1px solid var(--line,#dfe3e9);border-radius:10px;padding:8px 12px"><summary style="cursor:pointer"><b>${cl}</b> <span class="muted small">— ${subs.length?`검체 그룹 ${subs.length}개: ${esc(subs.map(g=>g.slice(cl.length+1)).join(' · '))}`:'검체를 아직 정하지 않음'}${nU?` · <b style="color:#b45309">검체 미지정 ${nU}종</b>`:''}</span></summary>
+   <div class="sp-docrow" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:6px 0 8px"><label style="display:inline-flex;gap:6px;align-items:center;margin:0;font-weight:400">정기점검·관리내역 서류 <select class="sp-doc" data-c="${cl}" style="margin:0;width:auto;height:32px"><option value="">검체별로 따로 (검체마다 서명)</option><option value="one" ${cl0.docOne?'selected':''}>${cl} 한 장으로 (대표자가 전체 서명)</option></select></label>${subs.length?`<span class="small muted">검체 이름 바꾸기:</span>${subs.map(g=>`<button type="button" class="sp-ren" onclick="spRenameAsk('${esc(g)}')" style="height:28px;padding:0 8px;font-size:12px">${esc(g.slice(cl.length+1))} ✎</button>`).join('')}`:''}</div>
    ${lets.length>1?`<label style="display:inline-flex;gap:6px;align-items:center;margin:6px 0;font-weight:400"><input type="checkbox" class="sp-bl" data-c="${cl}" ${useL?'checked':''} style="width:auto;margin:0">관리번호 세 번째 마디 첫 글자로 나누기 (예: ${cl}.O… → 한 검체, W…(Working)는 표준품마다 지정)</label>`:''}
    ${useL?`<div class="tablewrap"><table><thead><tr><th>관리번호</th><th>표준품</th><th>추천 검체 (사용기록)</th><th>검체</th></tr></thead><tbody>${letRows}</tbody></table></div>`:''}
    <p class="muted small" style="margin:8px 0 4px">${useL?'Working(W…)·글자 규칙에 없는 표준품':'표준품마다'} 검체를 적어 주세요. 여러 검체에 같이 쓰면 쉼표로 여러 개 — 그 검체 그룹마다 정기점검·관리내역에 모두 나옵니다.</p>
@@ -3174,16 +3182,25 @@ function panel(){const c=cfg(),cls=Object.keys(c.clients),opts=ALL();
   ${cls.length?`<div class="toolbar" style="gap:8px;margin-top:8px"><button onclick="splitFill()">빈 칸에 추천 검체 채우기</button><button class="primary" onclick="splitSave()">저장</button></div>`:''}</div>`}
 window.splitSave=function(){const c=cfg(),root=document.getElementById('splitPanel');if(!root)return;
  const on=[...root.querySelectorAll('.sp-on')].filter(x=>x.checked).map(x=>x.value),cl={};on.forEach(g=>cl[g]=Object.assign({},c.clients[g]||{}));
+ /* V3.7: 재고가 아직 없어 목록에 안 보이는 의뢰사(회원가입으로 켜진 것)는 그대로 둠 */const shown=new Set([...root.querySelectorAll('.sp-on')].map(x=>x.value));Object.keys(c.clients).forEach(g=>{if(!shown.has(g))cl[g]=c.clients[g]});
  root.querySelectorAll('.sp-bl').forEach(x=>{if(cl[x.dataset.c])cl[x.dataset.c].byLetter=x.checked});
+ root.querySelectorAll('.sp-doc').forEach(x=>{const o=cl[x.dataset.c];if(!o)return;if(x.value==='one')o.docOne=true;else delete o.docOne});
  root.querySelectorAll('.sp-l').forEach(x=>{const o=cl[x.dataset.c];if(!o)return;o.letters=o.letters||{};const v=nmL(x.value).join(', ');if(v)o.letters[x.dataset.l]=v;else delete o.letters[x.dataset.l]});
  const map=Object.assign({},c.map);root.querySelectorAll('.sp-b').forEach(x=>{const v=nmL(x.value);if(v.length)map[x.dataset.b]=v;else delete map[x.dataset.b]});
  /* 글자 규칙과 같은 검체 하나만 적힌 표준품은 따로 저장하지 않음(규칙을 바꾸면 함께 바뀌게) */Object.keys(map).forEach(b=>{const g=(stocks.find(s=>masterOf(s.code)===b)||{}).group,o=cl[g];if(!o||o.byLetter===false)return;const L=letterOf(b);if(L&&L!=='W'&&o.letters&&o.letters[L]&&map[b].length===1&&map[b][0]===o.letters[L])delete map[b]});
- if(save({clients:cl,map})){syncGroups();alert('검체별 그룹을 저장했습니다. 승인·권한 담당자 배정에서 검체 그룹을 체크할 수 있어요.');render()}};
+ /* V3.7: 끈 의뢰사의 설정(검체 이름·글자 규칙·서류 묶음)은 off에 보관 → 다시 켜면 그대로 돌아옴(담당자 배정도 유지) */
+ const off=Object.assign({},c.off);Object.keys(c.clients).forEach(g=>{if(shown.has(g)&&!on.includes(g))off[g]=c.clients[g]});on.forEach(g=>{if(!c.clients[g]&&off[g]){cl[g]=Object.assign({},off[g]);delete off[g]}});
+ if(save({clients:cl,map,off})){syncGroups();alert('검체별 그룹을 저장했습니다. 승인·권한 담당자 배정에서 검체 그룹을 체크할 수 있어요.');render()}};
 window.splitFill=function(){const root=document.getElementById('splitPanel');if(!root)return;let n=0;
  root.querySelectorAll('.sp-l').forEach(x=>{if(!x.value.trim()&&x.placeholder&&x.placeholder!=='검체 이름'){x.value=x.placeholder;n++}});
  root.querySelectorAll('.sp-b').forEach(x=>{if(!x.value.trim()&&x.dataset.s){x.value=x.dataset.s;n++}});
  alert(n?n+'칸에 추천 검체를 넣었습니다. 확인한 뒤 [저장]을 눌러 주세요.':'채울 추천이 없습니다. 사용기록이 있는 표준품만 추천돼요.')};
-document.addEventListener('change',e=>{if(e.target.matches&&e.target.matches('#splitPanel .sp-on,#splitPanel .sp-bl'))splitSave()});
+window.syncGroups=syncGroups;window.splitNm=nm;window.splitNmReset=()=>NMC.clear();window.docOne=g=>!!((cfg().clients[g]||{}).docOne);window.splitSug=sug;
+document.addEventListener('change',e=>{const x=e.target;if(!(x.matches&&x.matches('#splitPanel .sp-on,#splitPanel .sp-bl,#splitPanel .sp-doc')))return;
+ /* V3.7: 켜 둔 의뢰사를 끌 때는 한 번 물어봄 — 실수로 눌러도 검체 담당자가 풀리지 않게 */
+ if(x.matches('.sp-on')&&!x.checked&&cfg().clients[x.value]){const g=x.value,n=users.filter(u=>(u.groups||[]).some(v=>String(v).indexOf(g+'-')===0)).length;x.checked=true;
+  askConfirm({title:g+' 검체별 나누기 끄기',message:g+'를 검체로 나누지 않고 '+g+' 한 그룹으로 봅니다.'+(n?'\n검체 그룹을 맡은 담당자 '+n+'명은 다시 켤 때까지 '+g+' 표준품이 안 보입니다.':'')+'\n\n검체 이름·관리번호 규칙·담당자 배정은 지우지 않고 남겨 둡니다. 다시 체크하면 그대로 돌아옵니다.',ok:'끄기',danger:true,onOk:()=>{x.checked=false;splitSave()}});return}
+ splitSave()});
 const _r=window.render;window.render=function(){try{syncGroups()}catch(e){}const r=_r.apply(this,arguments);
  try{if(active==='admin'&&user().admin){const sec=document.getElementById('admin');if(sec&&!document.getElementById('splitPanel'))sec.insertAdjacentHTML('beforeend',panel())}}catch(e){console.error(e)}return r};
 })();
@@ -3308,10 +3325,10 @@ const _r=window.render;window.render=function(){const r=_r.apply(this,arguments)
 })();
 </script><script>/* V3.5: 버튼·체크 한 번에 화면을 다시 그려도 칸 안 스크롤(그룹 목록·표 칸·의뢰사 목록 등)이 맨 위로 튀지 않게 — 그리기 전 위치를 기억했다가 되돌림 */
 (function(){const SEL='.assign-grid,.grp-chips,.sp-list,.tablewrap,.signup-groups,#splitPanel .sp-main';
- const key=e=>{const sec=e.closest('section,#admin,#accountModal');const cls=[...e.classList].join('.');const all=[...document.querySelectorAll(SEL)].filter(x=>x.closest('section,#admin,#accountModal')===sec&&[...x.classList].join('.')===cls);return (sec&&sec.id||'')+'|'+cls+'|'+all.indexOf(e)};
- const _r=window.render;window.render=function(){const keep={};try{document.querySelectorAll(SEL).forEach(e=>{if(e.scrollTop>0||e.scrollLeft>0)keep[key(e)]=[e.scrollTop,e.scrollLeft]})}catch(e){}
+ /* V3.7: 요소마다 화면 전체를 다시 찾던 것(메뉴 이동마다 30~40ms) → 한 번에 이름 붙이기 */const keys=()=>{const m=new Map(),n={};document.querySelectorAll(SEL).forEach(e=>{const sec=e.closest('section,#admin,#accountModal');const k=(sec&&sec.id||'')+'|'+[...e.classList].join('.');n[k]=(n[k]||0);m.set(e,k+'|'+n[k]);n[k]++});return m};
+ const _r=window.render;window.render=function(){const keep={};let any=false;try{const K=keys();K.forEach((k,e)=>{if(e.scrollTop>0||e.scrollLeft>0){keep[k]=[e.scrollTop,e.scrollLeft];any=true}})}catch(e){}
   const r=_r.apply(this,arguments);
-  try{const go=()=>document.querySelectorAll(SEL).forEach(e=>{const k=keep[key(e)];if(k){e.scrollTop=k[0];e.scrollLeft=k[1]}});go();requestAnimationFrame(go)}catch(e){}
+  if(any)try{const go=()=>keys().forEach((k,e)=>{const v=keep[k];if(v){e.scrollTop=v[0];e.scrollLeft=v[1]}});go();requestAnimationFrame(go)}catch(e){}
   return r}})();
 </script><script>/* V3.5: '오늘 할 일' — 접속하자마자 무엇부터 할지 보이게. 현황 요약(로그인 첫 화면) 맨 위에 할 일만 한 줄씩: 만료·임박, 재고 0 폐기, 이번 달 정기점검 만든 그룹 수, 재고 부족, 자료 최신화, (관리자) 승인 대기.
    정기점검·관리내역을 만들면 standardhub_v22_inspect_made {그룹|월|종류:{by,at}}에 기억 */
@@ -3329,7 +3346,7 @@ function rows(){const u=user();let L=[];try{L=activeMine()}catch(e){}const st=s=
  try{const ov=window.clientAlertOverview&&clientAlertOverview();const n=ov&&ov.rows?ov.rows.filter(r=>r.triggered).length:0;if(n)out.push(['o','재고 부족 '+n+'종','알림 기준 이하 — 주문이 필요한지 확인해 주세요','재고 알림','go(\'alerts\')'])}catch(e){}
  const now=new Date(),ym=now.toISOString().slice(0,7),mo=now.getMonth()+1,mk=lj(MK,{});
  /* 정기점검 대상 그룹: 검체로 나눈 의뢰사는 검체 그룹별(GSK-프리오릭스…), 담당자는 배정받은 범위만 */
- const has=g=>u.admin||(u.groups||[]).includes(g),gs=[...new Set(L.flatMap(s=>{const sub=(window.subsOf?subsOf(s):[]).filter(g=>!/-검체 미지정$/.test(g));if(!sub.length)return [s.group];return has(s.group)?sub:sub.filter(has)}).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+ const has=g=>u.admin||(u.groups||[]).includes(g),gs=[...new Set(L.flatMap(s=>{const sub=(window.subsOf?subsOf(s):[]).filter(g=>!/-검체 미지정$/.test(g));if(window.docOne&&docOne(s.group))return has(s.group)?[s.group]:[];if(!sub.length)return [s.group];return has(s.group)?sub:sub.filter(has)}).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
  if(gs.length){
   /* 그룹 완료 = 정기점검·관리내역 둘 다 실장님 '확인 서명 완료'(합친 PDF 요청은 둘 다로 셈). 서명 요청이 없는 파일판은 둘 다 만들면 완료 */
   const SV=!!window.__SH_SERVER,rq=SV&&window.signReqs?signReqs().filter(r=>r.ym===ym):[],R={none:0,made:1,wait:2,done:3};
@@ -3441,5 +3458,184 @@ window.buySave=function(){const o=lj(BK,{}),k=key();o[k]=[...document.querySelec
 window.buyx=function(){const a=[...document.querySelectorAll('#inBuyCand .buy-k')].filter(x=>x.checked).map(x=>x.dataset.t);return a.length?'\n'+a.join('\n'):''};
 const _f=window.inspFill;if(_f)window.inspFill=function(){const r=_f.apply(this,arguments);try{if(document.getElementById('inBuy'))buyBox()}catch(e){console.error(e)}return r};
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='inDate'&&document.getElementById('inBuyCand'))buyBox()});
+})();
+</script><script>/* V3.7: 검체는 담당자가 정함 — (1) 회원가입: 의뢰사를 고르면 '맡은 검체' 칸(비우면 의뢰사 전체), 적으면 '의뢰사-검체'로 신청하고 승인할 때 그 검체 그룹을 만듦(재고가 없어도).
+   (2) 오늘 할 일: 그 의뢰사를 맡은 담당자 모두에게 '○○ 검체 미지정 표준품 N종' → [검체 정하기] 창에서 있는 검체를 고르면 그 검체 담당자에게, 새 검체면 '내가 맡을까요?'.
+   (3) 관리자 오늘 할 일: '담당자 없는 검체 그룹 N개'. 저장은 standardhub_v22_split(clients[의뢰사].names, map[기본번호]) */
+(function(){
+const K='standardhub_v22_split',UN='검체 미지정';
+const cfg=()=>{let o=null;try{o=(window.lsJSON?lsJSON(K):JSON.parse(localStorage.getItem(K)||'null'))}catch(e){}o=o||{};return Object.assign({},o,{clients:Object.assign({},o.clients||{}),map:Object.assign({},o.map||{})})};
+const put=o=>{try{localStorage.setItem(K,JSON.stringify(o));return true}catch(e){alert('저장하지 못했습니다.');return false}};
+const nm=x=>{x=String(x||'').trim();try{return window.splitNm?splitNm(x):x}catch(e){return x}};
+const nmL=v=>[...new Set(String(v||'').split(/\s*[,，、\/]\s*/).map(nm).filter(Boolean))];
+const isCl=g=>!!g&&!/^BPT/i.test(g)&&!String(g).includes('-');
+const namesOf=cl=>{const c=cfg(),s=new Set(((c.clients[cl]||{}).names||[]).map(nm).filter(Boolean));
+ stocks.forEach(x=>{if(x.group===cl&&window.subsOf)subsOf(x).forEach(g=>{const n=g.slice(cl.length+1);if(n&&n!==UN)s.add(n)})});return [...s].sort((a,b)=>a.localeCompare(b))};
+const addNames=(cl,ns)=>{const c=cfg(),o=Object.assign({},c.clients[cl]||{});o.names=[...new Set([...(o.names||[]).map(nm),...ns.map(nm)].filter(Boolean))];c.clients[cl]=o;return put(c)};
+const sync=()=>{try{window.syncGroups&&syncGroups()}catch(e){}};
+const H=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* (1) 회원가입 */
+const spec={};
+function specBox(){const box=document.getElementById('sgSpec');if(!box)return;box.querySelectorAll('input[data-c]').forEach(i=>spec[i.dataset.c]=i.value);
+ const cls=[...document.querySelectorAll('#accountContent input[name=groupChoice]:checked')].map(i=>i.value).filter(isCl);
+ box.innerHTML=cls.length?'<div class="small" style="margin:10px 0 4px;font-weight:600">맡은 검체 <span class="muted" style="font-weight:400">— 의뢰사 안에서 검체별로 담당이 나뉠 때만 적어 주세요(예: GSK 프리오릭스). 의뢰사 전체를 맡으면 비워 두세요.</span></div>'+cls.map(cl=>{const ns=namesOf(cl);return `<label class="sg-spec" style="display:flex;align-items:center;gap:10px;margin:4px 0;font-weight:400"><b style="min-width:52px">${H(cl)}</b><input data-c="${H(cl)}" list="sgDl-${H(cl)}" value="${H(spec[cl]||'')}" placeholder="${ns.length?'예: '+H(ns.slice(0,2).join(', ')):'예: 프리오릭스 (여러 개는 쉼표)'} · 비우면 ${H(cl)} 전체" style="margin:0;flex:1;height:34px"></label><datalist id="sgDl-${H(cl)}">${ns.map(n=>`<option value="${H(n)}">`).join('')}</datalist>`}).join(''):''}
+const _open=window.openAccountDialog;window.openAccountDialog=function(mode){sync();const r=_open.apply(this,arguments);
+ try{if(mode==='signup'){for(const k in spec)delete spec[k];const g=document.querySelector('#accountContent .signup-groups');if(g&&!document.getElementById('sgSpec')){const d=document.createElement('div');d.id='sgSpec';g.after(d);g.addEventListener('change',specBox)}}}catch(e){console.error(e)}return r};
+const _ss=window.sgSelShow;window.sgSelShow=function(){const r=_ss.apply(this,arguments);try{const s=document.getElementById('sgSel');const a=[...document.querySelectorAll('#accountContent input[name=groupChoice]:checked')].map(i=>i.value);const sp={};document.querySelectorAll('#sgSpec input[data-c]').forEach(i=>{const v=nmL(i.value);if(v.length)sp[i.dataset.c]=v});
+ if(s&&a.length&&Object.keys(sp).length){const out=a.flatMap(g=>sp[g]?sp[g].map(n=>g+'-'+n):[g]);s.innerHTML='선택한 그룹 '+out.length+'개: <b style="color:var(--ink)">'+H(out.join(', '))+'</b>'}}catch(e){}return r};
+document.addEventListener('input',e=>{if(e.target.closest&&e.target.closest('#sgSpec'))sgSelShow()});
+const _sub=window.submitSignup;window.submitSignup=function(){const sp={};document.querySelectorAll('#sgSpec input[data-c]').forEach(i=>{const v=nmL(i.value);if(v.length)sp[i.dataset.c]=v});
+ const n0=users.length,r=_sub.apply(this,arguments);
+ try{if(users.length>n0&&Object.keys(sp).length){const u=users[users.length-1];let gs=(u.requestedGroups||[]).slice();
+  Object.entries(sp).forEach(([cl,ns])=>{gs=gs.filter(g=>g!==cl);ns.forEach(n=>{const g=cl+'-'+n;if(!gs.includes(g))gs.push(g)})});
+  u.requestedGroups=gs;u.splitReq=sp;u.requested=[...gs,...(u.requestedNewGroup?['추가 요청: '+u.requestedNewGroup]:[])].join(', ');saveDemoAccounts()}}catch(e){console.error(e)}return r};
+const _ap=window.approve;window.approve=function(id){try{const u=users.find(x=>x.id===id);if(u&&u.splitReq){Object.entries(u.splitReq).forEach(([cl,ns])=>addNames(cl,ns));sync()}}catch(e){console.error(e)}return _ap.apply(this,arguments)};
+/* (2)(3) 오늘 할 일 */
+const realMe=()=>{const id=String(user().id);return users.find(x=>String(x.id)===id)};
+const mineCl=(u,cl)=>u.admin||(u.groups||[]).some(g=>g===cl||String(g).indexOf(cl+'-')===0);
+function unsetOf(cl){const out=new Map();stocks.forEach(s=>{if(s.group!==cl||!window.subsOf)return;try{if(disposalState(s)==='done')return}catch(e){}const sb=subsOf(s);if(sb.length===1&&sb[0]===cl+'-'+UN){const b=masterOf(s.code);if(!out.has(b))out.set(b,s)}});return out}
+function noOwner(){const own=new Set();users.filter(x=>x.status==='approved'&&!x.admin).forEach(x=>(x.groups||[]).forEach(g=>own.add(g)));const out=[];
+ Object.keys(cfg().clients).forEach(cl=>{if(own.has(cl))return;namesOf(cl).forEach(n=>{if(!own.has(cl+'-'+n))out.push(cl+'-'+n)})});return out}
+function rows(){const u=user(),r=[];if(window.leadDepts&&leadDepts(u).length)return r;
+ Object.keys(cfg().clients).sort().forEach(cl=>{if(!mineCl(u,cl))return;const n=unsetOf(cl).size;if(n)r.push(['#d98a1c',cl+' 검체 미지정 표준품 '+n+'종','내 검체면 정해 주세요 — 정하면 그 검체 담당자에게 갑니다','검체 정하기',"spPick('"+cl+"')"])});
+ if(u.admin){const no=noOwner();if(no.length)r.push(['#2b5bd7','담당자 없는 검체 그룹 '+no.length+'개',no.slice(0,4).join(', ')+(no.length>4?' 외 '+(no.length-4)+'개':'')+' — 담당자를 배정해 주세요','담당자 배정',"try{sessionStorage.setItem('sh_adm_tab','assign')}catch(e){};goGroup('admin')"])}
+ return r}
+function inject(){const p=document.getElementById('todoPanel');if(!p)return;const L=p.querySelector('.td-list');if(!L)return;L.querySelectorAll('.td-sp').forEach(e=>e.remove());let rs=[];try{rs=rows()}catch(e){console.error(e)}if(!rs.length)return;
+ [...L.querySelectorAll('.td-row')].forEach(e=>{if(/지금 할 일이 없습니다/.test(e.textContent))e.remove()});
+ const html=rs.map(([c,t,d,b,js])=>`<div class="td-row td-sp"><span class="td-dot" style="background:${c}"></span><div class="td-t"><b>${H(t)}</b><span>${H(d)}</span></div><button type="button" onclick="${H(js)}">${H(b)} →</button></div>`).join('');
+ const after=[...L.querySelectorAll('.td-row')].filter(e=>/만료|재고 0/.test((e.querySelector('b')||{}).textContent||'')).pop();if(after)after.insertAdjacentHTML('afterend',html);else L.insertAdjacentHTML('afterbegin',html)}
+const _r=window.render;window.render=function(){const x=_r.apply(this,arguments);try{if(typeof active!=='undefined'&&active==='overview')inject()}catch(e){console.error(e)}return x};
+/* 검체 정하기 창 */
+window.spPick=function(cl){const um=unsetOf(cl),ns=namesOf(cl);if(!um.size)return alert(cl+'에 검체를 정할 표준품이 없습니다.');
+ const sug=b=>{try{return (window.splitSug?splitSug(b):[]).join(', ')}catch(e){return ''}};
+ const rowsH=[...um.entries()].sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true})).map(([b,s])=>{const g=sug(b),nmS=(window.stdName&&stdName(b))||s.name||'';return `<tr><td><b>${H(b)}</b><div class="muted small">${H(nmS)}${s.cat?' · '+H(s.cat):''}</div></td><td class="muted small">${H(g||'-')}</td><td><input class="spk" data-b="${H(b)}" data-s="${H(g)}" list="spkDl" placeholder="${H(g||'검체 이름')}" style="margin:0;width:100%;height:32px"></td></tr>`}).join('');
+ const w=document.createElement('div');w.id='spkLayer';w.className='account-overlay';
+ w.innerHTML=`<div class="account-dialog" role="dialog" aria-modal="true" style="max-width:780px;width:94vw"><h3 style="margin:0 0 6px">${H(cl)} 검체 정하기</h3><p class="muted small" style="margin:0 0 10px">내가 아는 표준품만 적어 주세요. 있는 검체(${H(ns.join(', ')||'아직 없음')})를 고르면 그 검체 담당자에게 가고, 새 이름을 적으면 새 검체 그룹이 생깁니다. 여러 검체에 같이 쓰면 쉼표로. 모르는 것은 비워 두세요.</p>
+ <div class="tablewrap" style="max-height:52vh;overflow:auto"><table><thead><tr><th>기본번호 · 표준품명</th><th>추천 (사용기록)</th><th style="width:42%">검체</th></tr></thead><tbody>${rowsH}</tbody></table></div><datalist id="spkDl">${ns.map(n=>`<option value="${H(n)}">`).join('')}</datalist>
+ <div class="toolbar" style="justify-content:flex-end;gap:8px;margin-top:12px"><button type="button" id="spkFill" style="margin-right:auto">빈 칸에 추천 넣기</button><button type="button" id="spkNo">닫기</button><button type="button" class="primary" id="spkOk">저장</button></div></div>`;
+ document.body.appendChild(w);const close=()=>w.remove();w.querySelector('#spkNo').onclick=close;w.addEventListener('click',e=>{if(e.target===w)close()});
+ w.querySelector('#spkFill').onclick=()=>{let n=0;w.querySelectorAll('.spk').forEach(i=>{if(!i.value.trim()&&i.dataset.s){i.value=i.dataset.s;n++}});if(!n)alert('넣을 추천이 없습니다. 사용기록이 있는 표준품만 추천돼요.')};
+ w.querySelector('#spkOk').onclick=()=>{const c=cfg(),got=[];w.querySelectorAll('.spk').forEach(i=>{const v=nmL(i.value);if(v.length){c.map[i.dataset.b]=v;got.push(...v)}});
+  if(!got.length)return alert('적은 검체가 없습니다. 아는 표준품의 검체를 적어 주세요.');
+  if(!c.clients[cl])c.clients[cl]={};if(!put(c))return;const fresh=[...new Set(got)].filter(n=>!ns.includes(n));close();sync();render();
+  const k=w.querySelectorAll('.spk').length,done=[...w.querySelectorAll('.spk')].filter(i=>i.value.trim()).length;
+  const msg=done+'종의 검체를 정했습니다. 그 검체 담당자 화면·정기점검에 나옵니다.'+(done<k?' (남은 '+(k-done)+'종은 그대로)':'');
+  const me=realMe(),u=user();
+  if(!fresh.length||u.admin||!me){alert(msg);return}
+  const gs=fresh.map(n=>cl+'-'+n);
+  askConfirm({title:'새 검체 그룹이 생겼습니다',message:gs.join(', ')+'\n\n이 검체를 내가 맡을까요?\n아니요를 누르면 관리자에게 \'담당자 없는 검체 그룹\'으로 알려 드립니다.',ok:'내가 맡기',onOk:()=>{me.groups=[...new Set([...(me.groups||[]),...gs])];saveDemoAccounts();sync();render();alert(msg+' '+gs.join(', ')+'을(를) 내 담당에 넣었습니다.')}});
+  const no=document.getElementById('askNo');if(no){no.textContent='아니요, 다른 사람이 맡아요';no.addEventListener('click',()=>alert(msg+' 관리자에게 담당자 배정을 알렸습니다.'))}};
+ const f=w.querySelector('.spk');if(f)f.focus()};
+})();
+</script><script>/* V3.7: 검체 이름 바꾸기(영문 → 제품명) · 담당 넘기기(기술이전 → 본부 담당자, 넘긴 사람은 보기만) · 관리자 알림.
+   이름 바꾸기(spRename): 검체별 나누기 설정·계정 그룹·그룹별로 저장된 자료(정기점검 입력·NAS 경로·서명 현황 등 standardhub_* 안의 같은 그룹 이름)를 모두 새 이름으로,
+     옛 이름은 standardhub_v22_name_alias {옛 이름: 새 이름}에 남겨 사용 추이 검체별 사용량·관리내역 제품명에서도 새 이름으로 합침(reduceName 뒤에 적용).
+   담당 넘기기: standardhub_v22_handover [{id,g,from,to,at,status:wait|done|no}] → 받는 사람 '오늘 할 일' [받기] → 받은 사람 groups에 추가, 넘긴 사람은 groups에서 빼고 viewGroups(보기만).
+     보기만 그룹은 표준품 목록·사용 추이에서만 보임(오늘 할 일·정기점검·업로드에는 안 셈). 알림 기록 standardhub_v22_group_log [{t,from,to,g,by,at,seen}] */
+(function(){
+const lj=(k,d)=>{try{const v=window.lsJSON?lsJSON(k):JSON.parse(localStorage.getItem(k));return v==null?d:JSON.parse(JSON.stringify(v))}catch(e){return d}};
+const ls=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){alert('저장하지 못했습니다.');return false}};
+const H=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const AK='standardhub_v22_name_alias',HK='standardhub_v22_handover',GL='standardhub_v22_group_log',SK='standardhub_v22_split';
+const me=()=>{const id=String(user().id);return users.find(x=>String(x.id)===id)};
+const nameOf=id=>{const u=users.find(x=>String(x.id)===String(id));return u?u.name+' ('+u.id+')':String(id)};
+const log=o=>{const L=lj(GL,[]);L.push(Object.assign({by:String(user().id),at:new Date().toISOString().slice(0,16).replace('T',' '),seen:false},o));ls(GL,L.slice(-200))};
+/* 이름 바꿈 목록을 제품명 규칙 뒤에 적용 */
+const _rn=window.reduceName;if(_rn){window.reduceName=function(x){const r=_rn.apply(this,arguments);try{const A=lj(AK,{});return A[r]||A[String(x||'').trim()]||r}catch(e){return r}}}
+/* 작은 입력 창 */
+function dlg(title,html,okText,onOk){const w=document.createElement('div');w.className='account-overlay';w.id='grpDlg';
+ w.innerHTML=`<div class="account-dialog" role="dialog" aria-modal="true" style="max-width:520px"><h3 style="margin:0 0 10px">${H(title)}</h3>${html}<div class="toolbar" style="justify-content:flex-end;gap:8px;margin-top:14px"><button type="button" class="dl-no">취소</button><button type="button" class="primary dl-ok">${H(okText)}</button></div></div>`;
+ document.body.appendChild(w);const close=()=>w.remove();w.querySelector('.dl-no').onclick=close;w.addEventListener('click',e=>{if(e.target===w)close()});
+ w.querySelector('.dl-ok').onclick=()=>{if(onOk(w)!==false)close()};const f=w.querySelector('input,select');if(f)f.focus();return w}
+/* ---- 검체 이름 바꾸기 ---- */
+const canRen=g=>{const u=user(),cl=String(g).split('-')[0];return u.admin||(u.groups||[]).includes(g)||(u.groups||[]).includes(cl)};
+window.spRenameAsk=function(g){const i=String(g).indexOf('-');if(i<0)return;const cl=g.slice(0,i),old=g.slice(i+1);if(!canRen(g))return alert('이 검체 그룹을 맡은 사람만 이름을 바꿀 수 있습니다.');
+ dlg('검체 이름 바꾸기',`<p class="muted small" style="margin:0 0 10px">의뢰사에서 제품명이 정해졌을 때 바꿔 주세요. 담당자·정기점검 입력 내용·NAS 경로·서명 현황이 함께 옮겨가고, 예전 이름으로 적힌 사용기록도 새 이름으로 합쳐집니다.</p>
+  <label>지금 이름<input value="${H(g)}" disabled></label><label>새 이름<div style="display:flex;align-items:center;gap:6px"><b>${H(cl)}-</b><input class="dl-new" placeholder="예: 힙사고" style="margin:0;flex:1"></div></label>`,'바꾸기',w=>{const v=w.querySelector('.dl-new').value.trim();if(!v){alert('새 이름을 적어 주세요.');return false}spRename(g,v)})};
+function walk(v,a,b){if(Array.isArray(v))return v.map(x=>walk(x,a,b));if(v&&typeof v==='object'){const o={};Object.keys(v).forEach(k=>{const nk=k===a?b:(k.indexOf(a+'|')===0?b+k.slice(a.length):k);o[nk]=walk(v[k],a,b)});return o}return v===a?b:v}
+window.spRename=function(g,newName){const i=String(g).indexOf('-'),cl=g.slice(0,i),old=g.slice(i+1);let nn=String(newName||'').trim().replace(new RegExp('^'+cl+'-'),'');
+ try{nn=window.splitNm?splitNm(nn)||nn:nn}catch(e){}const ng=cl+'-'+nn;if(!nn||ng===g)return alert('지금 이름과 같습니다.');
+ /* 1) 검체별 나누기 설정 */const c=lj(SK,{})||{};c.clients=c.clients||{};c.map=c.map||{};const o=c.clients[cl]=c.clients[cl]||{};const sw=x=>x===old?nn:x;
+ o.names=[...new Set([...(o.names||[]).map(sw),nn])];if(o.letters)Object.keys(o.letters).forEach(L=>{o.letters[L]=String(o.letters[L]).split(/\s*,\s*/).map(sw).join(', ')});
+ Object.keys(c.map).forEach(b=>{c.map[b]=[...new Set(c.map[b].map(sw))]});ls(SK,c);
+ /* 2) 옛 이름 → 새 이름 (사용기록 검체명·관리내역 제품명에도) */const A=lj(AK,{});A[old]=nn;try{const r=_rn?_rn(old):old;if(r&&r!=='-')A[r]=nn}catch(e){}Object.keys(A).forEach(k=>{if(A[k]===old)A[k]=nn});ls(AK,A);
+ /* 3) 계정 */users.forEach(u=>['groups','requestedGroups','viewGroups'].forEach(f=>{if(Array.isArray(u[f]))u[f]=[...new Set(u[f].map(x=>x===g?ng:x))]}));try{saveDemoAccounts()}catch(e){}
+ /* 4) 그룹 이름으로 저장된 다른 자료(큰 자료는 건너뜀) */const BIG=/usage|label_info|purchase|upload_undo|upload_log|demo_accounts|split$|name_alias/;
+ for(let k=0;k<localStorage.length;k++){const key=localStorage.key(k);if(!/^standardhub_/.test(key)||BIG.test(key))continue;const raw=localStorage.getItem(key)||'';if(raw.length>300000||raw.indexOf(g)<0)continue;
+  try{const v=JSON.parse(raw),nv=walk(v,g,ng);const s=JSON.stringify(nv);if(s!==raw)localStorage.setItem(key,s)}catch(e){}}
+ const gi=groups.indexOf(g);if(gi>=0)groups.splice(gi,1);try{window.splitNmReset&&splitNmReset()}catch(e){}try{window.syncGroups&&syncGroups()}catch(e){}
+ log({t:'rename',g,to:ng});render();alert(g+' → '+ng+' 으로 바꿨습니다.')};
+/* ---- 담당 넘기기 ---- */
+const hv=()=>lj(HK,[]);
+window.grpGiveAsk=function(g){const m=me();if(!m||!(m.groups||[]).includes(g))return alert('내 담당 그룹만 넘길 수 있습니다.');
+ const cand=users.filter(u=>u.status==='approved'&&!u.admin&&String(u.id)!==String(m.id)).sort((a,b)=>String(a.dept||'').localeCompare(String(b.dept||''))||a.name.localeCompare(b.name));
+ if(!cand.length)return alert('넘겨받을 수 있는 승인된 담당자가 없습니다.');
+ const w=dlg('담당 넘기기 — '+g,`<p class="muted small" style="margin:0 0 10px">받는 사람이 '오늘 할 일'에서 [받기]를 누르면 넘어갑니다. 넘긴 뒤에는 이 그룹을 <b>보기만</b> 할 수 있어요(표준품 목록·사용 추이). 비고·1회 사용량·표준품명은 표준품에 붙어 있어 그대로 따라갑니다.</p>
+  <label>받는 사람 찾기<input class="dl-q" placeholder="이름 · 아이디 · 실" autocomplete="off"></label><select class="dl-to" size="7" style="width:100%;height:auto">${cand.map(u=>`<option value="${H(u.id)}">${H(u.name)} (${H(u.id)})${u.dept?' · '+H(u.dept):''}</option>`).join('')}</select>`,'넘기기',w=>{const to=w.querySelector('.dl-to').value;if(!to){alert('받는 사람을 골라 주세요.');return false}
+  const L=hv().filter(x=>!(x.g===g&&x.from===String(m.id)&&x.status==='wait'));L.push({id:Date.now().toString(36),g,from:String(m.id),to:String(to),at:new Date().toISOString().slice(0,10),status:'wait'});ls(HK,L);render();alert(nameOf(to)+'님께 넘기기를 요청했습니다. 받으면 넘어갑니다.')});
+ const q=w.querySelector('.dl-q'),sel=w.querySelector('.dl-to');q.oninput=()=>{const s=q.value.trim().toLowerCase();[...sel.options].forEach(o=>o.hidden=!!s&&!o.textContent.toLowerCase().includes(s));const v=[...sel.options].filter(o=>!o.hidden);if(v.length===1)sel.value=v[0].value}};
+window.grpTake=function(id,ok){const L=hv(),r=L.find(x=>x.id===id);if(!r||r.status!=='wait')return render();const m=me();if(!m||String(m.id)!==r.to)return;
+ if(!ok){r.status='no';ls(HK,L);render();return alert('넘겨받지 않았습니다. '+nameOf(r.from)+'님이 그대로 맡습니다.')}
+ const f=users.find(x=>String(x.id)===r.from);m.groups=[...new Set([...(m.groups||[]),r.g])];if(m.viewGroups)m.viewGroups=m.viewGroups.filter(x=>x!==r.g);
+ if(f){f.groups=(f.groups||[]).filter(x=>x!==r.g);f.viewGroups=[...new Set([...(f.viewGroups||[]),r.g])];f.viewSince=Object.assign({},f.viewSince||{},{[r.g]:new Date().toISOString().slice(0,10)})}
+ /* 사람마다 저장한 NAS 경로는 받는 사람에게도 복사 */try{const N=lj('standardhub_v22_nas_paths',{}),a=(N[r.from.toLowerCase()]||{})[r.g];if(a){const t=N[r.to.toLowerCase()]=N[r.to.toLowerCase()]||{};if(!t[r.g])t[r.g]=a;ls('standardhub_v22_nas_paths',N)}}catch(e){}
+ r.status='done';r.done=new Date().toISOString().slice(0,10);ls(HK,L);try{saveDemoAccounts()}catch(e){}log({t:'give',g:r.g,from:r.from,to:r.to});render();alert(r.g+'을(를) 넘겨받았습니다. 이제 내 담당입니다.')};
+window.grpGiveCancel=function(id){const L=hv().filter(x=>x.id!==id);ls(HK,L);render()};
+window.grpViewDrop=function(g){const m=me();if(!m)return;m.viewGroups=(m.viewGroups||[]).filter(x=>x!==g);if(m.viewSince)delete m.viewSince[g];try{saveDemoAccounts()}catch(e){}render()};
+/* 보기만 그룹은 넘긴 날부터 6개월(183일) 지나면 저절로 빠짐 */
+const VDAYS=183,vEnd=d=>{const x=new Date(d+'T00:00:00');x.setDate(x.getDate()+VDAYS);return x.toISOString().slice(0,10)};
+function viewExpire(){const today=new Date().toISOString().slice(0,10);let ch=false;users.forEach(u=>{if(!(u.viewGroups||[]).length||!u.viewSince)return;const keep=u.viewGroups.filter(g=>!(u.viewSince[g]&&vEnd(u.viewSince[g])<=today));if(keep.length!==u.viewGroups.length){u.viewGroups.filter(g=>!keep.includes(g)).forEach(g=>delete u.viewSince[g]);u.viewGroups=keep;ch=true}});if(ch){try{saveDemoAccounts()}catch(e){}}}
+/* 보기만 그룹: 표준품 목록·사용 추이에서만 보이게 */
+const _ac=window.accessible;window.accessible=function(s,u){const r=_ac.apply(this,arguments);if(r)return r;try{const uu=u||user();if(uu&&uu.status==='approved'&&s&&s.group&&!/^BPT/i.test(s.group)&&(uu.groups||[]).some(g=>String(g).indexOf(s.group+'-')===0)){const sb=window.subsOf?subsOf(s):[];if(!sb.length||(sb.length===1&&sb[0]===s.group+'-검체 미지정'))return true}}catch(e){}try{const uu=u||user(),a=typeof active!=='undefined'?active:'';if(uu&&uu.status==='approved'&&(uu.viewGroups||[]).length&&/^(inventory|usage)$/.test(a))return uu.viewGroups.includes(s.group)||(window.subsOf&&subsOf(s).some(g=>uu.viewGroups.includes(g)))}catch(e){}return false};
+/* ---- 오늘 할 일 ---- */
+function rows(){const u=user(),r=[];const id=String(u.id);
+ hv().filter(x=>x.status==='wait'&&x.to===id).forEach(x=>r.push(['#2b5bd7',nameOf(x.from)+'님이 '+x.g+'을(를) 넘겼습니다','받으면 내 담당이 되고 넘긴 분은 보기만 합니다',`<button type="button" onclick="grpTake('${H(x.id)}',false)">안 받기</button><button type="button" class="primary" onclick="grpTake('${H(x.id)}',true)">받기 →</button>`]));
+ if(u.admin){const n=lj(GL,[]).filter(x=>!x.seen);if(n.length){const t=x=>x.t==='rename'?x.g+' → '+x.to+' (이름 바꿈, '+nameOf(x.by)+')':x.g+': '+nameOf(x.from)+' → '+nameOf(x.to)+' (담당 넘김)';
+  r.push(['#6b7280','검체 그룹 변경 '+n.length+'건',n.slice(-3).reverse().map(t).join(' · ')+(n.length>3?' 외 '+(n.length-3)+'건':''),`<button type="button" onclick="grpLogSeen()">확인 →</button>`])}}
+ return r}
+window.grpLogSeen=function(){const L=lj(GL,[]);L.forEach(x=>x.seen=true);ls(GL,L);render()};
+function inject(){const p=document.getElementById('todoPanel');if(!p)return;const L=p.querySelector('.td-list');if(!L)return;L.querySelectorAll('.td-hv').forEach(e=>e.remove());let rs=[];try{rs=rows()}catch(e){console.error(e)}if(!rs.length)return;
+ [...L.querySelectorAll('.td-row')].forEach(e=>{if(/지금 할 일이 없습니다/.test(e.textContent))e.remove()});
+ L.insertAdjacentHTML('afterbegin',rs.map(([c,t,d,btn])=>`<div class="td-row td-hv"><span class="td-dot" style="background:${c}"></span><div class="td-t"><b>${H(t)}</b><span>${H(d)}</span></div><div style="display:flex;gap:6px;flex:none">${btn}</div></div>`).join(''))}
+/* ---- 내 계정: 내 담당 그룹 ---- */
+function acct(){const sec=document.getElementById('signup');if(!sec||sec.querySelector('#myGroups'))return;const m=me(),u=user();if(!m||u.status!=='approved'||u.admin)return;
+ const id=String(m.id),out=hv().filter(x=>x.status==='wait'&&x.from===id),isSub=g=>!!(window.splitName&&splitName(g));
+ const row=g=>{const w=out.find(x=>x.g===g);return `<tr><td><b>${H(g)}</b></td><td>${w?`<span class="small muted">${H(nameOf(w.to))}님께 넘기는 중</span> <button type="button" onclick="grpGiveCancel('${H(w.id)}')" style="height:28px">취소</button>`:`<button type="button" onclick="grpGiveAsk('${H(g)}')" style="height:30px">담당 넘기기</button>`} ${isSub(g)?`<button type="button" onclick="spRenameAsk('${H(g)}')" style="height:30px">검체 이름 바꾸기</button>`:''}</td></tr>`};
+ const vg=(m.viewGroups||[]);
+ const h=`<div class="panel" id="myGroups"><h3>내 담당 그룹</h3><p class="muted small" style="margin:0 0 8px">기술이전이 끝나 다른 담당자에게 넘길 때 [담당 넘기기], 의뢰사에서 제품명이 정해지면 [검체 이름 바꾸기]를 눌러 주세요.</p>
+  <div class="tablewrap"><table><thead><tr><th>그룹</th><th></th></tr></thead><tbody>${(m.groups||[]).map(row).join('')||'<tr><td colspan="2" class="muted">담당 그룹이 없습니다.</td></tr>'}</tbody></table></div>
+  ${vg.length?`<p class="small" style="margin:12px 0 4px"><b>보기만 하는 그룹</b> <span class="muted">(넘긴 그룹 — 표준품 목록·사용 추이에서만 보이고, 넘긴 날부터 6개월 뒤 저절로 빠짐)</span></p><div style="display:flex;flex-wrap:wrap;gap:6px">${vg.map(g=>`<span class="tag">${H(g)}${m.viewSince&&m.viewSince[g]?` <span class="muted" style="font-size:11px">${H(vEnd(m.viewSince[g]))}까지</span>`:''} <a href="javascript:void 0" onclick="grpViewDrop('${H(g)}')" title="보기에서도 빼기" style="margin-left:4px;color:#6b7280">×</a></span>`).join('')}</div>`:''}</div>`;
+ const pn=sec.querySelector('.panel');if(pn)pn.insertAdjacentHTML('afterend',h);else sec.insertAdjacentHTML('beforeend',h)}
+const _r=window.render;window.render=function(){try{viewExpire()}catch(e){}try{if(typeof active!=='undefined'&&active!=='inventory')window._invAll=0}catch(e){}const x=_r.apply(this,arguments);try{if(typeof active!=='undefined'){if(active==='overview')inject();if(active==='signup')acct()}}catch(e){console.error(e)}return x};
+})();
+</script><script>/* V3.7: 메뉴 이동이 느리던 것 — 한 번 그릴 때 재고 알림 계산(clientAlertOverview)과 월평균 사용량(usageAvgAll)을 여러 번 하던 것을, 저장된 자료·로그인·재고가 그대로면 한 번만 계산해 다시 씀 */
+(function(){const sig=()=>{let u='';try{u=String(user().id)+'|'+(user().groups||[]).join(',')}catch(e){}return (window.lsAllVer||0)+'|'+u+'|'+stocks.length+'|'+new Date().toISOString().slice(0,10)};
+ const memo=f=>{let k=null,v;return function(){if(arguments.length)return f.apply(this,arguments);const s=sig();if(s!==k){v=f.apply(this,arguments);k=s}return v}};
+ try{if(typeof clientAlertOverview==='function'){clientAlertOverview=memo(clientAlertOverview);window.clientAlertOverview=clientAlertOverview}}catch(e){}
+ if(window.usageAvgAll)window.usageAvgAll=memo(window.usageAvgAll);
+ /* 유효기한 상태·남은 날수: 같은 날짜는 한 번만 계산(저장된 자료가 바뀌거나 1분 지나면 다시) */
+ const tick=()=>(window.lsAllVer||0)+'|'+Math.floor(Date.now()/60000);
+ const memo1=f=>{const C=new Map();let k='';return function(x){const s=tick();if(s!==k){C.clear();k=s}const key=x&&typeof x==='object'?'o'+x.exp:'s'+x;if(C.has(key))return C.get(key);const v=f.apply(this,arguments);C.set(key,v);return v}};
+ try{if(typeof expireState==='function'){expireState=memo1(window.expireState);window.expireState=expireState}}catch(e){}
+ try{if(typeof dayGap==='function'){const m=memo1(dayGap);dayGap=m;window.dayGap=m}}catch(e){}
+})();
+</script><script>/* V3.7: 오래 걸리는 버튼(메뉴·하위 탭·더 보기·정기점검/관리내역 열기·만들기·Excel 반영·로그인)을 누르면 화면 위에 '불러오는 중…' 표시.
+   누른 순간 표시를 먼저 그리고(한 프레임 뒤) 원래 동작을 실행 — 0.15초 안에 끝나면 표시가 보이지 않음(깜빡임 없음). 움직임은 transform 애니메이션이라 계산 중에도 돎. */
+(function(){
+const css=document.createElement('style');css.textContent=`#shLoad{position:fixed;inset:0 0 auto 0;z-index:400;pointer-events:none;opacity:0}
+#shLoad.on{animation:shLoadIn 0s linear .15s forwards}
+#shLoad .bar{height:3px;background:#dfe3e9;overflow:hidden}#shLoad .bar i{display:block;height:100%;width:35%;background:#2b5bd7;animation:shLoadBar 1s ease-in-out infinite}
+#shLoad .pill{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:#20242b;color:#fff;font:500 13px/1 var(--font,'Malgun Gothic',sans-serif);padding:9px 14px;border-radius:999px;box-shadow:0 4px 14px #0003}
+#shLoad .sp{width:14px;height:14px;border:2px solid #ffffff55;border-top-color:#fff;border-radius:50%;animation:shLoadSp .7s linear infinite}
+body.sh-busy,body.sh-busy *{cursor:progress!important}
+@keyframes shLoadIn{to{opacity:1}}@keyframes shLoadBar{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}@keyframes shLoadSp{to{transform:rotate(360deg)}}`;document.head.appendChild(css);
+let box=null;function show(txt){if(!box){box=document.createElement('div');box.id='shLoad';box.setAttribute('role','status');box.innerHTML='<div class="bar"><i></i></div><div class="pill"><span class="sp"></span><span class="tx"></span></div>';document.body.appendChild(box)}
+ box.querySelector('.tx').textContent=txt||'불러오는 중…';box.classList.remove('on');void box.offsetWidth;box.classList.add('on');document.body.classList.add('sh-busy')}
+function hide(){if(box)box.classList.remove('on');document.body.classList.remove('sh-busy')}
+window.shBusy=function(fn,txt){show(txt);requestAnimationFrame(()=>setTimeout(()=>{try{fn()}finally{requestAnimationFrame(()=>setTimeout(hide,0))}},0))};
+const SEL='header nav button,#subTabs button,.inv-more button,.vw-more button,button[onclick*="openInspection"],button[onclick*="makeInspection"],#inspLayer button.primary,button[onclick*="applyExcelUpload"],button[onclick*="applyUsage"],button[onclick*="labelApply"],button[onclick*="loginDemo"],button[onclick*="handleLandingLogin"],button[onclick*="goGroup"],button[onclick*="hdrGo"],button[onclick*="admTab"]';
+const TXT=b=>/만들기|양식|관리내역/.test(b.textContent)&&b.closest('#inspLayer,#overview')?'서류를 만드는 중…':/반영|올리기/.test(b.textContent)?'자료를 반영하는 중…':/로그인/.test(b.textContent)?'로그인하는 중…':'불러오는 중…';
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('button');if(!b||!e.isTrusted||b.disabled||b.dataset.shGo)return;if(!b.matches(SEL))return;
+ e.stopImmediatePropagation();e.preventDefault();shBusy(()=>{b.dataset.shGo='1';try{b.click()}finally{delete b.dataset.shGo}},TXT(b))},true);
 })();
 </script></body></html>
