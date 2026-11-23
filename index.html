@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.0</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.10</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -425,7 +425,7 @@ header.hdr3>.toolbar #sessionName{font:400 13px/20px -apple-system,BlinkMacSyste
 /* V11.2: 비고 줄 덜그럭거림 — 누를 때 밑줄 두께를 바꾸지 않고 그림자로, 제목 줄 높이 통일 */#inNotes .nt-v:focus{border-bottom:1px solid #20242b!important;box-shadow:0 1px 0 #20242b!important}#inNotes summary{min-height:34px;box-sizing:border-box}#inNotes .nt-allbtn{height:24px!important;padding:0 8px!important}#inNotes>div>div[style*="overflow-y"]{scrollbar-gutter:stable}#inNotes .nt-exp{flex:0 0 auto;width:178px;font-size:12px;color:#4c525b;padding-bottom:4px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}#inNotes .nt-b{font-style:normal;font-size:11px;font-weight:600;color:#1a1a1a;border-radius:10px;padding:1px 7px}#inNotes .nt-b.nt-over{background:#eceef2;color:#8a3b3b}
 #hdrInfo{margin-right:auto;display:flex;align-items:center;gap:12px;min-width:0;font-size:13px;color:#4c525b;white-space:nowrap;overflow:hidden}#hdrInfo[hidden]{display:none!important}#hdrInfo .hi-l{all:unset;cursor:pointer;color:inherit;font-size:13px;line-height:38px;white-space:nowrap}#hdrInfo .hi-l:hover{text-decoration:underline}#hdrInfo .hi-l b{color:#20242b}#hdrInfo .hi-l b.hi-r{color:#b42318}#hdrInfo .hi-l b.hi-o{color:#b45309}#hdrInfo .hi-sep{color:#c3c8d0}@media(max-width:900px){#hdrInfo{display:none!important}}
 /* V11.5: 비고 줄은 실제 PDF 비고 칸이 좁으니 짧게 */#inNotes .nt-r .nt-v{flex:0 1 360px!important;max-width:360px}#inNotes .nt-allrow{padding-left:320px;margin:2px 0 4px!important}#inNotes .nt-allrow .nt-all{flex:0 1 360px!important;max-width:360px;height:30px;font-size:13px}@media(max-width:800px){#inNotes .nt-allrow{padding-left:0}}
-.ln-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ln-ks{display:flex;gap:4px;flex:0 0 auto}.ln-chip{display:inline-flex!important;align-items:center;margin:0!important;cursor:pointer;font-weight:400!important}.ln-chip input{position:absolute;opacity:0;width:1px!important;height:1px}.ln-chip span{display:inline-block;padding:3px 9px;border:1px solid #dfe3e9;border-radius:999px;font-size:12px;color:#6b7280;background:#fff;white-space:nowrap}.ln-chip input:checked+span{background:#20242b;border-color:#20242b;color:#fff}.ln-chip input:focus-visible+span{outline:2px solid #6b8afd;outline-offset:1px}.dp-box{margin-top:12px;border-top:1px solid var(--line);padding-top:8px}.dp-box summary{cursor:pointer;padding:4px 0}.dp-list{max-height:260px;overflow-y:auto;padding:4px 0 2px 4px;scrollbar-gutter:stable}.dp-r{display:flex!important;align-items:center;gap:12px;margin:0!important;padding:4px 0;font-weight:400!important;font-size:13px;cursor:pointer}.dp-r input{width:auto!important;margin:0!important}.dp-c{font-family:var(--mono,monospace);width:150px;flex:0 0 150px}.dp-e{width:130px;flex:0 0 130px;color:#4c525b}.dp-w{color:#b45309;width:90px;flex:0 0 90px}.dp-d{color:#17703c;font-size:12px}
+.ln-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ln-ks{display:flex;gap:4px;flex:0 0 auto}.ln-chip{position:relative;display:inline-flex!important;align-items:center;margin:0!important;cursor:pointer;font-weight:400!important}.ln-chip input{position:absolute;left:0;top:0;opacity:0;width:1px!important;height:1px}.ln-chip span{display:inline-block;padding:3px 9px;border:1px solid #dfe3e9;border-radius:999px;font-size:12px;color:#6b7280;background:#fff;white-space:nowrap}.ln-chip input:checked+span{background:#20242b;border-color:#20242b;color:#fff}.ln-chip input:focus-visible+span{outline:2px solid #6b8afd;outline-offset:1px}.dp-box{margin-top:12px;border-top:1px solid var(--line);padding-top:8px}.dp-box summary{cursor:pointer;padding:4px 0}.dp-list{max-height:260px;overflow-y:auto;padding:4px 0 2px 4px;scrollbar-gutter:stable}.dp-r{display:flex!important;align-items:center;gap:12px;margin:0!important;padding:4px 0;font-weight:400!important;font-size:13px;cursor:pointer}.dp-r input{width:auto!important;margin:0!important}.dp-c{font-family:var(--mono,monospace);width:150px;flex:0 0 150px}.dp-e{width:130px;flex:0 0 130px;color:#4c525b}.dp-w{color:#b45309;width:90px;flex:0 0 90px}.dp-d{color:#17703c;font-size:12px}
 /* V11.9: 선택 탭이 굵은 글꼴(맑은 고딕 Bold)로 바뀌며 글씨체가 달라 보이고 옆 버튼이 밀리던 문제 — 굵기는 그대로(500), 글자 테두리로만 살짝 진하게 */#subTabs button.active{font-weight:500!important;-webkit-text-stroke:0;color:#20242b!important}header.hdr3>nav button.active,nav button.active{font-weight:500!important;-webkit-text-stroke:0;color:#20242b!important}#subTabs button:not(.active){color:#6b7280}/* V12.0: 글자 테두리 효과는 맑은 고딕에서 깨져 보여 뺌 — 선택은 바탕·밑줄·글자색으로만 */
 /* V3.5 추정 표시 */#inspLayer .pn-gtag{font-size:11px;color:#2b5bd7;background:#eef3ff;border:1px solid #c9d7fb;border-radius:999px;padding:0 7px;white-space:nowrap}
 /* V12.4: 관리내역 제품명·표준품명 상자 — 다 정해지면 한 줄로 접힘 */#inspLayer .pn-box{margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}#inspLayer .pn-box.warn{border-color:#e0a100}#inspLayer .pn-box.pn-mini{background:transparent;padding:6px 2px;border:0;border-top:1px solid var(--line);border-radius:0}#inspLayer .pn-box summary{cursor:pointer}#inspLayer .pn-more{margin-top:6px}#inspLayer .pn-more summary{cursor:pointer}#inspLayer .pn-box .in-pn,#inspLayer .pn-box .in-nm{height:32px;min-height:0;padding:4px 10px;font-size:13.5px}#inspLayer .pn-box div[style*="margin:6px 0"]{margin:4px 0!important}
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.0 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.10 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2112,15 +2112,18 @@ function annexBuild(g,o){const logo=(document.querySelector('img.kptr')||{}).src
  const trs=rows.map(r=>`<tr>${tdHtml(r)}</tr>`);let W='auto';
  const f=document.createElement('iframe');f.style.cssText='position:absolute;left:-10000px;top:0;width:297mm;height:400mm;visibility:hidden;border:0';document.body.appendChild(f);
  let chunks=[trs];
- try{const d=f.contentDocument;d.open();d.write('<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:Arial,"Malgun Gothic",sans-serif;margin:0}table{border-collapse:collapse;width:100%;font-size:12px}th,td{border:1px solid #c5cad8;padding:6px 8px;text-align:left;vertical-align:top}th{background:#eceff6}'+ACSS+ANX+'</style></head><body>'+page(1,1,trs.join(''),' measure')+'<div id="mm" style="height:210mm"></div></body></html>');d.close();
+ try{const d=f.contentDocument;d.open();d.write('<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:Arial,"Malgun Gothic",sans-serif;margin:0}table{border-collapse:collapse;width:100%;font-size:12px}th,td{border:1px solid #c5cad8;padding:6px 8px;text-align:left;vertical-align:top}th{background:#eceff6}'+ACSS+ANX+(window.annexFontCss?annexFontCss():'')+'</style></head><body>'+page(1,1,trs.join(''),' measure')+'<div id="mm" style="height:210mm"></div></body></html>');d.close();
   const pg=d.querySelector('.apage'),tb=pg.querySelector('tbody'),mm=d.getElementById('mm').offsetHeight/210;
   /* V12.3: 먼저 내용 길이로 칸 너비를 자동으로 정하고(짧은 값은 한 줄), 그 너비를 모든 쪽에 똑같이 씀 */
-  {const tbl=pg.querySelector('table'),ths=[...tbl.querySelectorAll('thead th')],tw=tbl.getBoundingClientRect().width;W=ths.map(t=>Math.round(t.getBoundingClientRect().width/tw*1000)/10);/* V3.8: 비고 칸은 9%까지만 — 남는 폭은 표준품명에(비고가 길면 표준품명이 서너 줄로 꺾이던 것) */if(W.length>16&&W[16]>9){W[4]=Math.round((W[4]+W[16]-9)*10)/10;W[16]=9}const cg=d.createElement('colgroup');cg.innerHTML=W.map(w=>`<col style="width:${w}%">`).join('');tbl.insertBefore(cg,tbl.firstChild);tbl.classList.remove('auto')}
+  {const tbl=pg.querySelector('table'),ths=[...tbl.querySelectorAll('thead th')],tw=tbl.getBoundingClientRect().width;W=ths.map(t=>Math.round(t.getBoundingClientRect().width/tw*1000)/10);/* V3.8: 비고 칸은 9%까지만 — 남는 폭은 표준품명에(비고가 길면 표준품명이 서너 줄로 꺾이던 것) */if(W.length>16&&W[16]>14){W[4]=Math.round((W[4]+W[16]-14)*10)/10;W[16]=14}{const UP=window.annexPxGet&&annexPxGet(W.length);window._anxFit=null;if(UP){/* V4.10: 사람이 정한 칸 너비(글자 10px 기준 px) — 그 비율로 나누고, 합이 쪽 폭보다 넓으면 표 전체를 글자째 줄여 한 쪽 폭에 맞춤(엑셀 '한 페이지에 모든 열 맞추기'), 좁은 칸은 줄바꿈 */
+  const T=UP.reduce((a,b)=>a+b,0),CW=tbl.getBoundingClientRect().width,sc=Math.min(1,CW/T),NR=UP.map((x,i)=>x<W[i]*CW/100-1?i:-1).filter(i=>i>=0);/* NR: 자동 너비(글자 길이)보다 좁힌 칸만 줄바꿈 허용 */W=UP.map(x=>Math.round(x/T*10000)/100);
+  const FC='.apage table.a{font-size:'+(10*sc).toFixed(2)+'px}.apage table.a td,.apage table.a th{padding:'+(2*sc).toFixed(2)+'px '+(3*sc).toFixed(2)+'px!important}'+NR.map(i=>'.apage table.a td:nth-child('+(i+1)+')').join(',')+(NR.length?'{white-space:normal!important;overflow-wrap:anywhere}':'');window._anxFit={sc:sc,css:'<style>'+FC+'</style>'};
+  const st=d.createElement('style');st.textContent=FC;d.head.appendChild(st)}}const cg=d.createElement('colgroup');cg.innerHTML=W.map(w=>`<col style="width:${w}%">`).join('');tbl.insertBefore(cg,tbl.firstChild);tbl.classList.remove('auto')}
   const top=tb.getBoundingClientRect().top-pg.getBoundingClientRect().top,avail=210*mm-top-14*mm;/* V3.1: 2쪽부터는 부서명·작성일·서명 줄이 없어 그만큼 줄이 더 들어감 */const me=pg.querySelector('.meta'),mh=me?(()=>{const s=d.defaultView.getComputedStyle(me);return me.getBoundingClientRect().height+parseFloat(s.marginTop)+parseFloat(s.marginBottom)})():0;
   const hs=[...tb.rows].map(r=>r.getBoundingClientRect().height);
   if(hs.length){chunks=[];let cur=[],used=0;hs.forEach((h,i)=>{const lim=chunks.length?avail+mh:avail;if(cur.length&&used+h>lim){chunks.push(cur);cur=[];used=0}cur.push(trs[i]);used+=h});chunks.push(cur)}}catch(e){}
  f.remove();const n=chunks.length;
- return {pages:n,html:chunks.map((c,i)=>page(i+1,n,c.join(''),i===n-1?' last':'')).join('')}}
+ return {pages:n,html:(window._anxFit?window._anxFit.css:'')+chunks.map((c,i)=>page(i+1,n,c.join(''),i===n-1?' last':'')).join('')}}
 /* V9.4: 파일 이름 통일 — '2026년 10월 BPT 표준품 정기점검 (냉동)', '2026년 10월 MEC 표준품 관리내역' */
 function docName(kind,g,ym){const m=String(g).match(/^([^-]+)-(.+)$/),y=ym.slice(0,4),mo=Number(ym.slice(5,7));return y+'년 '+mo+'월 '+(m?m[1]:g)+' 표준품 '+kind+(m?' ('+m[2]+')':'')}
 window.docName=docName;
@@ -2253,7 +2256,7 @@ window.openInspection=function(mode){
  const ta=(id,l,ph)=>`<label>${l}<textarea id="${id}" rows="2" placeholder="${ph||'없으면 비워 두세요 (N/A로 표시)'}"></textarea></label>`;
  const ins=annexOnly?' style="display:none"':'';
  const l=document.createElement('div');l.id='inspLayer';l.className='account-overlay';
- l.innerHTML=`<div class="account-dialog" role="dialog" aria-modal="true"><div class="toolbar" style="justify-content:space-between"><h2 style="margin:0">${annexOnly?'표준품 관리내역':'표준품 정기점검 양식'}</h2><button onclick="closeInspection()">✕ 닫기</button></div>
+ l.innerHTML=`<div class="account-dialog" role="dialog" aria-modal="true"><div class="toolbar" style="justify-content:space-between"><h2 style="margin:0">${annexOnly?'표준품 관리내역':'표준품 정기점검 양식'}</h2><div style="display:flex;gap:6px"><button onclick="inspSaveNow()">저장</button><button onclick="closeInspection()">✕ 닫기</button></div></div>
  <p class="muted">${annexOnly?'관리내역(가로 A4)만 출력합니다. 작성자 · 확인일 · 확인자는 Adobe 서명과 실장님 입력을 위해 비워 둡니다.':'유효기한(임박 · 만료), 폐기 대상(만료 · 재고 0), 이번 달 입고는 자동으로 채웁니다. 점검자 · 확인일 · 확인자 칸은 Adobe 서명과 실장님 입력을 위해 비워 둡니다.'}</p>
  <div class="in-grid in-top${annexOnly?' a4':''}">
  <label>${annexOnly?'대상':'점검 대상'}<select id="inG" onchange="inspFill()">${gs.map(g=>`<option value="${esc(g)}">${esc(g)}${isB(g)?'':' (의뢰사)'}</option>`).join('')}</select></label>
@@ -2267,13 +2270,13 @@ window.openInspection=function(mode){
  <div class="in-grid in-ta"${ins}>${ta('inBuy','추가 구입 (요청) 필요 표준품')}${ta('inRetest','Re-test 필요 표준품')}${ta('inPlan','기타 · 입고 예정')}${ta('inEtc','기타 · 기타')}</div>
  ${annexOnly?'<div id="inTiers"></div><div id="inProds"></div><div id="inNames"></div><div id="inNotes"></div>':'<div id="inDisp"></div><div id="inLotNotes"></div>'}
   <div class="toolbar" style="margin-top:14px"><button class="primary" onclick="makeInspection('${annexOnly?'annex':'form'}')">${annexOnly?'관리내역 만들기':'양식 만들기'}</button><button onclick="closeInspection()">취소</button><span id="inSaved" class="muted small" style="align-self:center;margin-left:6px" title="적은 내용은 치는 대로 이 계정에 저장됩니다. [닫기]로 나가도 남습니다">입력한 내용은 자동으로 저장됩니다</span></div></div>`;
- document.body.appendChild(l);l.addEventListener('click',e=>{if(e.target===l)closeInsp()});inspFill()};
+ document.body.appendChild(l);inspFill()};
 
 window.makeInspection=function(mode){
  {const em=[...document.querySelectorAll('#inspLayer .in-pn')].filter(i=>!i.dataset.auto&&!i.value.trim());if(em.length&&!window.__pnOk){return askConfirm({title:'제품명이 비어 있습니다',message:'자동으로 못 찾은 표준품 '+em.length+'종의 제품명이 비어 있어 관리내역에 N/A로 나갑니다.\n'+em.map(i=>i.dataset.base).join(', ')+'\n\n그대로 만들까요?',ok:'그대로 만들기',onOk:()=>{window.__pnOk=1;try{makeInspection(mode)}finally{window.__pnOk=0}}})}}
  const g=val('inG'),cust=val('inCust').trim(),dept=val('inDept').trim(),date=val('inDate')||today(),ym=((document.querySelector('input[name=inYm]:checked')||{}).value)||date.slice(0,7);
  inspSave(mode);const all=lf();
- const css0='<style>*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{margin:0;padding:0}.fpage,.apage{font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",sans-serif}.doc{font-size:10px;margin-top:6px}.fpage{padding:12mm 12mm 0}@page{size:A4 portrait;margin:0}'+ACSS+ANX+'</style>';
+ const css0='<style>*{-webkit-print-color-adjust:exact;print-color-adjust:exact}body{margin:0;padding:0}.fpage,.apage{font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",sans-serif}.doc{font-size:10px;margin-top:6px}.fpage{padding:12mm 12mm 0}@page{size:A4 portrait;margin:0}'+ACSS+ANX+(window.annexFontCss?annexFontCss():'')+'</style>';
  const monA=(m=>Number.isInteger(m)&&m>=1&&m<=24?m:3)(Math.round(Number(val('inMon'))));const tiersA=mode==='annex'?readTiers():null,stockA=mode==='annex'?readStock():null;const AB=annexBuild(g,{cust,dept,date,mon:monA,tiers:tiersA,stock:stockA}),annex=AB.html;
  window._signCtx={g,cust,dept,date,ym,css0};
  if(mode==='annex'){hideInsp();window._signCtx.kind='annex';window._signCtx.signHtml=css0+annexBuild(g,{cust,dept,date,mon:monA,tiers:tiersA,stock:stockA,sign:true}).html;window._signCtx.title=docName('관리내역',g,ym);return printDoc(docName('관리내역',g,ym),css0+annex)}
@@ -3894,6 +3897,53 @@ window.shUpOk=function(r,u){u=u||user();if(!u)return false;if(u.admin)return tru
  let sb=[];try{sb=window.subsOf?subsOf(s||{code,group:g}):[]}catch(e){}return !sb.length||(sb.length===1&&/-검체 미지정$/.test(sb[0]))||sb.some(x=>G.includes(x))};
 /* 업로드 칸 설명 한 줄도 맞춤 */
 const _r=window.render;window.render=function(){const x=_r.apply(this,arguments);try{if(typeof active!=='undefined'&&active==='upload'){document.querySelectorAll('#upload .upl-grid>.panel').forEach(pn=>{const h=pn.querySelector(':scope>h3'),p=pn.querySelector(':scope>p.muted');if(h&&p&&/재고 Excel/.test(h.textContent)&&p.dataset.short&&!p.dataset.v52){p.dataset.v52='1';p.textContent='LIMS 입고 목록 Excel — 회사 전체 파일도 괜찮아요. 내 담당 표준품만 반영하고 나머지는 건너뜁니다.'}})}}catch(e){}return x};
+})();
+</script><script>/* V4.0 점검 뒤 · V4.10: (1) 도움말이 머리 위로 올라오지 않게 (3) 입력 창 [저장] (6) 관리내역 칸 너비 — 엑셀처럼 칸마다 자유롭게 끌어 조절, 인쇄·PDF는 한 쪽 폭에 맞춰 자동으로 줄임. 계정마다 standardhub_v22_annex_px {아이디:[17칸 px(글자 10px 기준)]} */
+(function(){const st=document.createElement('style');st.textContent='.sh-help{z-index:15!important}';document.head.appendChild(st);
+window.inspSaveNow=function(){/* 원래 자동 저장 경로(change)를 그대로 태움 → 저장 + '✓ 자동 저장됨' 표시 */const e=document.querySelector('#inspLayer input:not(#inG),#inspLayer textarea');try{if(e)e.dispatchEvent(new Event('change',{bubbles:true}));else window.inspSave()}catch(x){}const m=document.getElementById('inSaved');if(m)m.textContent='✓ 저장됨 ('+new Date().toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit'})+')';try{alert('입력한 내용을 저장했습니다.')}catch(x){}};
+const K='standardhub_v22_annex_px',me=()=>{try{return user().id}catch(e){return 'guest'}};
+const all=()=>{try{return JSON.parse(localStorage.getItem(K)||'{}')||{}}catch(e){return {}}};
+window.annexPxGet=function(n){const a=all()[me()];return Array.isArray(a)&&(!n||a.length===n)?a:null};
+window.annexPxSet=function(a){const m=all();if(a)m[me()]=a;else delete m[me()];localStorage.setItem(K,JSON.stringify(m))};
+window.annexFontCss=function(){return ''};
+function remake(){const L=document.getElementById('inspLayer');if(L&&document.getElementById('inNotes')){try{makeInspection('annex')}catch(e){}}}
+/* 덜그럭거림 없이 다시 그리기: 보던 미리보기는 그대로 둔 채 새 미리보기를 뒤에서(안 보이게) 만들고, 다 그려지면 한 번에 바꿔 끼움 */
+function cloneCss(){if(window._plCss)return;window._plCss=1;/* #printLayer에 걸린 모양을 #printLayerOld에도 똑같이(이름만 바꾼 예전 미리보기가 모양을 잃고 흐트러지지 않게) */const add=[];
+ for(const sh of document.styleSheets){let rs;try{rs=sh.cssRules}catch(e){continue}const walk=list=>{for(const r of list){if(r.selectorText&&r.selectorText.includes('#printLayer'))add.push(r.selectorText.split(',').map(x=>x.replace(/#printLayer\b/g,'#printLayerOld')).join(',')+'{'+r.style.cssText+'}');else if(r.cssRules&&r.media)add.push('@media '+r.media.mediaText+'{'+[...r.cssRules].filter(x=>x.selectorText&&x.selectorText.includes('#printLayer')).map(x=>x.selectorText.replace(/#printLayer\b/g,'#printLayerOld')+'{'+x.style.cssText+'}').join('')+'}')}};walk(rs)}
+ const st=document.createElement('style');st.textContent=add.join('\n');document.head.appendChild(st)}
+function remakeSilent(){cloneCss();const old=document.getElementById('printLayer');if(old){old.id='printLayerOld';old.querySelectorAll('[id]').forEach(e=>{e.id=e.id+'_old'})}window._pvSilent=true;remake();
+ setTimeout(()=>{if(window._pvSilent)swapIn(true)},5000)}
+function swapIn(force){const l=document.getElementById('printLayer'),o=document.getElementById('printLayerOld');
+ /* 새 미리보기 위쪽(버튼·NAS 경로 줄)이 예전과 똑같이 다 붙고, 표가 같은 자리에 올 때까지 기다렸다 바꿈 */
+ if(!force&&l&&o){const nb=l.querySelectorAll('button').length,ob=o.querySelectorAll('button').length,nf=l.querySelector('iframe'),of=o.querySelector('iframe');
+  const ready=nb>=ob&&l.querySelector('#cgReset')&&nf&&of&&Math.abs(nf.getBoundingClientRect().top-of.getBoundingClientRect().top)<1;
+  if(!ready&&(window._swT=(window._swT||0)+1)<100){setTimeout(()=>swapIn(),30);return}}
+ window._swT=0;window._pvSilent=false;if(l){l.style.visibility='';const y=window._pvY;if(y!=null){try{l.querySelector('iframe').contentWindow.scrollTo(0,y)}catch(e){}}}if(o)o.remove()}
+window.annexColsReset=function(){annexPxSet(null);const f=document.querySelector('#printLayer iframe');try{window._pvScroll=f.contentWindow.scrollY}catch(e){window._pvScroll=0}remakeSilent();alert('칸 너비를 처음(자동)으로 되돌렸습니다.')};
+function attach(tries){const l=document.getElementById('printLayer');if(!l)return;const f=l.querySelector('iframe'),d=f&&f.contentDocument;
+ if(!d||!d.querySelector('.apage table.a')){if((tries||0)<30)setTimeout(()=>attach((tries||0)+1),150);return}
+ if(d.getElementById('cgStyle'))return;
+ const ss=d.createElement('style');ss.id='cgStyle';ss.textContent='.apage table.a thead th{position:relative}.cgrip{position:absolute;top:0;right:-4px;width:8px;height:100%;cursor:col-resize;z-index:5;background:transparent}.cgrip:hover,.cgrip.on{background:rgba(47,111,209,.35)}@media print{.cgrip{display:none!important}}';d.head.appendChild(ss);
+ const tables=[...d.querySelectorAll('.apage table.a')],first=tables[0],ths=[...first.querySelectorAll('thead th')],colsOf=t=>[...t.querySelectorAll('colgroup col')];if(!colsOf(first).length)return;
+ const fit=(window._anxFit&&window._anxFit.sc)||1;
+ /* 넓은 화면에서 오른쪽이 비지 않게 — 화면에서만 미리보기 폭에 맞춰 확대(1~1.6배), 인쇄·PDF 크기는 그대로 */
+ const pz=d.createElement('style');pz.id='pvZoom';d.head.appendChild(pz);
+ const zfit=()=>{const pg=d.querySelector('.apage');if(!pg)return;const z=Math.max(1,Math.min(1.6,(f.clientWidth-60)/pg.offsetWidth));pz.textContent='@media screen{html{zoom:'+z.toFixed(3)+'}.apage{margin-left:auto!important;margin-right:auto!important}}'};
+ zfit();addEventListener('resize',zfit);
+ ths.forEach((th,i)=>{const gp=d.createElement('div');gp.className='cgrip';gp.title='끌어서 이 칸 너비 조절';th.appendChild(gp);
+  gp.addEventListener('mousedown',e=>{e.preventDefault();gp.classList.add('on');
+   /* 엑셀처럼: 끄는 칸만 넓어지고 좁아짐(오른쪽 칸들은 밀림), 표가 쪽보다 넓어져도 됨 — 놓으면 한 쪽 폭에 맞춰 다시 그림 */
+   const Z=(first.getBoundingClientRect().width/first.offsetWidth)||1,P=colsOf(first).map((c,k)=>ths[k].offsetWidth),x0=e.clientX,a0=P[i];
+   tables.forEach(t=>{t.style.tableLayout='fixed';t.style.width=P.reduce((a,b)=>a+b,0)+'px';colsOf(t).forEach((c,k)=>c.style.width=P[k]+'px')});
+   const mv=ev=>{const w=Math.max(12,Math.round(a0+(ev.clientX-x0)/Z));tables.forEach(t=>{const c=colsOf(t);c[i].style.width=w+'px';t.style.width=(P.reduce((a,b)=>a+b,0)-a0+w)+'px'})};
+   const up=ev=>{d.removeEventListener('mousemove',mv);d.removeEventListener('mouseup',up);gp.classList.remove('on');const w=Math.max(12,Math.round(a0+(ev.clientX-x0)/Z));if(Math.abs(w-a0)<2){tables.forEach(t=>{t.style.width='';colsOf(t).forEach((c,k)=>c.style.width=k<P.length?'':'')});window._pvScroll=d.defaultView.scrollY;remakeSilent();return}
+    const N=P.slice();N[i]=w;/* 저장은 글자 10px 기준 — 지금 미리보기가 줄여 그린 배율로 나눔 */annexPxSet(N.map(x=>Math.round(x/fit)));window._pvScroll=d.defaultView.scrollY;remakeSilent()};
+   d.addEventListener('mousemove',mv);d.addEventListener('mouseup',up)})});
+ {const y=window._pvScroll||0;window._pvScroll=0;window._pvY=y;try{if(y)d.defaultView.scrollTo(0,y)}catch(e){}if(window._pvSilent)requestAnimationFrame(()=>swapIn())}
+ const bar=l.querySelector('.toolbar')||l.firstElementChild;if(bar&&!l.querySelector('#cgReset')){const tip=document.createElement('span');tip.className='muted small';tip.style.cssText='align-self:center;white-space:nowrap;min-width:300px';
+  tip.textContent='↔ 칸 경계를 끌어 너비 조절'+(fit<0.999?' · 한 쪽에 맞춰 '+Math.round(fit*100)+'%로 인쇄':'');tip.title='엑셀처럼 칸마다 자유롭게 넓히고 좁힐 수 있습니다. 표가 가로 A4보다 넓어지면 인쇄·PDF에서 한 쪽 폭에 맞춰 글자째 줄여 모든 칸이 한눈에 보입니다. 좁은 칸은 여러 줄로 꺾입니다.';
+  const rb=document.createElement('button');rb.id='cgReset';rb.textContent='칸 너비 처음대로';rb.onclick=annexColsReset;if(!annexPxGet()){rb.disabled=true;rb.title='아직 바꾼 칸 너비가 없습니다'}bar.appendChild(tip);bar.appendChild(rb)}}
+const P0=window.printDoc;window.printDoc=function(){const r=P0.apply(this,arguments);if(window._pvSilent){const l=document.getElementById('printLayer');if(l)l.style.visibility='hidden'}setTimeout(()=>attach(0),window._pvSilent?0:200);return r};
 })();
 </script><script type="text/plain" id="pdflibSrc">/* pdf-lib 1.17.1 (MIT License, Copyright (c) 2019 Andrew Dillon) — 의뢰사 서류 취합의 PDF 합치기에서만 읽어 씀(외부 접속 없음) */
 !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t=t||self).PDFLib={})}(this,(function(t){"use strict";
