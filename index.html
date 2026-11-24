@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.30</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.32</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.30 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.32 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2129,7 +2129,7 @@ function annexBuild(g,o){const logo=(document.querySelector('img.kptr')||{}).src
  const leg=legE||legS?`<div class="aleg">${legE}${legE&&legS?'<span style="margin:0 4px 0 10px;color:#999">|</span>':''}${legS}${legS?'<span style="margin-left:6px">(재고량)</span>':''}</div>`:'';
  const page=(i,n,body,cls)=>`<div class="apage${cls||''}"><div class="ahd">${logo?`<img src="${logo}" alt="KPTR 한국의약품시험연구원">`:'<b>KPTR 한국의약품시험연구원</b>'}<span class="pg">page ${i} of ${n}</span></div><h1 class="at">${esc(window._anxTitle||'표준품 관리내역')}</h1>
  ${i!==1?'':`<div class="meta${o.sign?' sg':''}">`}${i!==1?'':o.sign?`<span>${esc(window._anxDeptL||'부서명')} : ${esc(o.dept)}</span>${window._anxNoDate?'':`<span>작성일 : ${dot(o.date)}</span>`}<span>작성자 : ${i===1?'<i class="sgs" data-f="Author" style="width:40mm"></i>':''}</span><span>확인일 : ${i===1?'<i class="sgs" data-f="ReviewDate" style="width:24mm;height:7mm"></i>':''}</span><span>확인자 : ${i===1?'<i class="sgs" data-f="Reviewer" style="width:40mm"></i>':''}</span>`:`<span>${esc(window._anxDeptL||'부서명')} : ${esc(o.dept)}</span>${window._anxNoDate?'':`<span>작성일 : ${dot(o.date)}</span>`}<span>작성자 :</span><span>확인일 :</span><span>확인자 :</span>`}${i!==1?'':'</div>'}
- <table class="a${W==='auto'?' auto':''}">${headHtml(W)}<tbody>${body}</tbody></table><div class="adoc">S-P-GO011-F1-V04</div>${leg}</div>`;
+ <table class="a${W==='auto'?' auto':''}">${headHtml(W)}<tbody>${body}</tbody></table><div class="adoc">${esc(window._anxDoc||'S-P-GO011-F1-V04')}</div>${leg}</div>`;
  const trs=(window.annexTplApply?annexTplApply(rows,g,o):rows).map(r=>`<tr data-r="${esc(r.key||r[0])}" data-b="${esc(r.base||'')}"${r.eo?` data-eo="${esc(JSON.stringify(r.eo))}"`:''}>${tdHtml(r)}</tr>`);let W='auto';
  const f=document.createElement('iframe');f.style.cssText='position:absolute;left:-10000px;top:0;width:297mm;height:400mm;visibility:hidden;border:0';document.body.appendChild(f);
  let chunks=[trs];
@@ -2768,7 +2768,7 @@ window.annexXlsx=function(){const C=window._signCtx,f=document.querySelector('#p
  const sty=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="3"><font><sz val="10"/><name val="맑은 고딕"/></font><font><b/><sz val="10"/><name val="맑은 고딕"/></font><font><b/><sz val="14"/><name val="맑은 고딕"/></font></fonts><fills count="${3+fills.length}"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE6E6E6"/></patternFill></fill>${fills.map(h=>`<fill><patternFill patternType="solid"><fgColor rgb="FF${h}"/></patternFill></fill>`).join('')}</fills><borders count="2"><border/><border><left style="thin"><color rgb="FF999999"/></left><right style="thin"><color rgb="FF999999"/></right><top style="thin"><color rgb="FF999999"/></top><bottom style="thin"><color rgb="FF999999"/></bottom></border></borders><cellStyleXfs count="1"><xf/></cellStyleXfs><cellXfs count="${4+fills.length}"><xf/><xf fontId="2" applyFont="1"/><xf fontId="1" fillId="2" borderId="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf borderId="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>${fills.map((h,i)=>`<xf fillId="${3+i}" borderId="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>`).join('')}</cellXfs></styleSheet>`;
  const cell=(r,c,v,s)=>`<c r="${colL(c)}${r}" t="inlineStr"${s?` s="${s}"`:''}><is><t xml:space="preserve">${xe(v)}</t></is></c>`;
  const meta=(pg[0].querySelector('.meta')||{}).innerText||'';const dept=(meta.match(/부서명\s*:\s*([^\n]*?)(?=\s*작성일|$)/)||[])[1]||(C&&C.dept)||'',dt=(meta.match(/작성일\s*:\s*([\d.]+)/)||[])[1]||'';
- let x=`<row r="1">${cell(1,0,'표준품 관리내역',1)}</row><row r="2">${cell(2,0,'부서명 : '+dept.trim())}${cell(2,4,'작성일 : '+dt)}${cell(2,head.length-1,'S-P-GO011-F1-V04')}</row><row r="4" ht="30" customHeight="1">${head.map((h,i)=>cell(4,i,h,2)).join('')}</row>`;
+ let x=`<row r="1">${cell(1,0,'표준품 관리내역',1)}</row><row r="2">${cell(2,0,'부서명 : '+dept.trim())}${cell(2,4,'작성일 : '+dt)}${cell(2,head.length-1,window._anxDoc||'S-P-GO011-F1-V04')}</row><row r="4" ht="30" customHeight="1">${head.map((h,i)=>cell(4,i,h,2)).join('')}</row>`;
  rows.forEach((r,i)=>{x+=`<row r="${5+i}">${r.map((c,j)=>cell(5+i,j,c.v,c.bg?4+fills.indexOf(c.bg):3)).join('')}</row>`});
  const W=head.map((h,i)=>Math.min(40,Math.max(6,...[h,...rows.map(r=>(r[i]||{}).v||'')].map(s=>[...String(s)].reduce((a,ch)=>a+(ch.charCodeAt(0)>255?2:1),0)*0.9+2))));
  const sheet=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetViews><sheetView workbookViewId="0"><pane ySplit="4" topLeftCell="A5" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>${W.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w.toFixed(1)}" customWidth="1"/>`).join('')}</cols><sheetData>${x}</sheetData><pageMargins left="0.3" right="0.3" top="0.4" bottom="0.4" header="0" footer="0"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>`;
@@ -3323,7 +3323,7 @@ window.sgSelShow=function(){const s=document.getElementById('sgSel');if(!s)retur
    회원가입 승인 대기는 있을 때만 계정 탭 맨 위에 작게. 검체별 나누기는 왼쪽 세로 의뢰사 목록(찾기) + 오른쪽 켠 의뢰사 설정.
    기존 화면을 그린 뒤 자리만 옮김(기능·저장 방식은 그대로). */
 (function(){
-const TABS=[['acct','계정'],['assign','담당자 배정'],['split','검체별 나누기'],['groups','그룹 관리']];
+const TABS=[['acct','계정'],['assign','담당자 배정'],['split','검체별 나누기'],['groups','그룹 관리'],['tpl','관리내역 양식']];/* V4.31: 관리내역 양식은 관리자만 등록 */
 const getT=()=>{try{return sessionStorage.getItem('sh_adm_tab')||'acct'}catch(e){return 'acct'}};
 const setT=t=>{try{sessionStorage.setItem('sh_adm_tab',t)}catch(e){}};
 window.admTab=function(t){setT(t);show();window.scrollTo(0,0)};
@@ -3365,7 +3365,8 @@ function build(){const root=document.getElementById('admin');if(!root||root.quer
  if(ga){const p=document.createElement('div');p.className='panel';p.appendChild(ga);sec.groups.appendChild(p);const d=ga.querySelector('#grpDet');if(d&&!d.open){d.open=true}}
  if(sp){sec.split.appendChild(sp);layoutSplit(sp)}
  if(cols&&!cols.children.length)cols.remove();
- TABS.forEach(([k])=>root.appendChild(sec[k]));show()}
+ {const p=document.createElement('div');p.className='panel';p.id='tplAdmin';sec.tpl.appendChild(p)}
+ TABS.forEach(([k])=>root.appendChild(sec[k]));show();try{window.tplAdminDraw&&tplAdminDraw()}catch(e){console.error(e)}}
 function layoutSplit(sp){if(sp.querySelector('.sp-lay'))return;const ons=[...sp.querySelectorAll('.sp-on')];if(!ons.length)return;
  const bar=ons[0].closest('.toolbar'),dets=[...sp.querySelectorAll('details.sp-c')],btns=[...sp.querySelectorAll('.toolbar')].find(x=>x.querySelector('button[onclick="splitSave()"]'));
  const st=typeof stocks!=='undefined'?stocks:[],nb={};st.forEach(s=>{(nb[s.group]=nb[s.group]||new Set()).add(masterOf(s.code))});
@@ -4096,43 +4097,55 @@ const addM=(d,m)=>{const x=new Date(d+'T00:00:00');x.setMonth(x.getMonth()+m);re
 /* V4.18: 관리내역 제목(양식 제목, 없으면 '표준품 관리내역') — 정기점검 '*별첨 1 …' 줄에 그대로 씀 */
 window.annexTitleOf=function(g){const f=annexTplFind(g);if(!f||!f.t)return '표준품 관리내역';const c0=cli(g),sub=g.slice(c0.length+1);return String(f.t.title||'표준품 관리내역').replace(/\{의뢰사\}/g,c0).replace(/\{검체\}/g,sub).replace(/\(\s*\)/g,'').replace(/\s{2,}/g,' ').trim()||'표준품 관리내역'};
 window.annexTplApply=function(rows,g,o){const f=annexTplFind(g);
- window._anxTplId=f?f.id:'';window._anxHead=null;window._anxTitle='';window._anxDeptL='';window._anxNoDate=false;if(!f)return rows;
+ window._anxTplId=f?f.id:'';window._anxHead=null;window._anxTitle='';window._anxDeptL='';window._anxDoc=f&&f.t&&f.t.docNo?String(f.t.docNo):'';/* V4.32: 의뢰사 양식 문서번호 */window._anxNoDate=false;if(!f)return rows;
  const t=f.t,cols=(t.cols&&t.cols.length?t.cols:defCols()).filter(c=>c.on);if(!cols.length)return rows;
  const c0=cli(g),sub=g.slice(c0.length+1);window._anxTitle=String(t.title||'표준품 관리내역').replace(/\{의뢰사\}/g,c0).replace(/\{검체\}/g,sub).replace(/\(\s*\)/g,'').replace(/\s{2,}/g,' ').trim();
- window._anxDeptL=t.deptL||'';window._anxNoDate=!!t.noDate;window._anxHead=cols.map(c=>c.l||nameOfK(c.k));
+ window._anxDeptL='';/* V4.32: 부서명 글자 바꾸기 뺌 — 늘 '부서명' */window._anxNoDate=!!t.noDate;window._anxHead=cols.map(c=>c.l||nameOfK(c.k));
  const X=lj(XK),E=(()=>{try{return JSON.parse(localStorage.getItem('standardhub_v22_annex_edit')||'{}')||{}}catch(e){return {}}})(),date=o.date||new Date().toISOString().slice(0,10),mon=Number(o.mon)||3,TS={};
  return rows.map(r=>{const ex=String(r[12]||'').slice(0,10),x=X[r.base]||{};
   const st=/^\d{4}-\d\d-\d\d$/.test(ex)?(ex<date?'폐기 대기':ex<=addM(date,mon)?'관리 임박':'등록 사용'):'';
   const val={kind:x.kind||'',cref:x.cref||'',test:(r.base in TS?TS[r.base]:(TS[r.base]=testsOf(r.base))),pnum:r.pnum||'',punit:r.punit||'',status:st};
   const nr=cols.map(c=>{if(typeof c.k==='number')return r[c.k];let v=val[c.k];const e=E[(r.key||r[0])+'|'+c.k];const sh=String(v||'').trim()||'N/A';if(e&&String(e.o).replace(/\s+/g,' ').trim()===sh){v=e.v;(r.ed||(r.ed=[])).push(c.k)}return v});
   return Object.assign(nr,{src:cols.map(c=>c.k),key:r.key||r[0],base:r.base,eo:r.eo,ed:r.ed,ec:r.ec,es:r.es,ss:r.ss,qn:r.qn})})};
-/* 입력 창 '관리내역 양식' — 관리내역 입력 창에서만 */
-function box(){const L=document.getElementById('inspLayer');if(!L||!document.getElementById('inNotes'))return;const g=(document.getElementById('inG')||{}).value||'';if(!g)return;
- let bx=document.getElementById('inTpl');if(!bx){bx=document.createElement('details');bx.id='inTpl';bx.className='in-fold';const at=L.querySelector('details.in-fold')||document.getElementById('inProds');if(!at)return;at.parentNode.insertBefore(bx,at)}
+/* V4.31: 관리내역 양식은 SOP 서식(S-P-GO011-F1-V04)이라 담당자는 바꾸지 않음 — 의뢰사가 별도 양식을 요청한 경우에만 관리자가 승인·권한 > 관리내역 양식에서 등록(누가·언제 기록). 담당자 입력 창에는 어떤 양식인지만 보임 */
+function editor(bx,g,after){
  const f=annexTplFind(g),c0=cli(g),own=f?f.id:'',t=f?JSON.parse(JSON.stringify(f.t)):{title:'',deptL:'',noDate:false,cols:defCols()};if(!t.cols||!t.cols.length)t.cols=defCols();
  Object.keys(EXN).forEach(k=>{if(!t.cols.some(c=>c.k===k))t.cols.push({k,l:EXN[k],on:false})});
- const open=bx.open;
- const sum=f?('이 그룹 양식'+(own!==g?' ('+own+' 전체)':'')+' · 칸 '+t.cols.filter(c=>c.on).length+'개'):'기본 양식';
- bx.innerHTML=`<summary><b>관리내역 양식</b> <span class="muted small">${esc(sum)}</span></summary>
- <div style="padding:8px 0 4px">
+ bx.innerHTML=`<div style="padding:8px 0 4px">
   <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-bottom:8px">
    <label style="display:flex;align-items:center;gap:6px;margin:0">제목 <input id="tpTitle" style="width:300px;margin:0" placeholder="표준품 관리내역" value="${esc(t.title||'')}"><span class="ih-q" tabindex="0">?<span class="ih-tip">{의뢰사}·{검체}를 넣으면 그룹 이름으로 바뀌어요. 예: {의뢰사} 표준품 관리내역 ({검체}) → GSK 표준품 관리내역 (벡세로)</span></span></label>
-   <label style="display:flex;align-items:center;gap:6px;margin:0">부서명 칸 이름 <input id="tpDeptL" style="width:90px;margin:0" placeholder="부서명" value="${esc(t.deptL||'')}"></label>
+   
+   <label style="display:flex;align-items:center;gap:6px;margin:0">문서번호 <input id="tpDocNo" style="width:170px;margin:0" placeholder="S-P-GO011-F1-V04" value="${esc(t.docNo||'')}"><span class="ih-q" tabindex="0">?<span class="ih-tip">관리내역 쪽마다 오른쪽 아래에 찍히는 문서번호예요. 의뢰사 양식에 따로 정한 번호가 있을 때만 적고, 비우면 SOP 번호(S-P-GO011-F1-V04) 그대로예요.</span></span></label>
    <label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" id="tpDate"${t.noDate?'':' checked'} style="width:auto;margin:0"> 작성일 표시</label>
   </div>
   <div id="tpCols" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:4px 12px">${t.cols.map((c,i)=>`<div class="tp-c" data-i="${i}" style="display:flex;align-items:center;gap:6px"><input type="checkbox" class="tp-on"${c.on?' checked':''} style="width:auto;margin:0"><input class="tp-l" value="${esc(c.l||nameOfK(c.k))}" style="margin:0;flex:1;min-width:0;height:30px;padding:2px 8px" title="${esc(nameOfK(c.k))}${typeof c.k==='number'?'':' (새 칸)'}"><button type="button" class="tp-up" style="min-width:28px;height:30px;padding:0 6px" title="앞으로">↑</button><button type="button" class="tp-dn" style="min-width:28px;height:30px;padding:0 6px" title="뒤로">↓</button></div>`).join('')}</div>
   <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px">
    <span class="muted small">저장할 곳</span>
    <label style="margin:0;display:flex;gap:4px;align-items:center"><input type="radio" name="tpScope" value="${esc(g)}"${!f||own===g?' checked':''} style="width:auto;margin:0"> ${esc(g)}만</label>
-   ${c0!==g?`<label style="margin:0;display:flex;gap:4px;align-items:center"><input type="radio" name="tpScope" value="${esc(c0)}"${own===c0?' checked':''} style="width:auto;margin:0"> ${esc(c0)} 모든 검체</label>`:''}
-   <button type="button" id="tpSave" class="primary">양식 저장</button>${f?'<button type="button" id="tpReset">기본 양식으로</button>':''}
+   ${c0!==g?`<label style="margin:0;display:flex;gap:4px;align-items:center"><input type="radio" name="tpScope" value="${esc(c0)}"${own===c0?' checked':''} style="width:auto;margin:0"> ${esc(c0)} 전체(${c0==='BPT'?'냉동·냉장·실온':'모든 검체'})</label>`:''}
+   <button type="button" id="tpSave" class="primary">양식 저장</button>${f?'<button type="button" id="tpReset">SOP 기본 양식으로</button>':''}
    <span class="ih-q" tabindex="0">?<span class="ih-tip">체크한 칸만 그 순서로 나와요. 칸 이름은 바꿔 쓸 수 있어요. 새 칸 — 표준품관리·의뢰사 번호는 미리보기에서 칸을 눌러 한 번 적으면 표준품마다 기억해요. 시험항목은 사용기록에서, 표준품상태는 유효기한으로(지남 = 폐기 대기, 임박 기준 개월 안 = 관리 임박, 그 밖 = 등록 사용) 자동으로 채워요.</span></span>
   </div></div>`;
- bx.open=open||false;
- const read=()=>({title:bx.querySelector('#tpTitle').value.trim(),deptL:bx.querySelector('#tpDeptL').value.trim(),noDate:!bx.querySelector('#tpDate').checked,cols:[...bx.querySelectorAll('.tp-c')].map(el=>{const c=t.cols[+el.dataset.i];return {k:c.k,l:el.querySelector('.tp-l').value.trim()||nameOfK(c.k),on:el.querySelector('.tp-on').checked}})});
+ const read=()=>({title:bx.querySelector('#tpTitle').value.trim(),deptL:'',docNo:(bx.querySelector('#tpDocNo')||{value:''}).value.trim(),noDate:!bx.querySelector('#tpDate').checked,cols:[...bx.querySelectorAll('.tp-c')].map(el=>{const c=t.cols[+el.dataset.i];return {k:c.k,l:el.querySelector('.tp-l').value.trim()||nameOfK(c.k),on:el.querySelector('.tp-on').checked}})});
  bx.querySelectorAll('.tp-up,.tp-dn').forEach(b=>b.onclick=()=>{const el=b.closest('.tp-c'),sib=b.classList.contains('tp-up')?el.previousElementSibling:el.nextElementSibling;if(!sib)return;if(b.classList.contains('tp-up'))sib.before(el);else sib.after(el)});
- bx.querySelector('#tpSave').onclick=()=>{const nt=read();if(!nt.cols.some(c=>c.on))return alert('보일 칸을 하나 이상 체크해 주세요.');const sc=(bx.querySelector('input[name=tpScope]:checked')||{}).value||g;if(own&&own!==sc)annexTplSave(own,null);annexTplSave(sc,nt);bx.open=true;box();alert('관리내역 양식을 저장했습니다 — '+sc+(sc!==g?' 모든 검체':'')+'.')};
- const rs=bx.querySelector('#tpReset');if(rs)rs.onclick=()=>askConfirm({title:'기본 양식으로',message:own+' 관리내역 양식을 지우고 기본 양식(17칸)으로 돌아갈까요?',ok:'기본 양식으로',onOk:()=>{annexTplSave(own,null);bx.open=true;box()}})}
+ bx.querySelector('#tpSave').onclick=()=>{const nt=read();if(!nt.cols.some(c=>c.on))return alert('보일 칸을 하나 이상 체크해 주세요.');const sc=(bx.querySelector('input[name=tpScope]:checked')||{}).value||g;if(own&&own!==sc)annexTplSave(own,null);nt.by=(user()||{}).id||'';nt.at=new Date().toLocaleString('ko-KR');annexTplSave(sc,nt);after&&after(sc);alert('관리내역 양식을 등록했습니다 — '+sc+(sc!==g?' 전체':'')+'.')};
+ const rs=bx.querySelector('#tpReset');if(rs)rs.onclick=()=>askConfirm({title:'SOP 기본 양식으로',message:own+' 관리내역 양식을 지우고 SOP 기본 양식(17칸)으로 돌아갈까요?',ok:'SOP 기본 양식으로',onOk:()=>{annexTplSave(own,null);after&&after(own)}})}
+
+const tplDesc=f=>{if(!f||!f.t)return 'SOP 기본 양식 (S-P-GO011-F1-V04)';const t=f.t;return (f.id)+' 요청 양식 · '+(t.by?'관리자 등록 ('+t.by+(t.at?', '+t.at:'')+')':'예전에 담당자가 저장한 양식 — 관리자 확인 필요')};
+function box(){const L=document.getElementById('inspLayer');if(!L||!document.getElementById('inNotes'))return;const g=(document.getElementById('inG')||{}).value||'';if(!g)return;
+ let bx=document.getElementById('inTpl');if(!bx){bx=document.createElement('details');bx.id='inTpl';bx.className='in-fold';const at=L.querySelector('details.in-fold')||document.getElementById('inProds');if(!at)return;at.parentNode.insertBefore(bx,at)}
+ const f=annexTplFind(g),open=bx.open,cols=f&&f.t&&f.t.cols?f.t.cols.filter(c=>c.on).map(c=>c.l||nameOfK(c.k)):null;
+ bx.innerHTML=`<summary><b>관리내역 양식</b> <span class="muted small">${esc(tplDesc(f))}</span></summary><div style="padding:6px 0 4px;font-size:12.5px;color:#4b5563;line-height:1.6">${f?`제목: <b>${esc(annexTitleOf(g))}</b> · 문서번호 ${esc(f.t.docNo||'S-P-GO011-F1-V04')}<br>칸 ${cols.length}개: ${esc(cols.join(' · '))}<br>`:'SOP 서식 그대로(17칸) 만듭니다.<br>'}<span class="muted small">양식은 SOP와 같아야 해서 담당자는 바꿀 수 없어요. 의뢰사가 별도 양식을 요청하면 관리자에게 등록을 부탁해 주세요(승인·권한 > 관리내역 양식).</span></div>`;
+ bx.open=open||false}
+/* 관리자 — 승인·권한 > 관리내역 양식 */
+window.tplAdminDraw=function(){const P=document.getElementById('tplAdmin');if(!P||!(user()||{}).admin)return;const T=lj(TK);
+ const st=typeof stocks!=='undefined'?stocks:[],gs=new Set();st.forEach(x=>{if(x.group)gs.add(x.group);try{(window.subsOf?subsOf(x):[]).forEach(y=>{if(!/검체 미지정/.test(y))gs.add(y)})}catch(e){}});
+ const list=[...gs].sort();const sel=window._tplG&&list.includes(window._tplG)?window._tplG:'';
+ const rows=Object.keys(T).sort().map(id=>{const t=T[id];return `<tr><td><b>${esc(id)}</b></td><td>${esc(t.title||'표준품 관리내역')}</td><td>${esc(t.docNo||'S-P-GO011-F1-V04')}</td><td>${(t.cols||[]).filter(c=>c.on).length}칸</td><td>${t.by?esc(t.by)+' · '+esc(t.at||''):'<span class="tag gold">담당자가 저장(예전) · 확인 필요</span>'}</td><td><button onclick="window._tplG='${esc(id)}';tplAdminDraw()">보기 · 고치기</button></td></tr>`}).join('');
+ P.innerHTML=`<h3>관리내역 양식</h3><div style="margin:0 0 8px;padding:8px 12px;border-radius:8px;background:#f4f6f9;font-size:12.5px;line-height:1.6">이곳은 <b>파일을 올리는 곳이 아니라</b>, 사이트가 만드는 관리내역의 제목·칸 구성·문서번호를 그룹별로 고르는 곳입니다(Excel·PDF·한글 파일은 올릴 수 없음). 사이트에 값이 있는 칸(기본 17칸 + 시험항목·순도/순도단위·표준품상태·표준품관리·의뢰사 번호)만 고를 수 있고, 칸 너비·글자 크기는 미리보기에서 그대로 조절됩니다. SOP 개정으로 <b>모든 그룹의 기본 양식</b>이 바뀌면 이 탭이 아니라 사이트 업데이트로 반영합니다.</div><p class="muted small" style="margin:0 0 10px">관리내역은 SOP 서식(S-P-GO011-F1-V04) 그대로가 기본입니다. 의뢰사가 별도 양식(제목·칸)을 요청한 경우에만 여기서 등록하세요. 담당자는 양식을 바꿀 수 없고, 입력 창에서 어떤 양식인지만 봅니다.</p>
+ <div class="tablewrap" style="margin-bottom:12px"><table><thead><tr><th>그룹</th><th>제목</th><th>문서번호</th><th>칸</th><th>등록</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="6" class="muted">등록된 의뢰사 양식이 없습니다 — 모든 그룹이 SOP 기본 양식입니다.</td></tr>'}</tbody></table></div>
+ <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b>양식 등록할 그룹</b><select id="tplSel" style="width:auto;margin:0" onchange="window._tplG=this.value;tplAdminDraw()"><option value="">그룹 고르기</option>${list.map(g=>`<option${g===sel?' selected':''}>${esc(g)}</option>`).join('')}</select></div><div id="tplEd"></div>`;
+ if(sel)editor(document.getElementById('tplEd'),sel,id=>{window._tplG=sel;tplAdminDraw()})};
 const _f=window.inspFill;if(_f)window.inspFill=function(){const r=_f.apply(this,arguments);try{box()}catch(e){console.error(e)}return r};
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='inG')setTimeout(()=>{try{box()}catch(x){}},0)});
 })();
