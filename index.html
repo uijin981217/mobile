@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.24</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.25</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.24 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.25 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2091,7 +2091,7 @@ function annexRows(g,cust,date,mon){const PN=lj(PNK,{}),UN=usage(),SN=savedNames
  const d0=date||today(),m0=Number.isInteger(mon)&&mon>=1&&mon<=24?mon:3,lim=(()=>{const x=new Date(d0+'T00:00:00');x.setMonth(x.getMonth()+m0);return x.toISOString().slice(0,10)})();
  const inInsp=s=>{const e=s.exp||'';return (/^\d{4}-\d{2}-\d{2}$/.test(e)&&e<=lim)||Number(s.qty)===0||gone(s.code)!==''||inW(iso((detailData[s.id]||{})['입고 일자']))};
  /* V4.24: 라벨 정보로 이번 기간 폐기가 확인된 입고번호(정기점검 '폐기 표준품')는 재고 목록에서 빠졌어도(사이트에서 폐기 처리·LIMS 목록에서 사라짐) 관리내역에 넣음 */
- const p0=window.prevInspD?prevInspD(g,ym0):'',DLx=(()=>{try{return window.labelDisposed?(p0?labelDisposed(g,ym0,p0,d0):labelDisposed(g,ym0)):[]}catch(e){return []}})();
+ const p0=window.prevInspD?prevInspD(g,ym0):'',DLx=(()=>{try{return window.labelDisposed?labelDisposed(g,ym0,window.inspFrom?inspFrom(g,ym0):p0,d0):[]}catch(e){return []}})();
  const keep0=listOf(g).filter(s=>gone(s.code)!=='x'&&(inInsp(s)||(!SKIP[baseCode(s)]&&!(window.nlGone&&nlGone(s)))));{const have=new Set(keep0.map(s=>s.code));DLx.forEach(x=>{if(have.has(x.code))return;const st=stocks.find(s=>s.code===x.code);if(st){keep0.push(st);have.add(x.code)}});keep0.sort((a,b)=>a.code.localeCompare(b.code,undefined,{numeric:true}))}
  const rows0=keep0.map(s=>{const r=detailData[s.id]||{},base=baseCode(s);
   const sub=client&&window.splitName?splitName(g):'';let prod=client?((sub&&sub!=='검체 미지정'?sub:'')||prodClean(PN[base])||autoProd(base,UN)||'N/A'):'KPTR';
@@ -2303,7 +2303,7 @@ window.makeInspection=function(mode){
  const withAnnex=false,target=all[g].target||'',axOn=!!all[g].axOn;/* V4.18: 의뢰사마다 '*별첨 1 표준품 관리내역(이름) (총 N page)' 줄 — 그룹마다 켜고 끔 */
  const rv=n=>(document.querySelector(`input[name="${n}"]:checked`)||{}).value==='1';
  const prevD=window.prevInspD?prevInspD(g,ym):'';/* V4.20: 지난 정기점검일(그룹별) */
- const DL=window.labelDisposed?(prevD?labelDisposed(g,ym,prevD,date):labelDisposed(g,ym)):[],dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!dset.has(s.code)&&!(window.labelGone&&labelGone(s.code))&&!dispDone(s.code)),nm=nameFn();/* V11.7: 라벨이 모두 폐기된 입고번호(지난달 이전에 폐기 완료)는 빼고, 이번 달 폐기분은 DL로 폐기일과 함께 */
+ const DL=window.labelDisposed?labelDisposed(g,ym,window.inspFrom?inspFrom(g,ym):prevD,date):[],dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!dset.has(s.code)&&!(window.labelGone&&labelGone(s.code))&&!dispDone(s.code)),nm=nameFn();/* V11.7: 라벨이 모두 폐기된 입고번호(지난달 이전에 폐기 완료)는 빼고, 이번 달 폐기분은 DL로 폐기일과 함께 */
  /* V4.22: '폐기 완료 직접 체크'한 입고번호도 이번 점검 기간에 체크했으면 폐기 목록에 체크한 날로(전에는 그냥 빠짐) — 관리내역과 같게 */
  const inW=window.inInspWin?inInspWin(g,ym,date):(d=>String(d||'').slice(0,7)===ym);{const DD=lj(DK,{});listOf(g).forEach(s=>{const d=DD[s.code];if(d&&!dset.has(s.code)&&!(window.labelGone&&labelGone(s.code))&&inW(d)){const n0=nm(s);DL.push({code:s.code,name:n0==='-'?'':n0,exp:s.exp||'',date:d,expired:!!(s.exp&&s.exp<=d)});dset.add(s.code)}});DL.sort((a,b)=>a.date.localeCompare(b.date)||a.code.localeCompare(b.code))}
  /* V5.0: 같은 표준품(기본번호·이름·유효기한·뒤 내용이 같음)은 한 줄로 — PB.MEC.003-005~007 */
@@ -2366,7 +2366,9 @@ function analyze(rows){const lots={};let bad=0;
 let pending=null;
 /* V4.21: 입고번호 라벨 정보 하나(폐기일 등) */window.labelLot=function(code){const o=lj();return (o&&o.lots&&o.lots[code])||null};
 /* V4.21: 그룹의 지난 정기점검일(이전 달 정기점검 기록의 점검일 d → 없으면 만든 날 at) */window.prevInspD=function(g,ym){try{const mk=JSON.parse(localStorage.getItem('standardhub_v22_inspect_made')||'{}');let best='',d='';Object.entries(mk).forEach(([k,v])=>{const [g0,y0,k0]=k.split('|');if(g0===g&&k0==='form'&&y0<ym&&y0>best){best=y0;d=(v&&(v.d||v.at))||''}});return /^\d{4}-\d{2}-\d{2}$/.test(d)?d:''}catch(e){return ''}};
-/* V4.21: 이번 점검 기간(지난 점검일 다음 날 ~ 이번 점검일, 지난 기록 없으면 점검월)에 든 날짜인지 */window.inInspWin=function(g,ym,date){const p=prevInspD(g,ym);return d=>!!d&&(p?(d>p&&(!date||d<=date)):d.slice(0,7)===ym)};
+/* V4.21: 이번 점검 기간(지난 점검일 다음 날 ~ 이번 점검일, 지난 기록 없으면 점검월)에 든 날짜인지 *//* V4.25: 첫 달(이 사이트로 만든 지난 정기점검 기록이 없을 때)은 지난달 1일부터 — 사이트를 처음 쓰는 달에 지난달 폐기·입고분도 들어가게. 시작 날의 하루 전(이 날짜보다 뒤면 기간 안) */
+window.inspFrom=function(g,ym){const p=prevInspD(g,ym);if(p)return p;const y=+ym.slice(0,4),m=+ym.slice(5,7);const d=new Date(Date.UTC(y,m-2,0));return d.toISOString().slice(0,10)};
+window.inInspWin=function(g,ym,date){const f=inspFrom(g,ym);return d=>!!d&&d>f&&(!date||d<=date)};
 window.labelGone=function(code){const o=lj(),L=o&&o.lots[code];return !!(L&&L.labels>0&&L.disposed===L.labels)};
 /* V3.5: 라벨 정보를 부를 때마다 다시 읽고 전부 훑던 것(실제 자료 3,000여 입고에서 대시보드 8초) → 자료가 바뀔 때만 기본번호별 이름표를 다시 만듦 */
 let _lnRaw=null,_lnIx={};window.labelName=function(base){const raw=localStorage.getItem(LBK);if(raw!==_lnRaw){_lnRaw=raw;_lnIx={};try{const o=JSON.parse(raw||'null');if(o)for(const c in o.lots){const b=masterOf(c);if(!_lnIx[b]&&o.lots[c].name)_lnIx[b]=o.lots[c].name}}catch(e){}}return _lnIx[base]||''};
