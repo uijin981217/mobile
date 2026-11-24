@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.18</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.20</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.18 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.20 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -1565,9 +1565,9 @@ window.alert=function(msg){
 window.askConfirm=function(o){
   closeAsk();
   const w=document.createElement('div');w.id='askLayer';w.className='account-overlay';
-  w.innerHTML='<div class="account-dialog" role="alertdialog" aria-modal="true"><h3 style="margin:0 0 8px">'+esc(o.title||'확인')+'</h3><p style="margin:0 0 18px;white-space:pre-line;color:var(--ink-2)">'+esc(o.message||'')+'</p><div class="toolbar" style="justify-content:flex-end"><button id="askNo">취소</button><button id="askYes" class="'+(o.danger?'danger-btn':'primary')+'">'+esc(o.ok||'확인')+'</button></div></div>';
+  w.innerHTML='<div class="account-dialog" role="alertdialog" aria-modal="true"><h3 style="margin:0 0 8px">'+esc(o.title||'확인')+'</h3><p style="margin:0 0 18px;white-space:pre-line;color:var(--ink-2)">'+esc(o.message||'')+'</p><div class="toolbar" style="justify-content:flex-end"><button id="askNo">'+esc(o.cancel||'취소')+'</button><button id="askYes" class="'+(o.danger?'danger-btn':'primary')+'">'+esc(o.ok||'확인')+'</button></div></div>';
   document.body.appendChild(w);
-  w.querySelector('#askNo').onclick=closeAsk;
+  w.querySelector('#askNo').onclick=()=>{closeAsk();o.onNo&&o.onNo()};
   w.querySelector('#askYes').onclick=()=>{closeAsk();o.onOk&&o.onOk()};
   w.addEventListener('click',e=>{if(e.target===w)closeAsk()});
   w.querySelector('#askNo').focus();
@@ -2288,7 +2288,8 @@ window.makeInspection=function(mode){
  if(mode==='annex'){hideInsp();window._signCtx.kind='annex';window._signCtx.signHtml=css0+annexBuild(g,{cust,dept,date,mon:monA,tiers:tiersA,stock:stockA,sign:true}).html;window._signCtx.title=docName('관리내역',g,ym);return printDoc(docName('관리내역',g,ym),css0+annex)}
  const withAnnex=false,target=all[g].target||'',axOn=!!all[g].axOn;/* V4.18: 의뢰사마다 '*별첨 1 표준품 관리내역(이름) (총 N page)' 줄 — 그룹마다 켜고 끔 */
  const rv=n=>(document.querySelector(`input[name="${n}"]:checked`)||{}).value==='1';
- const DL=window.labelDisposed?labelDisposed(g,ym):[],dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!dset.has(s.code)&&!(window.labelGone&&labelGone(s.code))&&!dispDone(s.code)),nm=nameFn();/* V11.7: 라벨이 모두 폐기된 입고번호(지난달 이전에 폐기 완료)는 빼고, 이번 달 폐기분은 DL로 폐기일과 함께 */
+ const prevD=(()=>{try{const mk=JSON.parse(localStorage.getItem('standardhub_v22_inspect_made')||'{}');let best='',d='';Object.entries(mk).forEach(([k,v])=>{const [g0,y0,k0]=k.split('|');if(g0===g&&k0==='form'&&y0<ym&&y0>best){best=y0;d=(v&&(v.d||v.at))||''}});return /^\d{4}-\d{2}-\d{2}$/.test(d)?d:''}catch(e){return ''}})();/* V4.20: 지난 정기점검일(그룹별) */
+ const DL=window.labelDisposed?(prevD?labelDisposed(g,ym,prevD,date):labelDisposed(g,ym)):[],dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!dset.has(s.code)&&!(window.labelGone&&labelGone(s.code))&&!dispDone(s.code)),nm=nameFn();/* V11.7: 라벨이 모두 폐기된 입고번호(지난달 이전에 폐기 완료)는 빼고, 이번 달 폐기분은 DL로 폐기일과 함께 */
  /* V5.0: 같은 표준품(기본번호·이름·유효기한·뒤 내용이 같음)은 한 줄로 — PB.MEC.003-005~007 */
  const ln=(s,x)=>({code:s.code,name:nm(s)==='-'?'':nm(s),exp:s.exp||'-',tail:x||''});
  const dl=x=>({code:x.code,name:x.name||'',exp:x.exp||'-',tail:' · 폐기 '+dot(x.date)});
@@ -2351,8 +2352,9 @@ window.labelGone=function(code){const o=lj(),L=o&&o.lots[code];return !!(L&&L.la
 /* V3.5: 라벨 정보를 부를 때마다 다시 읽고 전부 훑던 것(실제 자료 3,000여 입고에서 대시보드 8초) → 자료가 바뀔 때만 기본번호별 이름표를 다시 만듦 */
 let _lnRaw=null,_lnIx={};window.labelName=function(base){const raw=localStorage.getItem(LBK);if(raw!==_lnRaw){_lnRaw=raw;_lnIx={};try{const o=JSON.parse(raw||'null');if(o)for(const c in o.lots){const b=masterOf(c);if(!_lnIx[b]&&o.lots[c].name)_lnIx[b]=o.lots[c].name}}catch(e){}}return _lnIx[base]||''};
 /* 그 달(ym)에 라벨이 모두 폐기된 입고번호. 폐기일이 유효기한 이후면 '유효기한 만료', 아니면 '소진' */
-window.labelDisposed=function(g,ym){const o=lj();if(!o)return [];const u=user();
- return Object.entries(o.lots).filter(([c,L])=>(L.group===g||(window.subsOf&&(()=>{const s=stocks.find(x=>x.code===c);return !!s&&subsOf(s).includes(g)})()))&&L.labels>0&&L.disposed===L.labels&&L.date.slice(0,7)===ym&&(u.admin||u.groups.includes(g)||stocks.some(s=>s.code===c&&accessible(s,u))))
+/* V4.20: from(지난 점검일)이 있으면 '지난 점검일 다음 날 ~ 이번 점검일(to)'에 폐기된 것 — 지난달 점검 뒤 그달에 폐기한 것도 이번 점검에 나옴 */
+window.labelDisposed=function(g,ym,from,to){const o=lj();if(!o)return [];const u=user();const inWin=d=>from?(d>from&&(!to||d<=to)):d.slice(0,7)===ym;
+ return Object.entries(o.lots).filter(([c,L])=>(L.group===g||(window.subsOf&&(()=>{const s=stocks.find(x=>x.code===c);return !!s&&subsOf(s).includes(g)})()))&&L.labels>0&&L.disposed===L.labels&&L.date&&inWin(L.date)&&(u.admin||u.groups.includes(g)||stocks.some(s=>s.code===c&&accessible(s,u))))
   .map(([c,L])=>({code:c,name:L.name,exp:L.exp,date:L.date,expired:!!(L.exp&&L.exp<=L.date)})).sort((a,b)=>a.date.localeCompare(b.date)||a.code.localeCompare(b.code))};
 async function preview(src){const out=document.getElementById('labelResult');if(!out)return;
  try{const rows=await readExcelRows(src);if(!isLabelRows(rows)){out.innerHTML='<p class="danger">라벨 Excel이 아닌 것 같습니다. \'라벨 번호\' 열이 있는 파일을 올려 주세요.</p>';return}
@@ -2790,17 +2792,26 @@ const P1=window.printDoc;
 window.printDoc=function(t,b){P1(t,b);if(!SV())return;const C=window._signCtx;if(!C||C.title!==t)return;addReqBtn()};
 function addReqBtn(){const box=document.getElementById('nasBox');if(!box)return;const row=box.querySelector('.nas-row');if(!row||!box.querySelector('.nas-p')||box.querySelector('#nasReq'))return;
  const C=window._signCtx,ex=reqs().find(r=>(r.kind===C.kind||r.kind==='both')&&r.g===C.g&&r.ym===C.ym);
- const b=document.createElement('button');b.id='nasReq';b.className='primary';b.textContent=ex&&ex.status==='done'?'확인 완료됨 · 다시 요청':ex?'요청함 · 다시 요청':'NAS에 올렸음 → 실장님께 요청';b.onclick=signRequest;row.appendChild(b)}
+ const b=document.createElement('button');b.id='nasReq';b.className='primary';b.textContent=ex&&ex.status==='done'?'확인 완료됨 · 다시 요청':ex?'요청함 · 다시 요청':reqKind(C)==='both'?'NAS에 올렸음 → 실장님께 요청 (관리내역+정기점검)':'NAS에 올렸음 → 실장님께 요청';b.onclick=signRequest;row.appendChild(b)}
 /* NAS 줄이 다시 그려질 때도 버튼 유지 */
 new MutationObserver(()=>{if(SV()&&document.getElementById('nasBox'))addReqBtn()}).observe(document.documentElement,{childList:true,subtree:true});
 
+/* V4.19: 관리내역·정기점검은 같은 NAS 폴더라 실장님 요청도 한 번에 — 다른 서류도 만들었으면 'both'(정기점검+관리내역)로 요청, 아직 안 만들었으면 먼저 만들지 묻기 */
+const mkOf=(g,ym,k)=>{try{return !!(JSON.parse(localStorage.getItem('standardhub_v22_inspect_made'))||{})[g+'|'+ym+'|'+k]}catch(e){return false}};
+const otherK=k=>k==='form'?'annex':'form';
+const reqKind=C=>{if(C.kind==='form'&&C.merged)return 'both';const o=otherK(C.kind);if(!mkOf(C.g,C.ym,o))return C.kind;
+ /* 다른 서류만 따로 이미 요청한 적이 있으면 이 서류만 */if(reqs().some(r=>r.kind===o&&r.g===C.g&&r.ym===C.ym))return C.kind;return 'both'};
 window.signRequest=function(){const C=window._signCtx,u=me();if(!C||!u)return;
+ if(!C.merged&&!C._one&&!mkOf(C.g,C.ym,otherK(C.kind))&&!reqs().some(r=>r.g===C.g&&r.ym===C.ym)){const on=KIND[otherK(C.kind)];
+  return askConfirm({title:'한 번에 요청할까요?',message:`관리내역과 정기점검은 같은 NAS 폴더에 올리니 실장님께 한 번에 요청하면 편해요.\n\n${C.g} ${on}을 아직 안 만들었어요.`,ok:on+' 먼저 만들기',cancel:'이것만 요청',
+   onOk:()=>{try{closePrint()}catch(e){}window.dcOpen&&dcOpen(C.g,otherK(C.kind),C.ym)},onNo:()=>{C._one=true;setTimeout(()=>{window.signRequest();C._one=false},0)}})}
+ const K0=reqKind(C);
  const dept=deptOf(u),to=leads()[dept];
  if(!dept)return alert('내 소속 실이 정해져 있지 않습니다. 관리자에게 승인·권한 > 계정별 권한 현황에서 소속 실을 정해 달라고 요청해 주세요.');
  if(!to)return alert(dept+'의 실장(확인자)이 아직 지정되지 않았습니다. 관리자에게 승인·권한 > 실별 실장 지정을 요청해 주세요.');
  const path=nasFromTpl(((lj3('standardhub_v22_nas_paths',{})[String(u.id).toLowerCase()]||{})[C.g])||'',C.ym);
- askConfirm({title:'실장님께 확인 요청',message:`${KIND[C.kind==='form'&&C.merged?'both':C.kind]} · ${C.g} · ${C.ym}\n\n점검자 서명한 PDF를 아래 폴더에 저장했나요?\n${path}\n\n${uName(to)} 실장님 화면에 알림이 갑니다.`,ok:'요청하기',onOk:()=>{
-  const K=C.kind==='form'&&C.merged?'both':C.kind;const all=reqs().filter(r=>!(r.kind===K&&r.g===C.g&&r.ym===C.ym));
+ askConfirm({title:'실장님께 확인 요청',message:`${KIND[K0]} · ${C.g} · ${C.ym}\n\n${K0==='both'?'관리내역·정기점검 모두 ':''}작성자(점검자) 서명한 PDF를 아래 폴더에 저장했나요?\n${path}\n\n${uName(to)} 실장님 화면에 알림이 갑니다.`,ok:'요청하기',onOk:()=>{
+  const K=K0;const all=reqs().filter(r=>!(r.g===C.g&&r.ym===C.ym&&(r.kind===K||K==='both')));
   all.unshift({id:Date.now().toString(36),kind:K,g:C.g,ym:C.ym,path,by:String(u.id),dept,to:String(to),at:new Date().toISOString(),status:'requested'});
   if(sv3(REQK,all.slice(0,500))){const b=document.getElementById('nasReq');if(b)b.textContent='요청함 · 다시 요청';bell();alert(uName(to)+' 실장님께 확인 요청을 보냈습니다.')}}})};
 window.signDone=function(id){const all=reqs(),r=all.find(x=>x.id===id);if(!r)return;
@@ -3356,7 +3367,7 @@ const _r=window.render;window.render=function(){const r=_r.apply(this,arguments)
 (function(){
 const MK='standardhub_v22_inspect_made';
 const lj=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
-const _mi=window.makeInspection;if(_mi)window.makeInspection=function(){window._signCtx=undefined;const r=_mi.apply(this,arguments);try{const C=window._signCtx;if(C&&C.g&&C.ym&&C.kind){const o=lj(MK,{});o[C.g+'|'+C.ym+'|'+C.kind]={by:String(user().id),at:new Date().toISOString().slice(0,10)};localStorage.setItem(MK,JSON.stringify(o))}}catch(e){}return r};
+const _mi=window.makeInspection;if(_mi)window.makeInspection=function(){window._signCtx=undefined;const r=_mi.apply(this,arguments);try{const C=window._signCtx;if(C&&C.g&&C.ym&&C.kind){const o=lj(MK,{});o[C.g+'|'+C.ym+'|'+C.kind]={by:String(user().id),at:new Date().toISOString().slice(0,10),d:C.date||''};localStorage.setItem(MK,JSON.stringify(o))}}catch(e){}return r};
 const am=()=>{const v=Number(lj('standardhub_v22_alert_months',3));return Number.isInteger(v)&&v>=1&&v<=24?v:3};
 function rows(){const u=user();let L=[];try{L=activeMine()}catch(e){}const st=s=>{try{return expireState(s)||''}catch(e){return ''}};
  const exp=L.filter(s=>st(s)==='만료').length,soon=L.filter(s=>/이내/.test(st(s))).length,zero=L.filter(s=>Number(s.qty)===0).length,out=[];
