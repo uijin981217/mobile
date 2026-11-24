@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.17</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.18</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.17 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.18 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2177,7 +2177,7 @@ function inspSave(mode){if(!document.getElementById('inspLayer')||!document.getE
 
  const NT=lj(LK,{});document.querySelectorAll('#inspLayer .nt-v').forEach(i=>{const v=i.value.trim();if(v&&!ntNone(v))NT[i.dataset.code]=v;else delete NT[i.dataset.code]});try{localStorage.setItem(LK,JSON.stringify(NT))}catch(e){}
  const SKIP=lj(SK,{});document.querySelectorAll('#inspLayer .in-skip').forEach(i=>{if(i.checked)SKIP[i.dataset.base]=1;else delete SKIP[i.dataset.base]});try{localStorage.setItem(SK,JSON.stringify(SKIP))}catch(e){}
- const all=lf(),prev=all[g]||{};all[g]=Object.assign(prev,{cust,dept},mode==='annex'?{}:{target:val('inTarget').trim()});sf(all);}
+ const all=lf(),prev=all[g]||{};all[g]=Object.assign(prev,{cust,dept},mode==='annex'?{}:{target:val('inTarget').trim(),axOn:!!(document.getElementById('inAxOn')||{}).checked});sf(all);}
 /* V13.7: 정기점검 입력 창 작성 중 내용(점검일·임박 기준·라벨/보관상태·추가 구입·Re-test·입고 예정·기타·관리내역 비고 칸 선택)도 그룹별로 기억(V13.8: 기간 제한 없이 계속 남음) */
 const DFK='standardhub_v22_inspect_draft',DF_IDS=['inDate','inMon','inBuy','inRetest','inPlan','inEtc'];
 function draftSave(){if(!document.getElementById('inspLayer')||document.getElementById('inNotes')||!document.getElementById('inG'))return;const g=val('inG'),A=lj(DFK,{}),o={ts:Date.now(),v:{},r:{},ln:{}};
@@ -2235,7 +2235,8 @@ window.ntAllOpen=function(e,b){e.preventDefault();e.stopPropagation();const d=b.
 window.ntAll=function(btn){const d=btn.closest('details'),v=d.querySelector('.nt-all').value.trim();d.querySelectorAll('.nt-v').forEach(i=>i.value=v)};
 window.noteSet=function(code,v){const N=lj(LK,{});v=String(v||'').trim();if(v&&!ntNone(v))N[code]=v;else delete N[code];try{localStorage.setItem(LK,JSON.stringify(N))}catch(e){return alert('이 브라우저에서는 저장할 수 없습니다.')}notesBox()};
 window.noteAdd=function(){const c=val('ntCode'),t=val('ntText').trim();if(!t)return alert('비고 내용을 입력해 주세요.');noteSet(c,t)};
-window.inspFill=function(){notesBox();dispBox();lnBox();if(document.getElementById('inTiers')&&!document.getElementById('tRows'))tiersBox();const g=val('inG'),m=lf()[g]||{};document.getElementById('inCust').value=m.cust||defCust(g);document.getElementById('inTarget').value=m.target||defTarget(g);document.getElementById('inDept').value=m.dept||'';try{draftLoad()}catch(e){}
+window.axSync=function(){const a=document.getElementById('inAxOn'),n=document.getElementById('inAxPv');if(!a||!n)return;const g=val('inG');n.textContent='*별첨 1 '+(window.annexTitleOf?annexTitleOf(g):'표준품 관리내역')+' (총 N page)';n.classList.toggle('off',!a.checked)};document.head.insertAdjacentHTML('beforeend','<style>.ax-cell{grid-column:1/-1}.ax-cell .ax-row{display:flex;gap:6px;align-items:center;max-width:720px}.ax-cell .ax-ck{display:inline-flex!important;flex-direction:row!important;align-items:center;gap:5px;height:38px;padding:0 11px;margin:0!important;border:1px solid #dfe3e9;border-radius:9px;background:#fff;white-space:nowrap;font-weight:500;cursor:pointer;flex:none}.ax-cell .ax-ck input{width:auto!important;height:auto!important;margin:0}.ax-cell .ax-ck:has(input:checked){border-color:#20242b;background:#f3f5f8}.ax-cell .ax-pv{flex:1;min-width:0;height:38px;line-height:38px;padding:0 11px;border:1px dashed #cfd5dd;border-radius:9px;background:#fafbfc;font-size:12.5px;color:#20242b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ax-cell .ax-pv.off{color:#a3a9b2;text-decoration:line-through}</style>');
+window.inspFill=function(){notesBox();dispBox();lnBox();if(document.getElementById('inTiers')&&!document.getElementById('tRows'))tiersBox();const g=val('inG'),m=lf()[g]||{};document.getElementById('inCust').value=m.cust||defCust(g);document.getElementById('inTarget').value=m.target||defTarget(g);{const a=document.getElementById('inAxOn');if(a)a.checked=!!m.axOn;axSync()}document.getElementById('inDept').value=m.dept||'';try{draftLoad()}catch(e){}
  const UN=usage(),SN=savedNames(),SKIP=lj(SK,{}),allB=[...new Set(listOf(g).filter(s=>!(window.nlGone&&nlGone(s))).map(baseCode))].sort(),autoNm=b=>(window.labelName&&labelName(b))||(UN[b]||{}).name||(window.guessStd&&guessStd(b))||'',miss=allB.filter(b=>!autoNm(b)),box=document.getElementById('inNames');if(!box)return;
  const PN=lj(PNK,{}),pbox=document.getElementById('inProds');if(pbox){const bs=isB(g)?[]:[...new Set(listOf(g).filter(s=>!(window.nlGone&&nlGone(s))).map(baseCode))].sort();
   const row=(b,au)=>`<div style="display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap"><span style="min-width:110px;font-family:var(--mono,monospace)">${esc(b)}</span><input class="in-pn" data-base="${esc(b)}" data-auto="${esc(au)}" value="${esc(prodClean(PN[b]||'')===prodClean(au)?'':prodClean(PN[b]||''))}" placeholder="${esc(au||'제품명 입력 (비우면 N/A)')}" style="margin:0;flex:1;min-width:140px"></div>`;
@@ -2266,7 +2267,7 @@ window.openInspection=function(mode){
  <div class="in-grid in-top${annexOnly?' a4':''}">
  <label>${annexOnly?'대상':'점검 대상'}<select id="inG" onchange="inspFill()">${gs.map(g=>`<option value="${esc(g)}">${esc(g)}${isB(g)?'':' (의뢰사)'}</option>`).join('')}</select></label>
  <label>${annexOnly?'회사명':'고객사 (= 관리내역 회사명)'}<input id="inCust"></label><label>부서명 <span class="muted small">(관리내역 위쪽)</span><input id="inDept" placeholder="예: 바이오의약1실"></label>
- <div${ins}><label>점검대상 표준품<input id="inTarget"></label></div>
+ <div${ins}><label>점검대상 표준품<input id="inTarget"></label></div>${annexOnly?'':'<div class="ax-cell"><label for="inAxOn">별첨 1 (관리내역)<span class="ih-q" tabindex="0">?<span class="ih-tip">관리내역을 별첨으로 붙이는 의뢰사만 켜세요. 점검대상 표준품 아래에 &#39;*별첨 1 + 관리내역 제목 (총 N page)&#39;이 들어가요. 제목은 관리내역 입력 창 &#39;관리내역 양식&#39;의 제목을 그대로 가져오고, 쪽 수는 이 그룹 관리내역에서 자동으로 셉니다. 그룹마다 기억해요.</span></span></label><div class="ax-row"><label class="ax-ck"><input type="checkbox" id="inAxOn" onchange="axSync()"><span>넣기</span></label><span id="inAxPv" class="ax-pv"></span></div></div>'}
  <label>${annexOnly?'작성일':'점검일<span class="ih-q" tabindex="0">?<span class="ih-tip">관리내역 작성일과 같은 날짜예요.</span></span>'}<input id="inDate" type="date" value="${today()}"></label>
  <div${ins}><label>유효기한 임박 기준<span class="ih-q" tabindex="0">?<span class="ih-tip">${annexOnly?"작성일":"점검일"}부터 N개월 안에 끝나는 유효기한을 임박으로 셉니다.</span></span><span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap"><input id="inMon" type="number" min="1" max="24" step="1" value="${curMon()}" style="width:68px;text-align:center;margin:0" title="1~24개월">개월 이내</span></label></div>
  </div>
@@ -2285,7 +2286,7 @@ window.makeInspection=function(mode){
  const monA=(m=>Number.isInteger(m)&&m>=1&&m<=24?m:3)(Math.round(Number(val('inMon'))));const tiersA=mode==='annex'?readTiers():null,stockA=mode==='annex'?readStock():null;const AB=annexBuild(g,{cust,dept,date,mon:monA,tiers:tiersA,stock:stockA}),annex=AB.html;
  window._signCtx={g,cust,dept,date,ym,css0};
  if(mode==='annex'){hideInsp();window._signCtx.kind='annex';window._signCtx.signHtml=css0+annexBuild(g,{cust,dept,date,mon:monA,tiers:tiersA,stock:stockA,sign:true}).html;window._signCtx.title=docName('관리내역',g,ym);return printDoc(docName('관리내역',g,ym),css0+annex)}
- const withAnnex=false,target=all[g].target||'';
+ const withAnnex=false,target=all[g].target||'',axOn=!!all[g].axOn;/* V4.18: 의뢰사마다 '*별첨 1 표준품 관리내역(이름) (총 N page)' 줄 — 그룹마다 켜고 끔 */
  const rv=n=>(document.querySelector(`input[name="${n}"]:checked`)||{}).value==='1';
  const DL=window.labelDisposed?labelDisposed(g,ym):[],dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!dset.has(s.code)&&!(window.labelGone&&labelGone(s.code))&&!dispDone(s.code)),nm=nameFn();/* V11.7: 라벨이 모두 폐기된 입고번호(지난달 이전에 폐기 완료)는 빼고, 이번 달 폐기분은 DL로 폐기일과 함께 */
  /* V5.0: 같은 표준품(기본번호·이름·유효기한·뒤 내용이 같음)은 한 줄로 — PB.MEC.003-005~007 */
@@ -2312,7 +2313,7 @@ window.makeInspection=function(mode){
  let form=`<div class="fpage"><div class="hd">${logo?`<img src="${logo}" alt="KPTR 한국의약품시험연구원">`:'<b>KPTR 한국의약품시험연구원</b>'}<h1>표준품 정기점검</h1><span class="pg">page 1 of 1</span></div>
  <table class="f"><colgroup><col style="width:17%"><col style="width:16%"><col style="width:13%"><col style="width:19%"><col style="width:13%"><col style="width:22%"></colgroup>
  <tr><th>고객사</th><td style="text-align:center">${esc(cust)}</td><th>점검일</th><td style="text-align:center">${dot(date)}</td><th>점검자</th><td class="big"></td></tr>
- <tr><th>점검대상<br>표준품</th><td colspan="5">${esc(target)}${withAnnex?`<br>&nbsp;&nbsp;*별첨 1 표준품 관리내역(${pages} Page)`:''}</td></tr>
+ <tr><th>점검대상<br>표준품</th><td colspan="5">${esc(target)}${withAnnex?`<br>&nbsp;&nbsp;*별첨 1 표준품 관리내역(${pages} Page)`:axOn?`<br>*별첨 1 ${esc(window.annexTitleOf?annexTitleOf(g):'표준품 관리내역')} (총 ${AB.pages||1} page)`:''}</td></tr>
  <tr><th colspan="6" class="sec">점검항목</th></tr>
  <tr><th>유효기한</th><td colspan="5" class="lst" style="height:120px"><div class="cw">${blk('임박',soon,s=>ln(s))}<br><br>${blk('만료',exp,s=>ln(s))}</div></td></tr>
  <tr><th>라벨상태</th><td colspan="5">${st(rv('inLab'),rv('inLabRe'))}</td></tr>
@@ -3800,7 +3801,7 @@ new MutationObserver(()=>{if(document.getElementById('grpAlert')&&!document.quer
 addEventListener('resize',()=>{try{help()}catch(e){}});
 /* (5) 입력 창 단순하게 */
 function basic(){const l=document.getElementById('inspLayer');if(!l||l.querySelector('details.in-basic'))return;const top=l.querySelector('.in-top');if(!top)return;
- const pick=id=>{const el=document.getElementById(id);if(!el)return null;let n=el.closest('.in-top>*');return n};const items=['inCust','inDept','inTarget'].map(pick).filter(Boolean);if(!items.length)return;
+ const pick=id=>{const el=document.getElementById(id);if(!el)return null;let n=el.closest('.in-top>*');return n};const items=['inCust','inDept','inTarget','inAxOn'].map(pick).filter(Boolean);if(!items.length)return;
  const d=document.createElement('details');d.className='in-basic';d.innerHTML='<summary><b>기본 정보</b><span></span></summary><div class="in-grid in-top'+(top.classList.contains('a4')?' a4':'')+'"></div>';const g=d.querySelector('div');items.forEach(n=>g.appendChild(n));top.after(d);
  const sum=()=>{const v=id=>((document.getElementById(id)||{}).value||'').trim();const parts=[v('inCust'),v('inDept')].filter(Boolean);d.querySelector('summary span').textContent=parts.length?'▸ '+parts.join(' · '):'— 처음 한 번 적어 주세요';if(!v('inCust')||!v('inDept'))d.open=true};
  sum();l.addEventListener('input',e=>{if(e.target.closest('details.in-basic'))sum()});l.addEventListener('change',e=>{if(e.target.id==='inG')setTimeout(sum,0)});
@@ -4031,6 +4032,8 @@ function testsOf(base){try{const P=((usage()||{})[base]||{}).pur||{},cnt={};Obje
   let t=fx?cleanTest('',fx[1]):(ti&&smp0==='-')?cleanTest('',ti):cleanTest(np?'':s0,t0);t=String(t||'').replace(/^\[[^\]]*\]\s*/,'').trim();if(!t||/미기재/.test(t))return;cnt[t]=(cnt[t]||0)+((e&&e.n)||1)}));
  return Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0,2).join(', ')}catch(e){return ''}}
 const addM=(d,m)=>{const x=new Date(d+'T00:00:00');x.setMonth(x.getMonth()+m);return x.toISOString().slice(0,10)};
+/* V4.18: 관리내역 제목(양식 제목, 없으면 '표준품 관리내역') — 정기점검 '*별첨 1 …' 줄에 그대로 씀 */
+window.annexTitleOf=function(g){const f=annexTplFind(g);if(!f||!f.t)return '표준품 관리내역';const c0=cli(g),sub=g.slice(c0.length+1);return String(f.t.title||'표준품 관리내역').replace(/\{의뢰사\}/g,c0).replace(/\{검체\}/g,sub).replace(/\(\s*\)/g,'').replace(/\s{2,}/g,' ').trim()||'표준품 관리내역'};
 window.annexTplApply=function(rows,g,o){const f=annexTplFind(g);
  window._anxTplId=f?f.id:'';window._anxHead=null;window._anxTitle='';window._anxDeptL='';window._anxNoDate=false;if(!f)return rows;
  const t=f.t,cols=(t.cols&&t.cols.length?t.cols:defCols()).filter(c=>c.on);if(!cols.length)return rows;
