@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.33</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.34</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.33 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.34 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2452,6 +2452,8 @@ async function readRaw(src){
 /* 표준품(기본번호) → Cat No. 정규화 값들 */
 function catMap(){const m={};(typeof stocks!=='undefined'?stocks:[]).forEach(s=>{const r=detailData[s.id]||{};let c=String(r['Cat No.']||r['Cat No']||r['CatNo']||'').trim();if(!c||c==='-')return;const b=masterOf(s.code);(m[b]=m[b]||new Set());pnKeys(c).forEach(k=>m[b].add(k))});return m}
 function matchBase(pn,CM){const ks=pnKeys(pn);if(!ks.length)return [];return Object.keys(CM).filter(b=>ks.some(k=>CM[b].has(k)))}
+/* V4.34: 관리내역 양식 '표준품관리' 짐작 — 구매 정보에 이 표준품(Cat No.↔P/N)이 있으면 true(구매 표준품), 없으면 false(제공표준품), 구매 정보를 아무도 안 올렸으면 null. 단가는 보지 않으므로 '단가 보기' 권한과 상관없음 */
+let _bbC=null,_bbT=0;window.boughtBase=function(base){const now=Date.now();if(!_bbC||now-_bbT>3000){_bbT=now;_bbC=null;const o=ld();if(o&&o.items&&o.items.length){const CM=catMap(),S=new Set();o.items.forEach(x=>matchBase(x.pn,CM).forEach(b=>S.add(b)));_bbC=S}}return _bbC?_bbC.has(base):null};
 /* V7.2: 단가는 관리자, 그리고 관리자가 '단가 보기'를 허용한 담당자만 */
 window.canSeePrice=function(){const u=user();return !!u&&(!!u.admin||u.status==='approved'&&!!u.priceView)};
 window.purchaseFor=function(base){if(!canSeePrice())return [];const o=ld();if(!o)return [];const CM=catMap(),set=CM[base];if(!set)return [];
@@ -4104,7 +4106,7 @@ window.annexTplApply=function(rows,g,o){const f=annexTplFind(g);
  const X=lj(XK),E=(()=>{try{return JSON.parse(localStorage.getItem('standardhub_v22_annex_edit')||'{}')||{}}catch(e){return {}}})(),date=o.date||new Date().toISOString().slice(0,10),mon=Number(o.mon)||3,TS={};
  return rows.map(r=>{const ex=String(r[12]||'').slice(0,10),x=X[r.base]||{};
   const st=/^\d{4}-\d\d-\d\d$/.test(ex)?(ex<date?'폐기 대기':ex<=addM(date,mon)?'관리 임박':'등록 사용'):'';
-  const val={kind:x.kind||'',cref:x.cref||'',test:(r.base in TS?TS[r.base]:(TS[r.base]=testsOf(r.base))),pnum:r.pnum||'',punit:r.punit||'',status:st};
+  const val={kind:x.kind||(b=>b===true?'표준품':b===false?'제공표준품':'')(window.boughtBase?boughtBase(r.base):null)/* V4.34: 직접 적은 값이 없으면 구매 정보로 짐작 */,cref:x.cref||'',test:(r.base in TS?TS[r.base]:(TS[r.base]=testsOf(r.base))),pnum:r.pnum||'',punit:r.punit||'',status:st};
   const nr=cols.map(c=>{if(typeof c.k==='number')return r[c.k];let v=val[c.k];const e=E[(r.key||r[0])+'|'+c.k];const sh=String(v||'').trim()||'N/A';if(e&&String(e.o).replace(/\s+/g,' ').trim()===sh){v=e.v;(r.ed||(r.ed=[])).push(c.k)}return v});
   return Object.assign(nr,{src:cols.map(c=>c.k),key:r.key||r[0],base:r.base,eo:r.eo,ed:r.ed,ec:r.ec,es:r.es,ss:r.ss,qn:r.qn})})};
 /* V4.31: 관리내역 양식은 SOP 서식(S-P-GO011-F1-V04)이라 담당자는 바꾸지 않음 — 의뢰사가 별도 양식을 요청한 경우에만 관리자가 승인·권한 > 관리내역 양식에서 등록(누가·언제 기록). 담당자 입력 창에는 어떤 양식인지만 보임 */
