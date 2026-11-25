@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.34</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.36</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.34 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.36 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2115,7 +2115,7 @@ function annexTable(rows){return `<table class="a">${headHtml()}<tbody>${rows.ma
 const ANX='.apage{page:annex;box-sizing:border-box;width:297mm;height:210mm;padding:7mm 9mm 0;position:relative;overflow:hidden;break-after:page;font-family:Arial,"Malgun Gothic",sans-serif;color:#1a1a2b}.apage.last{break-after:auto}.apage.measure{height:auto;overflow:visible}.ahd{display:flex;align-items:flex-end}.ahd img{height:18px}.ahd .pg{margin-left:auto;font-size:10px}.at{text-align:center;font-size:17px;font-weight:500;margin:0 0 4px}.meta{display:flex;justify-content:flex-end;gap:34px;font-size:11px;margin:0 6px 5px 0}.meta span{min-width:70px}.meta.sg{align-items:flex-end}.meta.sg span{display:inline-flex;align-items:flex-end;white-space:nowrap}.meta .sgs{display:inline-block;height:9mm;margin-left:3px;border-bottom:1px solid #888}.adoc{position:absolute;left:10mm;bottom:6mm;font-size:10px}.aleg{position:absolute;right:10mm;bottom:6mm;font-size:10px;display:flex;align-items:center;gap:4px}.aleg i{display:inline-block;width:14px;height:10px;border:1px solid #444;margin-left:10px}.aleg i.x-soon{background:#ffe08a}.aleg i.x-exp{background:#f8c4c0}.a td.x-soon{background:#ffe08a;color:#1a1a1a;font-weight:700}.a td.x-exp{background:#f8c4c0;color:#a11a12;font-weight:700}.apage.measure .aleg{position:static}.apage.measure .adoc{position:static;margin-top:4px}@page annex{size:A4 landscape;margin:0}';
 /* 별첨 1: 쪽마다 머리(로고·제목·쪽 번호·부서명 줄)·표 제목 줄·문서번호가 나오도록 직접 쪽을 나눔.
    인쇄 화면과 같은 CSS로 숨은 iframe에 그려 각 줄 높이를 재고, 가로 A4 한 쪽에 들어가는 만큼씩 담음 */
-function annexBuild(g,o){const logo=(document.querySelector('img.kptr')||{}).src||'',rows=annexRows(g,o.cust,o.date,o.mon);if(window.annexEditApply)annexEditApply(rows,g);
+function annexBuild(g,o){const logo=(document.querySelector('img.kptr')||{}).src||'',rows=annexRows(g,o.cust,o.date,o.mon).filter(r=>!(window.annexHidden&&annexHidden(r[0])));/* V4.35: 미리보기에서 뺀 행 */if(window.annexEditApply)annexEditApply(rows,g);
  /* V9.8: 유효기한 표시 — 작성일부터 N개월 이내는 노란 칸 (V9.9: 이미 지난 것은 표시 안 함) */
  /* V10.1: 유효기한 색 단계(사람마다 개월 수·색을 정함) — 작성일부터 가장 가까운 단계 색으로 칠함, 지난 것은 색 없음 */
  const tiers=(o.tiers&&o.tiers.length?o.tiers:(Number(o.mon)?[{m:Number(o.mon),c:'#ffe08a'}]:[])).filter(t=>t.m>0&&/^#[0-9a-f]{6}$/i.test(t.c)).sort((a,b)=>a.m-b.m);
@@ -2305,9 +2305,9 @@ window.makeInspection=function(mode){
  const withAnnex=false,target=all[g].target||'',axOn=!!all[g].axOn;/* V4.18: 의뢰사마다 '*별첨 1 표준품 관리내역(이름) (총 N page)' 줄 — 그룹마다 켜고 끔 */
  const rv=n=>(document.querySelector(`input[name="${n}"]:checked`)||{}).value==='1';
  const prevD=window.prevInspD?prevInspD(g,ym):'';/* V4.20: 지난 정기점검일(그룹별) */
- const DL=window.labelDisposed?labelDisposed(g,ym,window.inspFrom?inspFrom(g,ym):prevD,date):[],dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!dset.has(s.code)&&!(window.labelGone&&labelGone(s.code))&&!dispDone(s.code)),nm=nameFn();/* V11.7: 라벨이 모두 폐기된 입고번호(지난달 이전에 폐기 완료)는 빼고, 이번 달 폐기분은 DL로 폐기일과 함께 */
+ const HID=c=>!!(window.annexHidden&&annexHidden(c));/* V4.36: 관리내역에서 뺀 행은 정기점검에서도 뺌 */const DL=(window.labelDisposed?labelDisposed(g,ym,window.inspFrom?inspFrom(g,ym):prevD,date):[]).filter(x=>!HID(x.code)),dset=new Set(DL.map(x=>x.code)),list=listOf(g).filter(s=>!HID(s.code)&&!dset.has(s.code)&&!(window.labelGone&&labelGone(s.code))&&!dispDone(s.code)),nm=nameFn();/* V11.7: 라벨이 모두 폐기된 입고번호(지난달 이전에 폐기 완료)는 빼고, 이번 달 폐기분은 DL로 폐기일과 함께 */
  /* V4.22: '폐기 완료 직접 체크'한 입고번호도 이번 점검 기간에 체크했으면 폐기 목록에 체크한 날로(전에는 그냥 빠짐) — 관리내역과 같게 */
- const inW=window.inInspWin?inInspWin(g,ym,date):(d=>String(d||'').slice(0,7)===ym);{const DD=lj(DK,{});listOf(g).forEach(s=>{const d=DD[s.code];if(d&&!dset.has(s.code)&&!(window.labelGone&&labelGone(s.code))&&inW(d)){const n0=nm(s);DL.push({code:s.code,name:n0==='-'?'':n0,exp:s.exp||'',date:d,expired:!!(s.exp&&s.exp<=d)});dset.add(s.code)}});DL.sort((a,b)=>a.date.localeCompare(b.date)||a.code.localeCompare(b.code))}
+ const inW=window.inInspWin?inInspWin(g,ym,date):(d=>String(d||'').slice(0,7)===ym);{const DD=lj(DK,{});listOf(g).forEach(s=>{const d=DD[s.code];if(d&&!HID(s.code)&&!dset.has(s.code)&&!(window.labelGone&&labelGone(s.code))&&inW(d)){const n0=nm(s);DL.push({code:s.code,name:n0==='-'?'':n0,exp:s.exp||'',date:d,expired:!!(s.exp&&s.exp<=d)});dset.add(s.code)}});DL.sort((a,b)=>a.date.localeCompare(b.date)||a.code.localeCompare(b.code))}
  /* V5.0: 같은 표준품(기본번호·이름·유효기한·뒤 내용이 같음)은 한 줄로 — PB.MEC.003-005~007 */
  const ln=(s,x)=>({code:s.code,name:nm(s)==='-'?'':nm(s),exp:s.exp||'-',tail:x||''});
  const dl=x=>({code:x.code,name:x.name||'',exp:x.exp||'-',tail:' · 폐기 '+dot(x.date)});
@@ -2317,7 +2317,7 @@ window.makeInspection=function(mode){
  const grpL=items=>{const m=new Map();items.forEach(o=>{const k=[masterOf(o.code),o.name,o.exp,o.tail].join('\u0001');if(!m.has(k))m.set(k,{...o,codes:[]});m.get(k).codes.push(o.code)});
   return [...m.values()].map(o=>'- '+esc(codesTxt(o.codes))+(o.name?' : '+esc(o.name):'')+' (EXP. '+esc(o.exp)+')'+o.tail)};
  const blk=(t,arr,f)=>'['+t+']<br>'+(arr.length?grpL(arr.map(f)).join('<br>'):'- N/A'),blk2=(t,items)=>'['+t+']<br>'+(items.length?grpL(items).join('<br>'):'- N/A');
- const NT0=lj(LK,{}),LNx={};[...document.querySelectorAll('#inLotNotes .ln-r')].forEach(r=>{const c=r.dataset.code,n=NT0[c];if(!n)return;r.querySelectorAll('.ln-k:checked').forEach(x=>{const k=x.value,K=masterOf(c)+'\u0001'+n;const m=LNx[k]=LNx[k]||new Map();if(!m.has(K))m.set(K,{n,cs:[]});m.get(K).cs.push(c)})});
+ const NT0=lj(LK,{}),LNx={};[...document.querySelectorAll('#inLotNotes .ln-r')].forEach(r=>{const c=r.dataset.code,n=NT0[c];if(!n||HID(c))return;r.querySelectorAll('.ln-k:checked').forEach(x=>{const k=x.value,K=masterOf(c)+'\u0001'+n;const m=LNx[k]=LNx[k]||new Map();if(!m.has(K))m.set(K,{n,cs:[]});m.get(K).cs.push(c)})});
  const lnx=k=>LNx[k]?'\n'+[...LNx[k].values()].map(o=>codesTxt(o.cs)+' : '+o.n).join('\n'):'';
  const tx=v=>{v=String(v||'').trim();return v?v.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>(/^[-·•]/.test(x)?'':'- ')+esc(x)).join('<br>'):'- N/A'};
  const mon=(m=>Number.isInteger(m)&&m>=1&&m<=24?m:3)(Math.round(Number(val('inMon')))),lim=new Date(date+'T00:00:00');lim.setMonth(lim.getMonth()+mon);const limS=lim.getFullYear()+'-'+String(lim.getMonth()+1).padStart(2,'0')+'-'+String(lim.getDate()).padStart(2,'0');
@@ -2331,18 +2331,19 @@ window.makeInspection=function(mode){
  const pages=withAnnex?AB.pages:0;
  let form=`<div class="fpage"><div class="hd">${logo?`<img src="${logo}" alt="KPTR 한국의약품시험연구원">`:'<b>KPTR 한국의약품시험연구원</b>'}<h1>표준품 정기점검</h1><span class="pg">page 1 of 1</span></div>
  <table class="f"><colgroup><col style="width:17%"><col style="width:16%"><col style="width:13%"><col style="width:19%"><col style="width:13%"><col style="width:22%"></colgroup>
- <tr><th>고객사</th><td style="text-align:center">${esc(cust)}</td><th>점검일</th><td style="text-align:center">${dot(date)}</td><th>점검자</th><td class="big"></td></tr>
- <tr><th>점검대상<br>표준품</th><td colspan="5">${esc(target)}${withAnnex?`<br>&nbsp;&nbsp;*별첨 1 표준품 관리내역(${pages} Page)`:axOn?`<br>*별첨 1 ${esc(window.annexTitleOf?annexTitleOf(g):'표준품 관리내역')} (총 ${AB.pages||1} page)`:''}</td></tr>
+ <tr><th>고객사</th><td style="text-align:center" data-fe="cust">${esc(cust)}</td><th>점검일</th><td style="text-align:center">${dot(date)}</td><th>점검자</th><td class="big"></td></tr>
+ <tr><th>점검대상<br>표준품</th><td colspan="5" data-fe="target">${esc(target)}${withAnnex?`<br>&nbsp;&nbsp;*별첨 1 표준품 관리내역(${pages} Page)`:axOn?`<br>*별첨 1 ${esc(window.annexTitleOf?annexTitleOf(g):'표준품 관리내역')} (총 ${AB.pages||1} page)`:''}</td></tr>
  <tr><th colspan="6" class="sec">점검항목</th></tr>
- <tr><th>유효기한</th><td colspan="5" class="lst" style="height:120px"><div class="cw">${blk('임박',soon,s=>ln(s))}<br><br>${blk('만료',exp,s=>ln(s))}</div></td></tr>
- <tr><th>라벨상태</th><td colspan="5">${st(rv('inLab'),rv('inLabRe'))}</td></tr>
- <tr><th>보관상태<br>(보관위치,<br>밀봉여부 등)</th><td colspan="5">${st(rv('inSto'),rv('inStoRe'))}</td></tr>
- <tr><th>추가 구입<br>(요청)<br>필요 표준품</th><td colspan="5">${tx(val('inBuy')+lnx('buy')+(window.buyx?buyx():''))}</td></tr>
- <tr><th>Re-test 필요<br>표준품</th><td colspan="5">${tx(val('inRetest')+lnx('retest'))}</td></tr>
- <tr><th>폐기 표준품</th><td colspan="5" class="lst" style="height:100px"><div class="cw">${blk2('유효기한 만료',[...exp.map(s=>ln(s,Number(s.qty)===0?' · 재고 0':'')),...DL.filter(x=>x.expired).map(dl)])}<br><br>${blk2('소진',[...empty.filter(s=>!exp.includes(s)).map(s=>ln(s,' · 재고 0')),...DL.filter(x=>!x.expired).map(dl)])}</div></td></tr>
- <tr><th>기타<br>특이사항</th><td colspan="5" class="lst" style="height:120px"><div class="cw">[입고 예정]<br>${tx(val('inPlan')+lnx('plan'))}<br><br>${blk('입고',inM,s=>ln(s,' · 입고 '+dot(iso((detailData[s.id]||{})['입고 일자']))))}<br><br>[기타]<br>${tx(val('inEtc')+lnx('etc'))}</div></td></tr>
+ <tr><th>유효기한</th><td colspan="5" class="lst" style="height:120px" data-fe="exp"><div class="cw">${blk('임박',soon,s=>ln(s))}<br><br>${blk('만료',exp,s=>ln(s))}</div></td></tr>
+ <tr><th>라벨상태</th><td colspan="5" data-fe="lab">${st(rv('inLab'),rv('inLabRe'))}</td></tr>
+ <tr><th>보관상태<br>(보관위치,<br>밀봉여부 등)</th><td colspan="5" data-fe="sto">${st(rv('inSto'),rv('inStoRe'))}</td></tr>
+ <tr><th>추가 구입<br>(요청)<br>필요 표준품</th><td colspan="5" data-fe="buy">${tx(val('inBuy')+lnx('buy')+(window.buyx?buyx():''))}</td></tr>
+ <tr><th>Re-test 필요<br>표준품</th><td colspan="5" data-fe="retest">${tx(val('inRetest')+lnx('retest'))}</td></tr>
+ <tr><th>폐기 표준품</th><td colspan="5" class="lst" style="height:100px" data-fe="disp"><div class="cw">${blk2('유효기한 만료',[...exp.map(s=>ln(s,Number(s.qty)===0?' · 재고 0':'')),...DL.filter(x=>x.expired).map(dl)])}<br><br>${blk2('소진',[...empty.filter(s=>!exp.includes(s)).map(s=>ln(s,' · 재고 0')),...DL.filter(x=>!x.expired).map(dl)])}</div></td></tr>
+ <tr><th>기타<br>특이사항</th><td colspan="5" class="lst" style="height:120px" data-fe="etc"><div class="cw">[입고 예정]<br>${tx(val('inPlan')+lnx('plan'))}<br><br>${blk('입고',inM,s=>ln(s,' · 입고 '+dot(iso((detailData[s.id]||{})['입고 일자']))))}<br><br>[기타]<br>${tx(val('inEtc')+lnx('etc'))}</div></td></tr>
  <tr><th>확인일</th><td colspan="2" class="big" style="text-align:center"></td><th>확인자</th><td colspan="2" class="big"></td></tr></table>
  <div class="doc">S-P-GO011-F4-V03</div></div>`;
+ if(window.formEditApply)form=formEditApply(form,g,ym);/* V4.35: 미리보기에서 고친 칸 */
  form=fitOnePage(form,css0+css);
  window._signCtx.signHtml=css0+css+form.replace('<th>점검자</th><td class="big"></td>','<th>점검자</th><td class="big" style="position:relative"><i data-f="Inspector" style="position:absolute;inset:0"></i></td>').replace('<th>확인일</th><td colspan="2" class="big" style="text-align:center"></td>','<th>확인일</th><td colspan="2" class="big" style="position:relative"><i data-f="ReviewDate" style="position:absolute;inset:0"></i></td>').replace('<th>확인자</th><td colspan="2" class="big"></td>','<th>확인자</th><td colspan="2" class="big" style="position:relative"><i data-f="Reviewer" style="position:absolute;inset:0"></i></td>');
  try{window._signCtx.annexSignHtml=css0+annexBuild(g,{cust,dept,date,mon:monA,tiers:(typeof myTiers==='function'?myTiers():null),stock:(typeof myStock==='function'?myStock():null),sign:true}).html;window._signCtx.annexTitle=docName('관리내역',g,ym)}catch(e){}
@@ -3986,6 +3987,7 @@ function swapIn(force){const l=document.getElementById('printLayer'),o=document.
   const ready=nb>=ob&&l.querySelector('#cgReset')&&nf&&of&&Math.abs(nf.getBoundingClientRect().top-of.getBoundingClientRect().top)<1;
   if(!ready&&(window._swT=(window._swT||0)+1)<100){setTimeout(()=>swapIn(),30);return}}
  window._swT=0;window._pvSilent=false;if(l){l.style.visibility='';const y=window._pvY;if(y!=null){try{l.querySelector('iframe').contentWindow.scrollTo(0,y)}catch(e){}}}if(o)o.remove()}
+window._plCloneCss=cloneCss;window._annexRemake=remakeSilent;
 window.annexColsReset=function(){annexPxSet(null);const f=document.querySelector('#printLayer iframe');try{window._pvScroll=f.contentWindow.scrollY}catch(e){window._pvScroll=0}remakeSilent();alert('칸 너비를 처음(자동)으로 되돌렸습니다.')};
 function attach(tries){const l=document.getElementById('printLayer');if(!l)return;const f=l.querySelector('iframe'),d=f&&f.contentDocument;
  if(!d||!d.querySelector('.apage table.a')){if((tries||0)<30)setTimeout(()=>attach((tries||0)+1),150);return}
@@ -4041,6 +4043,62 @@ function attach(tries){const l=document.getElementById('printLayer');if(!l)retur
    const eb=document.createElement('button');eb.id='cgEditReset';eb.textContent='고친 글자 되돌리기'+(ks.length?' ('+ks.length+')':'');if(!ks.length){eb.disabled=true;eb.title='미리보기에서 고친 글자가 없습니다'}
    eb.onclick=()=>askConfirm({title:'고친 글자 되돌리기',message:'이 관리내역에서 고친 글자 '+ks.length+'칸을 원래(LIMS · 입력 창) 값으로 되돌릴까요?',ok:'되돌리기',onOk:()=>{const M=lj2(EK);ks.forEach(k=>delete M[k]);localStorage.setItem(EK,JSON.stringify(M));try{window._pvScroll=d.defaultView.scrollY}catch(e){}remakeSilent()}});bar.appendChild(eb)}}}
 const P0=window.printDoc;window.printDoc=function(){const r=P0.apply(this,arguments);if(window._pvSilent){const l=document.getElementById('printLayer');if(l)l.style.visibility='hidden'}setTimeout(()=>attach(0),window._pvSilent?0:200);return r};
+})();
+</script><script>/* V4.35: (1) 정기점검 미리보기에서 칸을 눌러 글자 고치기 — 관리내역과 같은 방식(Enter 완료 · Alt+Enter 줄바꿈 · Esc 취소).
+   standardhub_v22_form_edit {'그룹|월|칸':{o:원래 글자,v:고친 글자,by,at}} — 그 그룹·그 달 서류에만, 원래 글자가 그대로일 때만(자료가 바뀌면 새 값).
+   (2) 관리내역 미리보기에서 행 빼기 — 관리번호 칸 왼쪽 × → standardhub_v22_annex_hide {입고번호:{g,by,at}}, [뺀 행 되돌리기]로 다시 넣음. 다음 달에도 빠짐. */
+(function(){
+const FE='standardhub_v22_form_edit',HK='standardhub_v22_annex_hide',lj=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){return {}}};
+const me=()=>{try{return (user()||{}).id||''}catch(e){return ''}};
+const esc2=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const txt=html=>{const t=document.createElement('div');t.innerHTML=String(html||'').replace(/<br\s*\/?>/gi,'\n');return t.textContent.split('\n').map(x=>x.replace(/ /g,' ').replace(/\s+/g,' ').trim()).join('\n').replace(/\n{3,}/g,'\n\n').trim()};
+const nrm=t=>String(t??'').replace(/ /g,' ').split('\n').map(x=>x.replace(/\s+/g,' ').trim()).join('\n').trim();
+const FN={cust:'고객사',target:'점검대상 표준품',exp:'유효기한',lab:'라벨상태',sto:'보관상태',buy:'추가 구입',retest:'Re-test',disp:'폐기 표준품',etc:'기타 특이사항'};
+window.formEditApply=function(form,g,ym){const E=lj(FE),box=document.createElement('div');box.innerHTML=form;
+ box.querySelectorAll('td[data-fe]').forEach(td=>{const host=td.querySelector('.cw')||td,o=txt(host.innerHTML);td.setAttribute('data-fo',o);const e=E[g+'|'+ym+'|'+td.dataset.fe];
+  if(e&&nrm(e.o)===nrm(o)){host.innerHTML=esc2(e.v).replace(/\n/g,'<br>');td.setAttribute('data-fed','1')}});return box.innerHTML};
+window.annexHidden=function(code){return !!lj(HK)[code]};
+function ctx(){return window._signCtx||{}}
+/* 정기점검 다시 그리기 — 보던 미리보기를 둔 채 새로 만들고 다 그려지면 바꿔 끼움(덜그럭거리지 않게) */
+function formRemake(onFail){if(window._plCloneCss)_plCloneCss();const old=document.getElementById('printLayer');let y=0;try{y=old.querySelector('iframe').contentWindow.scrollY}catch(e){}
+ if(old){old.id='printLayerOld';old.querySelectorAll('[id]').forEach(e=>{e.id=e.id+'_old'})}
+ window.__pnOk=1;try{makeInspection('form')}catch(e){console.error(e)}finally{window.__pnOk=0}
+ const l=document.getElementById('printLayer');
+ if(!l){if(old){old.id='printLayer';old.querySelectorAll('[id$="_old"]').forEach(e=>{e.id=e.id.slice(0,-4)})}if(onFail)onFail();return}
+ l.style.visibility='hidden';let n=0;(function wait(){const f=l.querySelector('iframe'),d=f&&f.contentDocument;if((d&&d.querySelector('.fpage td[data-fe]')&&n>3)||n>75){try{f.contentWindow.scrollTo(0,y)}catch(e){}l.style.visibility='';if(old)old.remove();return}n++;setTimeout(wait,40)})()}
+function attachForm(tries){const l=document.getElementById('printLayer');if(!l)return;const f=l.querySelector('iframe'),d=f&&f.contentDocument;
+ if(!d||!d.querySelector('.fpage')){if((tries||0)<30)setTimeout(()=>attachForm((tries||0)+1),150);return}
+ if(d.querySelector('.apage')||d.getElementById('feStyle'))return;const C=ctx(),g=C.g||'',ym=C.ym||'';if(!g||!ym)return;
+ const es=d.createElement('style');es.id='feStyle';es.textContent='@media screen{.fpage td[data-fe] .cw,.fpage td[data-fe]:not(.lst){cursor:text}.fpage td[data-fe]:hover{outline:1px dashed #2f6fd1;outline-offset:-2px}.fpage td[data-fe]:focus-within{outline:2px solid #2f6fd1;outline-offset:-2px;background:#fff}.fpage td[data-fed]{box-shadow:inset 3px 0 0 #f0b429}}';d.head.appendChild(es);
+ d.querySelectorAll('.fpage td[data-fe]').forEach(td=>{const host=td.querySelector('.cw')||td;host.contentEditable='true';host.spellcheck=false;host.style.outline='none';
+  host.addEventListener('focus',()=>{host._s=host.innerText;host._x=0});
+  host.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();if(ev.altKey||ev.shiftKey)d.execCommand('insertLineBreak');else host.blur()}else if(ev.key==='Escape'){ev.preventDefault();host._x=1;host.innerText=host._s;host.blur()}});
+  host.addEventListener('blur',()=>{if(host._x)return;const v=host.innerText.replace(/ /g,' ').split('\n').map(x=>x.replace(/\s+$/,'')).join('\n').replace(/^\n+|\n+$/g,'');if(nrm(v)===nrm(host._s))return;
+   const key=g+'|'+ym+'|'+td.dataset.fe,E=lj(FE),prev=E[key],o=td.dataset.fo||'';if(nrm(v)===nrm(o))delete E[key];else E[key]={o,v,by:me(),at:new Date().toISOString()};localStorage.setItem(FE,JSON.stringify(E));
+   formRemake(()=>{const M=lj(FE);if(prev)M[key]=prev;else delete M[key];localStorage.setItem(FE,JSON.stringify(M));host.innerText=host._s})})});
+ const bar=l.querySelector('.pl-bar')||l.firstElementChild;if(!bar||l.querySelector('#feRow'))return;const row=document.createElement('div');row.id='feRow';row.style.cssText='display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 16px;border-bottom:1px solid #dfe3e9;background:#fafbfc';
+ const E=lj(FE),ks=Object.keys(E).filter(k=>k.startsWith(g+'|'+ym+'|'));
+ row.innerHTML='<span class="muted small" style="white-space:nowrap">칸을 눌러 글자를 고칠 수 있어요</span><span class="ih-q" tabindex="0">?<span class="ih-tip">고객사·점검대상·유효기한·라벨/보관상태·추가 구입·Re-test·폐기 표준품·기타 특이사항 칸을 눌러 고쳐요. Enter 완료 · Alt+Enter 줄바꿈 · Esc 취소. 고친 칸은 왼쪽에 노란 줄이 보이고(인쇄에는 안 나옴), 이 그룹·이 달 서류에만 적용돼요. 자료가 바뀌어 그 칸의 자동 내용이 달라지면 고친 글자 대신 새 내용이 나와요.</span></span>';
+ const eb=document.createElement('button');eb.id='feReset';eb.textContent='고친 글자 되돌리기'+(ks.length?' ('+ks.length+')':'');if(!ks.length){eb.disabled=true;eb.title='고친 칸이 없습니다'}else eb.title=ks.map(k=>FN[k.split('|')[2]]||k).join(', ');
+ eb.onclick=()=>askConfirm({title:'고친 글자 되돌리기',message:'이 정기점검('+g+' · '+ym+')에서 고친 칸 '+ks.length+'개를 자동으로 채운 내용으로 되돌릴까요?',ok:'되돌리기',onOk:()=>{const M=lj(FE);ks.forEach(k=>delete M[k]);localStorage.setItem(FE,JSON.stringify(M));formRemake()}});
+ row.appendChild(eb);bar.after(row)}
+/* 관리내역 행 빼기 */
+function attachDel(tries){const l=document.getElementById('printLayer');if(!l)return;const f=l.querySelector('iframe'),d=f&&f.contentDocument;
+ if(!d||!d.querySelector('.apage table.a')){if((tries||0)<30)setTimeout(()=>attachDel((tries||0)+1),150);return}
+ if(d.getElementById('rxStyle'))return;const g=ctx().g||'';
+ const st=d.createElement('style');st.id='rxStyle';st.textContent='.apage table.a tbody td:first-child{position:relative}.rx{display:none;position:absolute;left:-26px;top:0;bottom:0;width:26px;cursor:pointer}.rx::before{content:"×";position:absolute;left:4px;top:50%;margin-top:-9px;width:18px;height:18px;border-radius:50%;background:#e5484d;color:#fff;font:bold 14px/18px Arial,sans-serif;text-align:center}.rx:hover::before{background:#c4171d}@media screen{.apage table.a tbody tr:hover .rx,.apage table.a tbody tr.rsel .rx{display:block}.apage table.a tbody tr.rsel td{box-shadow:inset 0 0 0 9999px rgba(47,111,209,.07)}}@media print{.rx{display:none!important}}';d.head.appendChild(st);
+ d.querySelectorAll('.apage table.a tbody tr').forEach(tr=>{const code=tr.dataset.r;if(!code)return;const td=tr.cells[0];if(!td)return;const x=d.createElement('i');x.className='rx';x.contentEditable='false';x.title='이 행을 관리내역에서 빼기';
+  x.addEventListener('mousedown',e=>{e.preventDefault();e.stopPropagation()});
+  x.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();askConfirm({title:'행 빼기',message:code+' 행을 관리내역에서 뺄까요?\n\n정기점검 양식에서도 빠지고(유효기한·폐기·입고 목록 등), 다음 달 서류에서도 계속 빠져요. 미리보기 위 [뺀 행 되돌리기]로 다시 넣을 수 있어요.',ok:'빼기',onOk:()=>{const H=lj(HK);H[code]={g,by:me(),at:new Date().toISOString()};localStorage.setItem(HK,JSON.stringify(H));try{window._pvScroll=d.defaultView.scrollY}catch(e){}if(window._annexRemake)_annexRemake()}})});
+  td.appendChild(x)});
+ /* 행을 누르면(칸 선택) 그 행 × 가 계속 보임 — 마우스를 옮기다 사라지지 않게 */
+ d.addEventListener('focusin',e=>{const tr=e.target&&e.target.closest&&e.target.closest('.apage table.a tbody tr');if(!tr)return;d.querySelectorAll('tr.rsel').forEach(x=>{if(x!==tr)x.classList.remove('rsel')});tr.classList.add('rsel')});
+ d.addEventListener('mousedown',e=>{const tr=e.target&&e.target.closest&&e.target.closest('.apage table.a tbody tr');if(tr){d.querySelectorAll('tr.rsel').forEach(x=>{if(x!==tr)x.classList.remove('rsel')});tr.classList.add('rsel')}});
+ (function bar(n){const row=l.querySelector('#cgRow');if(!row){if(n<40)setTimeout(()=>bar(n+1),100);return}if(row.querySelector('#rxReset'))return;const H=lj(HK),ks=Object.keys(H).filter(k=>H[k].g===g);
+  const b=document.createElement('button');b.id='rxReset';b.textContent='뺀 행 되돌리기'+(ks.length?' ('+ks.length+')':'');if(!ks.length){b.disabled=true;b.title='뺀 행이 없습니다 — 행을 누르면 관리번호 왼쪽에 × 가 나와요'}else b.title=ks.join(', ');
+  b.onclick=()=>askConfirm({title:'뺀 행 되돌리기',message:'이 그룹('+g+')에서 뺀 행 '+ks.length+'개를 관리내역에 다시 넣을까요?\n'+ks.join(', '),ok:'다시 넣기',onOk:()=>{const M=lj(HK);ks.forEach(k=>delete M[k]);localStorage.setItem(HK,JSON.stringify(M));try{window._pvScroll=d.defaultView.scrollY}catch(e){}if(window._annexRemake)_annexRemake()}});
+  row.appendChild(b)})(0)}
+const P=window.printDoc;window.printDoc=function(t,b){const r=P.apply(this,arguments);const s=String(b||'');if(/class="apage/.test(s))setTimeout(()=>attachDel(0),window._pvSilent?0:220);else if(/class="fpage/.test(s))setTimeout(()=>attachForm(0),220);return r};
 })();
 </script><script>/* V4.12: 입력 창 · 미리보기의 긴 설명 글을 숨기고 제목 옆 [?]에 넣음(마우스를 올리거나 누르면 보임) — 내용은 그대로 */
 (function(){const st=document.createElement('style');document.addEventListener('click',e=>{const q=e.target&&e.target.closest&&e.target.closest('.ih-q');if(q){e.preventDefault();e.stopPropagation();q.focus()}},true);st.textContent='.ih-hid{display:none!important}.ih-q{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;border:1px solid #b5bcc7;color:#5b6270;background:#fff;font-size:11px;font-weight:500;line-height:1;margin-left:6px;cursor:help;position:relative;vertical-align:middle;flex:0 0 auto}.ih-q:hover,.ih-q:focus{border-color:#2f6fd1;color:#2f6fd1;outline:none}.ih-q .ih-tip{display:none;position:absolute;left:-8px;top:24px;z-index:300;width:min(440px,72vw);background:#20242b;color:#fff;padding:9px 11px;border-radius:8px;font-size:12.5px;line-height:1.55;white-space:normal;font-weight:400;text-align:left;box-shadow:0 6px 18px rgba(0,0,0,.18)}.ih-q:hover .ih-tip,.ih-q:focus .ih-tip{display:block}';document.head.appendChild(st);
