@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.41</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.42</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.41 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.42 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2275,7 +2275,7 @@ window.openInspection=function(mode){
  const annexOnly=mode==='annex',gs=targets();if(!gs.length)return alert('출력할 표준품이 없습니다. 먼저 Excel을 올려 주세요.');
  closeInsp();const rb=(n,v,t,c)=>`<label style="display:inline-flex;align-items:center;gap:6px;margin:0 16px 0 0;white-space:nowrap;font-weight:400"><input type="radio" name="${n}" value="${v}" ${c?'checked':''} style="width:auto;margin:0">${t}</label>`;
  const radio=(n,a,b)=>rb(n,0,a,1)+rb(n,1,b,0);
- const ta=(id,l,ph)=>`<label>${l}<textarea id="${id}" rows="2" placeholder="${ph||'없으면 N/A'}"></textarea></label>`;
+ const ta=(id,l,ph,st)=>`<label${st?' style="'+st+'"':''}>${l}<textarea id="${id}" rows="2" placeholder="${ph||'없으면 N/A'}"></textarea></label>`;
  const ins=annexOnly?' style="display:none"':'';
  const l=document.createElement('div');l.id='inspLayer';l.className='account-overlay';
  l.innerHTML=`<div class="account-dialog" role="dialog" aria-modal="true"><div class="toolbar" style="justify-content:space-between"><h2 style="margin:0">${annexOnly?'표준품 관리내역':'표준품 정기점검 양식'}</h2><div style="display:flex;gap:6px"><button onclick="inspSaveNow()">저장</button><button onclick="closeInspection()">✕ 닫기</button></div></div>
@@ -2289,7 +2289,7 @@ window.openInspection=function(mode){
  </div>
  ${(()=>{/* V4.1: 몇 월 점검인지 — 지난달 점검을 이번 달에 늦게 하는 경우 */const d=new Date(),cy=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');d.setDate(1);d.setMonth(d.getMonth()-1);const py=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const pick=window._inspYm===py?py:cy;window._inspYm='';const r=(v,l)=>`<label style="display:inline-flex;align-items:center;gap:5px;margin:0;font-weight:400;white-space:nowrap"><input type="radio" name="inYm" value="${v}" ${v===pick?'checked':''} onchange="inYmHint()" style="width:auto;margin:0">${l}</label>`;return `<div id="inYmBox" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:2px 0 10px"><b style="font-weight:600">${annexOnly?'작성 월':'점검 월'}</b>${r(cy,Number(cy.slice(5))+'월')}${r(py,Number(py.slice(5))+'월')}<span id="inYmHint" class="muted small"></span></div>`})()}
  <div class="rs-box"${ins}><div class="rs-row"><b>라벨상태</b><span class="rs-g">${radio('inLab','정상','손상')}</span><span class="rs-sep">/</span><span class="muted small rs-l">손상 시 재출력</span><span class="rs-g">${radio('inLabRe','아니오','예')}</span></div><div class="rs-row"><b>보관상태 <span class="muted small" style="font-weight:400">(보관위치, 밀봉여부 등)</span></b><span class="rs-g">${radio('inSto','정상','손상')}</span><span class="rs-sep">/</span><span class="muted small rs-l">손상 시 재출력</span><span class="rs-g">${radio('inStoRe','아니오','예')}</span></div></div>
- <div class="in-grid in-ta"${ins}>${ta('inBuy','추가 구입 (요청) 필요 표준품')}${ta('inRetest','Re-test 필요 표준품')}${ta('inEtc','기타 특이사항')}</div>
+ <div class="in-grid in-ta"${ins}>${ta('inBuy','추가 구입 (요청) 필요 표준품')}${ta('inRetest','Re-test 필요 표준품')}${ta('inEtc','기타 특이사항','','grid-column:1/-1')}</div>
  ${annexOnly?'<div id="inTiers"></div><div id="inProds"></div><div id="inNames"></div><div id="inNotes"></div>':'<div id="inDisp"></div><div id="inLotNotes"></div>'}
   <div class="toolbar" style="margin-top:14px"><button class="primary" onclick="makeInspection('${annexOnly?'annex':'form'}')">${annexOnly?'관리내역 만들기':'양식 만들기'}</button><button onclick="closeInspection()">취소</button><span id="inSaved" class="muted small" style="align-self:center;margin-left:6px" title="적은 내용은 치는 대로 이 계정에 저장됩니다. [닫기]로 나가도 남습니다"></span></div></div>`;
  document.body.appendChild(l);inspFill()};
@@ -2340,7 +2340,7 @@ window.makeInspection=function(mode){
  <tr><th>추가 구입<br>(요청)<br>필요 표준품</th><td colspan="5" data-fe="buy">${tx(val('inBuy')+lnx('buy')+(window.buyx?buyx():''))}</td></tr>
  <tr><th>Re-test 필요<br>표준품</th><td colspan="5" data-fe="retest">${tx(val('inRetest')+lnx('retest'))}</td></tr>
  <tr><th>폐기 표준품</th><td colspan="5" class="lst" style="height:100px" data-fe="disp"><div class="cw">${blk2('유효기한 만료',[...exp.map(s=>ln(s,Number(s.qty)===0?' · 재고 0':'')),...DL.filter(x=>x.expired).map(dl)])}<br><br>${blk2('소진',[...empty.filter(s=>!exp.includes(s)).map(s=>ln(s,' · 재고 0')),...DL.filter(x=>!x.expired).map(dl)])}</div></td></tr>
- <tr><th>기타<br>특이사항</th><td colspan="5" class="lst" style="height:120px" data-fe="etc"><div class="cw">${blk('입고',inM,s=>ln(s,' · 입고 '+dot(iso((detailData[s.id]||{})['입고 일자']))))}<br><br>[기타]<br>${tx(val('inEtc'))}</div></td></tr>
+ <tr><th>기타<br>특이사항</th><td colspan="5" class="lst" style="height:120px" data-fe="etc"><div class="cw">${blk('입고',inM,s=>ln(s,' · 입고 '+dot(iso((detailData[s.id]||{})['입고 일자']))))}${String(val('inEtc')||'').trim()?'<br><br>'+esc(String(val('inEtc')).trim()).replace(/\n/g,'<br>'):''}</div></td></tr>
  <tr><th>확인일</th><td colspan="2" class="big" style="text-align:center"></td><th>확인자</th><td colspan="2" class="big"></td></tr></table>
  <div class="doc">S-P-GO011-F4-V03</div></div>`;
  if(window.formEditApply)form=formEditApply(form,g,ym);/* V4.35: 미리보기에서 고친 칸 */
