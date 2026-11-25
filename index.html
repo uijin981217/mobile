@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.40</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.41</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.40 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.41 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2943,11 +2943,42 @@ function ovPanel(){const el=document.getElementById('overview');if(!el)return;co
 window.adminSetMgr=function(id,on){const u=users.find(x=>String(x.id)===String(id));if(!u)return;if(on&&!u.dept)return alert(u.name+' 님의 소속 실이 정해져 있지 않습니다. 먼저 이 줄의 \'소속 실\'을 골라 주세요.');
  const M=lj(MK,{});if(on)M[String(id)]=1;else delete M[String(id)];try{localStorage.setItem(MK,JSON.stringify(M))}catch(e){return alert('저장하지 못했습니다.')}render();
  alert(on?u.name+' 님을 '+u.dept+' 책임매니저로 지정했습니다 — 우리 실 표준품·서류 진행·서명 현황을 보기만 합니다(확인 서명은 실장님만).':u.name+' 님의 책임매니저 지정을 해제했습니다.')};
-function adminRows(){const root=document.getElementById('admin');if(!root||!(user()||{}).admin)return;const tbl=[...root.querySelectorAll('table')].find(t=>/그룹 배정/.test(t.tHead?.textContent||'')&&/단가 보기/.test(t.tHead?.textContent||''));if(!tbl)return;const M=lj(MK,{});
- [...tbl.tBodies[0].rows].forEach(tr=>{if(tr.dataset.mgrfix||tr.cells.length<8)return;tr.dataset.mgrfix='1';const m=(tr.cells[0].textContent.match(/\(([^()]+)\)\s*$/)||[])[1];const u=m&&users.find(x=>String(x.id)===m);if(!u||u.admin||u.status!=='approved')return;
-  if(window.leadDepts&&leadDepts(u).length)return;const on=!!M[String(u.id)],last=tr.cells[tr.cells.length-1];
-  if(on&&u.dept){tr.cells[2].insertAdjacentHTML('beforeend',' <span class="tag">책임매니저</span>');tr.cells[4].insertAdjacentHTML('beforeend','<div class="muted small">+ '+H(u.dept)+' 보기 전용</div>')}
-  const b=document.createElement('button');b.textContent=on?'책임매니저 해제':'책임매니저 지정';b.title='우리 실 담당자 그룹을 보기만(확인 서명 권한 없음)';b.onclick=()=>adminSetMgr(u.id,!on);const host=last.querySelector('div,.toolbar')||last;host.appendChild(b);if(last.style)last.style.whiteSpace='nowrap'})}
+/* V4.41: 계정별 권한 현황 — 버튼 여러 개 대신 '역할' 선택 상자(담당자·책임매니저·실장·관리자) 하나 + [⋯] 메뉴(비밀번호 변경·삭제) */
+const LK2='standardhub_v22_dept_leads',SV=()=>!!window.__SH_SERVER;
+const roleOf=u=>u.admin?'admin':(window.leadDepts&&leadDepts(u).length)?'lead':lj(MK,{})[String(u.id)]?'mgr':'staff';
+const RN={staff:'담당자',mgr:'책임매니저',lead:'실장',admin:'관리자'};
+window.adminRoleSet=function(id,to,sel){const u=users.find(x=>String(x.id)===String(id));if(!u)return;const from=roleOf(u);if(from===to)return;
+ const back=()=>{if(sel)sel.value=from};if(user().id===id){back();return alert('본인 계정의 역할은 직접 바꿀 수 없습니다.')}
+ if((to==='lead'||to==='mgr')&&!u.dept){back();return alert(u.name+' 님의 소속 실이 정해져 있지 않습니다. 먼저 이 줄의 \'소속 실\'을 골라 주세요.')}
+ const L=lj(LK2,{}),cur=to==='lead'?L[u.dept]:null,cu=cur&&String(cur)!==String(id)&&users.find(x=>String(x.id)===String(cur));
+ const msg={staff:u.name+' 님을 담당자로 바꿉니다. 맡은 그룹만 다루고'+((u.groups||[]).length?'':', 담당 그룹이 없으면 소속 실을 보기만 해요')+'.',
+  mgr:u.name+' 님을 '+u.dept+' 책임매니저로 지정합니다. 본인 담당 업무는 그대로 하고, '+u.dept+' 표준품·서류 진행·서명 현황을 보기만 해요(확인 서명은 실장님만).',
+  lead:u.name+' 님을 '+u.dept+' 실장(확인자)으로 지정합니다. '+u.dept+' 전체를 보기 전용으로 보고 서명 요청을 받아요.'+(cu?'\n\n지금 '+u.dept+' 실장은 '+cu.name+' ('+cu.id+') 님이에요 — '+cu.name+' 님은 담당자로 돌아갑니다(실마다 한 명).':''),
+  admin:u.name+' 님을 관리자로 지정합니다. 모든 표준품을 보고 계정 승인·권한 배정·삭제를 할 수 있어요.'}[to];
+ askConfirm({title:RN[from]+' → '+RN[to],message:msg,ok:RN[to]+'(으)로 변경',cancel:'취소',onNo:back,onOk:()=>{
+  Object.keys(L).forEach(d=>{if(String(L[d])===String(id))delete L[d]});if(to==='lead')L[u.dept]=String(id);
+  const M=lj(MK,{});delete M[String(id)];if(to==='mgr')M[String(id)]=1;
+  if(to==='admin'){u.admin=true;u.status='approved'}else delete u.admin;
+  try{localStorage.setItem(LK2,JSON.stringify(L));localStorage.setItem(MK,JSON.stringify(M))}catch(e){return alert('저장하지 못했습니다.')}try{saveDemoAccounts()}catch(e){}render();alert(u.name+' 님: '+RN[to])}});
+ setTimeout(()=>{const n=document.getElementById('askNo')||[...document.querySelectorAll('#askLayer button')].find(x=>/취소/.test(x.textContent));if(n&&!n._rb){n._rb=1;n.addEventListener('click',back)}},0)};
+window.acctMenu=function(btn,id){document.querySelectorAll('.acct-menu').forEach(m=>m.remove());const m=document.createElement('div');m.className='acct-menu';
+ m.innerHTML='<button type="button" data-a="pw">비밀번호 변경</button><button type="button" data-a="del" class="danger-outline">계정 삭제</button>';
+ const r=btn.getBoundingClientRect();m.style.cssText='position:fixed;z-index:250;top:'+(r.bottom+4)+'px;left:'+Math.max(8,r.right-150)+'px;width:150px;background:#fff;border:1px solid #dfe3e9;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:6px;display:flex;flex-direction:column;gap:4px';
+ m.querySelector('[data-a=pw]').onclick=()=>{m.remove();adminResetPw(id)};m.querySelector('[data-a=del]').onclick=()=>{m.remove();adminDeleteUser(id)};document.body.appendChild(m);
+ setTimeout(()=>document.addEventListener('click',function c(e){if(!m.contains(e.target)){m.remove();document.removeEventListener('click',c,true)}},true),0)};
+function adminRows(){const root=document.getElementById('admin');if(!root||!(user()||{}).admin)return;const tbl=[...root.querySelectorAll('table')].find(t=>/그룹 배정/.test(t.tHead?.textContent||'')&&/단가 보기/.test(t.tHead?.textContent||''));if(!tbl)return;
+ if(!document.getElementById('acctTblCss')){const c=document.createElement('style');c.id='acctTblCss';c.textContent='#admin .acct-role{margin:0;min-width:118px;height:34px}#admin .acct-more{min-width:38px;height:34px;padding:0 10px;font-weight:700;letter-spacing:1px}.acct-menu button{text-align:left;height:34px}#leadNote{display:none}';document.head.appendChild(c)}
+ const hd=tbl.tHead.rows[0];if(hd.cells[2]&&hd.cells[2].textContent!=='역할')hd.cells[2].textContent='역할';
+ [...tbl.tBodies[0].rows].forEach(tr=>{if(tr.dataset.rolefix||tr.cells.length<8)return;tr.dataset.rolefix='1';const m=(tr.cells[0].textContent.match(/\(([^()]+)\)\s*$/)||[])[1];const u=m&&users.find(x=>String(x.id)===m);if(!u)return;
+  const last=tr.cells[tr.cells.length-1],host=last.querySelector('div,.toolbar')||last;
+  /* 역할 바꾸는 버튼들은 빼고(선택 상자로), 비밀번호·삭제는 [⋯]로 — '다시 승인'만 남김 */[...host.querySelectorAll('button')].forEach(b=>{if(!/다시 승인/.test(b.textContent))b.remove()});
+  const mb=document.createElement('button');mb.type='button';mb.className='acct-more';mb.textContent='⋯';mb.title='비밀번호 변경 · 계정 삭제';mb.onclick=e=>{e.stopPropagation();acctMenu(mb,u.id)};host.appendChild(mb);host.style.flexWrap='nowrap';
+  if(u.status!=='approved')return;const r=roleOf(u),noG=!(u.groups||[]).length&&!(u.items||[]).length;
+  const opts=[['staff',noG?'보기 전용':'담당자'],['mgr','책임매니저'],...(SV()||r==='lead'?[['lead','실장']]:[]),['admin','관리자']];
+  tr.cells[2].innerHTML='<select class="acct-role" title="역할을 바꾸면 확인창이 떠요">'+opts.map(([v,t])=>`<option value="${v}"${v===r?' selected':''}>${t}</option>`).join('')+'</select>';
+  const sel=tr.cells[2].querySelector('select');sel.onchange=()=>adminRoleSet(u.id,sel.value,sel);
+  if(r==='mgr'&&u.dept&&!/보기 전용/.test(tr.cells[4].textContent))tr.cells[4].insertAdjacentHTML('beforeend','<div class="muted small">+ '+H(u.dept)+' 보기 전용</div>')});
+ const nt=[...root.querySelectorAll('p.muted')].find(p=>/관리자로 지정하면 모든 표준품을/.test(p.textContent));if(nt&&!nt.dataset.r){nt.dataset.r=1;nt.textContent="역할: 담당자(맡은 그룹) · 책임매니저(본인 업무 + 소속 실 보기) · 실장(소속 실 보기 + 확인 서명, 실마다 한 명) · 관리자(모든 표준품·계정 관리). 담당 그룹이 없는 담당자는 '보기 전용'(소속 실 보기)으로 표시돼요. 역할을 바꾸면 확인창이 떠요. '단가 보기'를 허용하면 그 담당자도 구매 단가를 보고 구매 정보를 올릴 수 있어요. 비밀번호 변경·계정 삭제는 [⋯]."}}
 const R=window.render;window.render=function(){R();try{const a=typeof active!=='undefined'?active:'';if(a==='overview')ovPanel();if(a==='admin')adminRows();const u=user(),d=mgrDept(u),rt=document.getElementById('roleTag');if(d&&rt)rt.textContent=(isViewer(u)?'보기 전용 · ':'책임매니저 · ')+d}catch(e){console.error(e)}};
 /* 보기 전용: Excel 업로드·재고 알림 기준·확인 항목 탭 없음 */const VT0=window.visibleTabs;visibleTabs=window.visibleTabs=function(u){const t=VT0.apply(this,arguments);try{if(isViewer(u||user()))return t.filter(x=>!/^(upload|alerts|dashboard)$/.test(x))}catch(e){}return t};
 })();
