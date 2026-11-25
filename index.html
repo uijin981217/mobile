@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.36</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.40</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.36 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.40 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -702,7 +702,7 @@ function submitSignup(){
  if(users.some(u=>u.id.toLowerCase()===id.toLowerCase()))return signupError('이미 사용 중인 아이디입니다.');
  if(password.length<8)return signupError('비밀번호는 8자 이상으로 입력해 주세요.');
  if(password!==confirmPass)return signupError('비밀번호 확인이 일치하지 않습니다.');
- if(!chosen.length&&!newGroupRequest&&!window._sgNoGroupOk){return askConfirm({title:'담당 그룹 없이 가입',message:'담당 표준품 그룹을 고르지 않았습니다.\n실장님처럼 확인·서명만 하시는 분은 그대로 가입하시면 됩니다(관리자가 실장으로 지정하면 우리 실 전체를 봅니다).\n표준품을 맡으셨다면 [취소]를 누르고 그룹을 골라 주세요.',ok:'그룹 없이 가입',onOk:function(){window._sgNoGroupOk=true;try{submitSignup()}finally{window._sgNoGroupOk=false}}})}
+ if(!chosen.length&&!newGroupRequest&&!window._sgNoGroupOk){return askConfirm({title:'보기 전용으로 가입',message:'담당 표준품 그룹을 고르지 않았습니다.\n승인되면 우리 실(소속 실) 표준품 목록·사용 추이·서류 진행을 보기만 할 수 있어요. 나중에 담당이 생기면 내 계정에서 [담당 그룹 추가 요청]을 누르면 됩니다.\n실장님은 이렇게 가입하신 뒤 관리자가 [실장으로 지정]합니다.\n\n표준품을 맡으셨다면 [취소]를 누르고 그룹을 골라 주세요.',ok:'보기 전용으로 가입',onOk:function(){window._sgNoGroupOk=true;try{submitSignup()}finally{window._sgNoGroupOk=false}}})}
  // 테스트용 즉시 승인. 운영 서버에서는 관리자 승인 및 권한 검증 필수.
  users.push({id,name,dept,password,status:'pending',groups:[],items:[],requested:[...chosen,...(newGroupRequest?['추가 요청: '+newGroupRequest]:[])].join(', '),requestedGroups:chosen,requestedNewGroup:newGroupRequest,demoCreated:true});saveDemoAccounts();
  const sel=document.getElementById('who');sel.add(new Option(name+' (승인 대기)',id));sel.value=id;closeAccountDialog();active='signup';render();
@@ -2174,9 +2174,9 @@ function dispBox(){const box=document.getElementById('inDisp');if(!box)return;co
  box.innerHTML=`<details class="dp-box"${open?' open':''}><summary><b>폐기 대상 확인</b> <span class="muted small">만료 · 재고 0 입고 ${ls.length}개${n?` · <b style="color:#17703c">폐기 완료 체크 ${n}개</b>`:''} — 이미 폐기한 것은 체크하면 정기점검 폐기 목록과 관리내역에서 빠집니다</span></summary><div class="dp-list">${ls.map(s=>{const why=[s.exp&&s.exp<d0?'만료':'',Number(s.qty)===0?'재고 0':''].filter(Boolean).join(' · ');return `<label class="dp-r"><input type="checkbox" ${D[s.code]?'checked':''} onchange="dispSet('${esc(s.code)}',this.checked)"><span class="dp-c">${esc(s.code)}</span><span class="dp-e">EXP. ${esc(s.exp||'-')}</span><span class="dp-w">${why}</span>${D[s.code]?`<span class="dp-d">폐기 완료 체크 ${esc(dot(D[s.code]))}</span>`:''}</label>`}).join('')}</div></details>`}
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='inDate'&&document.getElementById('inDisp'))setTimeout(dispBox,0)});
 /* V13.2: 정기점검 입력 창 '관리내역 비고' — 관리내역 입력 창에서 적은 입고번호별 비고를 보여 주고, 체크한 것을 양식의 해당 칸에 넣음 */
-const LNS=[['buy','추가 구입'],['retest','Re-test'],['plan','입고 예정'],['etc','기타']];
+const LNS=[['buy','추가 구입'],['retest','Re-test']];/* V4.37: 입고 예정·기타 칩 뺌 — 기타 특이사항은 담당자가 직접 적음 */
 function lnSec(t){return /re-?\s*test|재시험|리테스트/i.test(t)?'retest':/구입|구매|주문|발주/.test(t)?'buy':/입고/.test(t)?'plan':'etc'}
-function lnSecs(t){const o=[];if(/re-?\s*test|재시험|리테스트/i.test(t))o.push('retest');if(/구입|구매|주문|발주/.test(t))o.push('buy');if(/입고/.test(t))o.push('plan');return o.length?o:['etc']}
+function lnSecs(t){const o=[];if(/re-?\s*test|재시험|리테스트/i.test(t))o.push('retest');if(/구입|구매|주문|발주/.test(t))o.push('buy');return o}
 function lnSum(){const box=document.getElementById('inLotNotes');if(!box)return;const rs=[...box.querySelectorAll('.ln-r')],n=rs.filter(r=>r.querySelector('.ln-k:checked')).length,e=box.querySelector('.ln-cnt');if(e)e.textContent='비고 '+rs.length+'개 · 양식에 넣을 것 '+n+'개'}
 window.lnSum=lnSum;
 function lnBox(){const box=document.getElementById('inLotNotes');if(!box)return;const g=val('inG'),NT=lj(LK,{});
@@ -2289,7 +2289,7 @@ window.openInspection=function(mode){
  </div>
  ${(()=>{/* V4.1: 몇 월 점검인지 — 지난달 점검을 이번 달에 늦게 하는 경우 */const d=new Date(),cy=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');d.setDate(1);d.setMonth(d.getMonth()-1);const py=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const pick=window._inspYm===py?py:cy;window._inspYm='';const r=(v,l)=>`<label style="display:inline-flex;align-items:center;gap:5px;margin:0;font-weight:400;white-space:nowrap"><input type="radio" name="inYm" value="${v}" ${v===pick?'checked':''} onchange="inYmHint()" style="width:auto;margin:0">${l}</label>`;return `<div id="inYmBox" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:2px 0 10px"><b style="font-weight:600">${annexOnly?'작성 월':'점검 월'}</b>${r(cy,Number(cy.slice(5))+'월')}${r(py,Number(py.slice(5))+'월')}<span id="inYmHint" class="muted small"></span></div>`})()}
  <div class="rs-box"${ins}><div class="rs-row"><b>라벨상태</b><span class="rs-g">${radio('inLab','정상','손상')}</span><span class="rs-sep">/</span><span class="muted small rs-l">손상 시 재출력</span><span class="rs-g">${radio('inLabRe','아니오','예')}</span></div><div class="rs-row"><b>보관상태 <span class="muted small" style="font-weight:400">(보관위치, 밀봉여부 등)</span></b><span class="rs-g">${radio('inSto','정상','손상')}</span><span class="rs-sep">/</span><span class="muted small rs-l">손상 시 재출력</span><span class="rs-g">${radio('inStoRe','아니오','예')}</span></div></div>
- <div class="in-grid in-ta"${ins}>${ta('inBuy','추가 구입 (요청) 필요 표준품')}${ta('inRetest','Re-test 필요 표준품')}${ta('inPlan','기타 · 입고 예정')}${ta('inEtc','기타 · 기타')}</div>
+ <div class="in-grid in-ta"${ins}>${ta('inBuy','추가 구입 (요청) 필요 표준품')}${ta('inRetest','Re-test 필요 표준품')}${ta('inEtc','기타 특이사항')}</div>
  ${annexOnly?'<div id="inTiers"></div><div id="inProds"></div><div id="inNames"></div><div id="inNotes"></div>':'<div id="inDisp"></div><div id="inLotNotes"></div>'}
   <div class="toolbar" style="margin-top:14px"><button class="primary" onclick="makeInspection('${annexOnly?'annex':'form'}')">${annexOnly?'관리내역 만들기':'양식 만들기'}</button><button onclick="closeInspection()">취소</button><span id="inSaved" class="muted small" style="align-self:center;margin-left:6px" title="적은 내용은 치는 대로 이 계정에 저장됩니다. [닫기]로 나가도 남습니다"></span></div></div>`;
  document.body.appendChild(l);inspFill()};
@@ -2340,7 +2340,7 @@ window.makeInspection=function(mode){
  <tr><th>추가 구입<br>(요청)<br>필요 표준품</th><td colspan="5" data-fe="buy">${tx(val('inBuy')+lnx('buy')+(window.buyx?buyx():''))}</td></tr>
  <tr><th>Re-test 필요<br>표준품</th><td colspan="5" data-fe="retest">${tx(val('inRetest')+lnx('retest'))}</td></tr>
  <tr><th>폐기 표준품</th><td colspan="5" class="lst" style="height:100px" data-fe="disp"><div class="cw">${blk2('유효기한 만료',[...exp.map(s=>ln(s,Number(s.qty)===0?' · 재고 0':'')),...DL.filter(x=>x.expired).map(dl)])}<br><br>${blk2('소진',[...empty.filter(s=>!exp.includes(s)).map(s=>ln(s,' · 재고 0')),...DL.filter(x=>!x.expired).map(dl)])}</div></td></tr>
- <tr><th>기타<br>특이사항</th><td colspan="5" class="lst" style="height:120px" data-fe="etc"><div class="cw">[입고 예정]<br>${tx(val('inPlan')+lnx('plan'))}<br><br>${blk('입고',inM,s=>ln(s,' · 입고 '+dot(iso((detailData[s.id]||{})['입고 일자']))))}<br><br>[기타]<br>${tx(val('inEtc')+lnx('etc'))}</div></td></tr>
+ <tr><th>기타<br>특이사항</th><td colspan="5" class="lst" style="height:120px" data-fe="etc"><div class="cw">${blk('입고',inM,s=>ln(s,' · 입고 '+dot(iso((detailData[s.id]||{})['입고 일자']))))}<br><br>[기타]<br>${tx(val('inEtc'))}</div></td></tr>
  <tr><th>확인일</th><td colspan="2" class="big" style="text-align:center"></td><th>확인자</th><td colspan="2" class="big"></td></tr></table>
  <div class="doc">S-P-GO011-F4-V03</div></div>`;
  if(window.formEditApply)form=formEditApply(form,g,ym);/* V4.35: 미리보기에서 고친 칸 */
@@ -2809,7 +2809,7 @@ const deptOf=u=>u&&u.dept||'';
 const KIND={form:'정기점검',annex:'관리내역',both:'정기점검+관리내역'};
 const fmt=t=>{if(!t)return '';const d=new Date(t);const p=n=>String(n).padStart(2,'0');return (d.getMonth()+1)+'.'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())};
 const short=p=>{const a=String(p||'').split('\\').filter(Boolean);return a.length>4?'\\\\'+a[0]+'\\…\\'+a.slice(-3).join('\\'):p};
-function mine(){const id=myId(),u=me(),all=reqs();if(u&&u.admin)return all;return all.filter(r=>r.by===id||r.to===id)}
+function mine(){const id=myId(),u=me(),all=reqs();if(u&&u.admin)return all;const md=window.mgrDept?mgrDept(u):'';/* V4.39: 책임매니저는 우리 실 요청도 봄 */return all.filter(r=>r.by===id||r.to===id||(md&&(r.dept===md||deptOf(users.find(x=>String(x.id)===String(r.by)))===md)))}
 function todo(){const id=myId();return reqs().filter(r=>r.status==='requested'&&r.to===id)}
 window.signReqs=reqs;
 
@@ -2919,6 +2919,38 @@ window.render=function(){R6();if(!SV()||active!=='admin'||!(user()||{}).admin)re
  if(!root.querySelector('#leadNote')){const n=document.createElement('p');n.id='leadNote';n.className='muted small';n.textContent='[실장으로 지정]: 그 계정의 소속 실 실장(확인자)이 됩니다(실마다 한 명). 실장님은 우리 실 담당자들이 맡은 그룹 전체를 보기 전용으로 보고, 서명 요청을 확인합니다.';const w=tbl.closest('.tablewrap');if(w)w.before(n)}};
 })();
 
+/* V4.39: 책임매니저 — 관리자가 계정별 권한 현황에서 [책임매니저 지정](standardhub_v22_dept_mgrs {아이디:1}, 실마다 여러 명). 본인 담당 그룹 일은 그대로 하고,
+   우리 실(소속 실) 담당자들이 맡은 그룹은 보기만: 표준품 목록·사용 추이에 보임, 현황 요약에 '우리 실 서류 진행'(상태만), 대시보드 '서명 현황'에 우리 실 요청(경로 복사만 — [확인 서명 완료]는 실장님만) */
+(function(){
+const MK='standardhub_v22_dept_mgrs',lj=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
+const H=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+window.mgrDept=function(u){try{u=u||user()}catch(e){return ''}if(!u||u.admin||u.status!=='approved'||!u.dept)return '';if(window.leadDepts&&leadDepts(u).length)return '';return lj(MK,{})[String(u.id)]?u.dept:''};
+const deptGs=(d,me)=>{const s=new Set();users.forEach(x=>{if(!x.admin&&x.status==='approved'&&x.dept===d&&String(x.id)!==String(me))(x.groups||[]).forEach(g=>s.add(g))});return [...s].sort((a,b)=>a.localeCompare(b))};
+/* V4.40: 보기 전용 — 승인됐고 담당 그룹·개별 품목이 없는 계정(실장 아님)은 소속 실 표준품을 보기만 */
+window.isViewer=function(u){try{u=u||user()}catch(e){return false}if(!u||u.admin||u.status!=='approved'||!u.dept)return false;if(window.leadDepts&&leadDepts(u).length)return false;const r=users.find(x=>String(x.id)===String(u.id))||u;return !(r.groups||[]).length&&!(r.items||[]).length};
+const viewDept=u=>{try{u=u||user()}catch(e){return ''}return mgrDept(u)||(isViewer(u)?u.dept:'')};window.viewDept=viewDept;
+window.mgrGroups=function(u){const d=viewDept(u);if(!d)return [];const mine=new Set((u||user()).groups||[]);return deptGs(d,(u||user()).id).filter(g=>!mine.has(g))};
+/* 보기만: 표준품 목록·사용 추이 */
+const _ac=window.accessible;window.accessible=function(s,u){const r=_ac.apply(this,arguments);if(r)return r;try{const uu=u||user(),a=typeof active!=='undefined'?active:'';if(!/^(inventory|usage)$/.test(a))return false;const gs=mgrGroups(uu);if(!gs.length)return false;return gs.includes(s.group)||(window.subsOf&&subsOf(s).some(g=>gs.includes(g)))}catch(e){}return false};
+/* 현황 요약: 우리 실 서류 진행(상태만) */
+function ovPanel(){const el=document.getElementById('overview');if(!el)return;const old=el.querySelector('#mgrDocs');if(old)old.remove();const u=user(),d=viewDept(u),vw=isViewer(u);if(vw){const dc=el.querySelector('#docCard');if(dc)dc.remove()}if(!d||!window._docSt)return;const gs=mgrGroups(u);if(!gs.length)return;
+ const dt=new Date(),ym=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0');const own=g=>users.filter(x=>x.status==='approved'&&!x.admin&&x.dept===d&&(x.groups||[]).includes(g)).map(x=>x.name).join(', ');
+ const rows=gs.map(g=>{const a=_docSt(g,'annex',ym),f=_docSt(g,'form',ym);return `<tr><td><b>${H(g)}</b></td><td class="muted small">${H(own(g))}</td><td>${_docChip(a.s)}</td><td>${_docChip(f.s)}</td></tr>`}).join('');
+ const box=document.createElement('details');box.className='panel ov-fold';box.id='mgrDocs';box.open=vw||!!window._mgrOpen;box.ontoggle=()=>{window._mgrOpen=box.open};
+ box.innerHTML=`<summary><h3 style="display:inline">우리 실 서류 진행 <span class="muted small" style="font-weight:400">${H(d)} · ${Number(ym.slice(5))}월 · ${vw?'그룹':'다른 담당자 그룹'} ${gs.length}개 (보기만)</span></h3></summary><div class="tablewrap" style="margin-top:8px"><table><thead><tr><th>그룹</th><th>담당자</th><th>관리내역</th><th>정기점검</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+ const dc=el.querySelector('#docCard');if(dc)dc.after(box);else el.appendChild(box)}
+/* 관리자: 계정별 권한 현황에 [책임매니저 지정]/[해제] */
+window.adminSetMgr=function(id,on){const u=users.find(x=>String(x.id)===String(id));if(!u)return;if(on&&!u.dept)return alert(u.name+' 님의 소속 실이 정해져 있지 않습니다. 먼저 이 줄의 \'소속 실\'을 골라 주세요.');
+ const M=lj(MK,{});if(on)M[String(id)]=1;else delete M[String(id)];try{localStorage.setItem(MK,JSON.stringify(M))}catch(e){return alert('저장하지 못했습니다.')}render();
+ alert(on?u.name+' 님을 '+u.dept+' 책임매니저로 지정했습니다 — 우리 실 표준품·서류 진행·서명 현황을 보기만 합니다(확인 서명은 실장님만).':u.name+' 님의 책임매니저 지정을 해제했습니다.')};
+function adminRows(){const root=document.getElementById('admin');if(!root||!(user()||{}).admin)return;const tbl=[...root.querySelectorAll('table')].find(t=>/그룹 배정/.test(t.tHead?.textContent||'')&&/단가 보기/.test(t.tHead?.textContent||''));if(!tbl)return;const M=lj(MK,{});
+ [...tbl.tBodies[0].rows].forEach(tr=>{if(tr.dataset.mgrfix||tr.cells.length<8)return;tr.dataset.mgrfix='1';const m=(tr.cells[0].textContent.match(/\(([^()]+)\)\s*$/)||[])[1];const u=m&&users.find(x=>String(x.id)===m);if(!u||u.admin||u.status!=='approved')return;
+  if(window.leadDepts&&leadDepts(u).length)return;const on=!!M[String(u.id)],last=tr.cells[tr.cells.length-1];
+  if(on&&u.dept){tr.cells[2].insertAdjacentHTML('beforeend',' <span class="tag">책임매니저</span>');tr.cells[4].insertAdjacentHTML('beforeend','<div class="muted small">+ '+H(u.dept)+' 보기 전용</div>')}
+  const b=document.createElement('button');b.textContent=on?'책임매니저 해제':'책임매니저 지정';b.title='우리 실 담당자 그룹을 보기만(확인 서명 권한 없음)';b.onclick=()=>adminSetMgr(u.id,!on);const host=last.querySelector('div,.toolbar')||last;host.appendChild(b);if(last.style)last.style.whiteSpace='nowrap'})}
+const R=window.render;window.render=function(){R();try{const a=typeof active!=='undefined'?active:'';if(a==='overview')ovPanel();if(a==='admin')adminRows();const u=user(),d=mgrDept(u),rt=document.getElementById('roleTag');if(d&&rt)rt.textContent=(isViewer(u)?'보기 전용 · ':'책임매니저 · ')+d}catch(e){console.error(e)}};
+/* 보기 전용: Excel 업로드·재고 알림 기준·확인 항목 탭 없음 */const VT0=window.visibleTabs;visibleTabs=window.visibleTabs=function(u){const t=VT0.apply(this,arguments);try{if(isViewer(u||user()))return t.filter(x=>!/^(upload|alerts|dashboard)$/.test(x))}catch(e){}return t};
+})();
 /* V10.6: 날짜 칸 — 사람마다 치는 방법이 달라도 알아듣게(20261130 · 2026-11-30 · 2026.11.30 · 26.11.30 · 2026/11/30 · 2026년 11월 30일 · 11/30 · 2026-11). 사이트의 모든 날짜 칸을 글자 칸 + 달력 버튼으로 바꿈 */
 (function(){
 const p2=n=>String(n).padStart(2,'0');
@@ -3427,7 +3459,7 @@ function rows(){const u=user();let L=[];try{L=activeMine()}catch(e){}const st=s=
   const used=Object.keys(mk).some(k=>k.split('|')[1]===py)||(SV&&window.signReqs&&signReqs().some(r=>r.ym===py));if(used)mRow(py,true);mRow(ym,false)}
  const logs=[...lj('standardhub_v22_upload_log',[]),...Object.values(lj('standardhub_v22_upload_undo',{}))].filter(x=>x&&x.ts&&(u.admin||String(x.owner||x.by||'')===String(u.id)));
  const last=logs.length?Math.max(...logs.map(x=>x.ts)):0,days=last?Math.floor((Date.now()-last)/864e5):null;
- if(!u.admin&&!(window.leadDepts&&leadDepts(u).length)&&(days===null||days>=7))out.push(['b',days===null?'LIMS 자료를 아직 올리지 않았습니다':'LIMS 자료를 올린 지 '+days+'일','재고·사용기록·라벨 Excel을 새로 올려 주세요','Excel 업로드','goGroup(\'data\')']);
+ if(!u.admin&&!(window.leadDepts&&leadDepts(u).length)&&!(window.isViewer&&isViewer(u))&&(days===null||days>=7))out.push(['b',days===null?'LIMS 자료를 아직 올리지 않았습니다':'LIMS 자료를 올린 지 '+days+'일','재고·사용기록·라벨 Excel을 새로 올려 주세요','Excel 업로드','goGroup(\'data\')']);
  return out}
 function panel(){let r=[];try{r=rows()}catch(e){return ''}
  const C={r:'#d23c3c',o:'#d98a1c',g:'#6b7280',b:'#2b5bd7',k:'#2f9e5b'};
@@ -3616,6 +3648,7 @@ function dlg(title,html,okText,onOk){const w=document.createElement('div');w.cla
  w.innerHTML=`<div class="account-dialog" role="dialog" aria-modal="true" style="max-width:520px"><h3 style="margin:0 0 10px">${H(title)}</h3>${html}<div class="toolbar" style="justify-content:flex-end;gap:8px;margin-top:14px"><button type="button" class="dl-no">취소</button><button type="button" class="primary dl-ok">${H(okText)}</button></div></div>`;
  document.body.appendChild(w);const close=()=>w.remove();w.querySelector('.dl-no').onclick=close;w.addEventListener('click',e=>{if(e.target===w)close()});
  w.querySelector('.dl-ok').onclick=()=>{if(onOk(w)!==false)close()};const f=w.querySelector('input,select');if(f)f.focus();return w}
+window._grpDlg=dlg;
 /* ---- 검체 이름 바꾸기 ---- */
 const canRen=g=>{const u=user(),cl=String(g).split('-')[0];return u.admin||(u.groups||[]).includes(g)||(u.groups||[]).includes(cl)};
 window.spRenameAsk=function(g){const i=String(g).indexOf('-');if(i<0)return;const cl=g.slice(0,i),old=g.slice(i+1);if(!canRen(g))return alert('이 검체 그룹을 맡은 사람만 이름을 바꿀 수 있습니다.');
@@ -3677,6 +3710,61 @@ function acct(){const sec=document.getElementById('signup');if(!sec||sec.querySe
  const pn=sec.querySelector('.panel');if(pn)pn.insertAdjacentHTML('afterend',h);else sec.insertAdjacentHTML('beforeend',h)}
 const _r=window.render;window.render=function(){try{viewExpire()}catch(e){}try{if(typeof active!=='undefined'&&active!=='inventory')window._invAll=0}catch(e){}const x=_r.apply(this,arguments);try{if(typeof active!=='undefined'){if(active==='overview')inject();if(active==='signup')acct()}}catch(e){console.error(e)}return x};
 })();
+</script><script>/* V4.37: (1) 정기점검 '기타 특이사항' — 담당자가 직접 적는 한 칸(입고 예정·기타 칸 없앰). 그룹·점검 월마다 standardhub_v22_inspect_etc {'그룹|월':글}에 기억, 다음 달 입력 창에는 지난 점검의 기타 특이사항을 참고로 보여 주고 [그대로 가져오기].
+   (2) 담당 그룹 추가 요청 — 내 계정 '내 담당 그룹' [담당 그룹 추가 요청] → standardhub_v22_group_req → 관리자 '오늘 할 일'에서 [승인]/[반려]. 검체 그룹(의뢰사-검체)을 승인하면 그 의뢰사 검체별 나누기를 켜고 검체 이름을 넣음. */
+(function(){
+const EK='standardhub_v22_inspect_etc',RQ='standardhub_v22_group_req',SK='standardhub_v22_split',DFK='standardhub_v22_inspect_draft';
+const lj=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},ls=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){alert('저장하지 못했습니다.');return false}};
+const H=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const gv=id=>(document.getElementById(id)||{}).value||'';
+const ymOf=()=>((document.querySelector('input[name=inYm]:checked')||{}).value)||(gv('inDate')||new Date().toISOString()).slice(0,7);
+const isForm=()=>!!document.getElementById('inspLayer')&&!document.getElementById('inNotes')&&!!document.getElementById('inEtc');
+function etcSave(){if(!isForm())return;const g=gv('inG');if(!g)return;const E=lj(EK,{}),k=g+'|'+ymOf(),v=gv('inEtc').trim();if(v)E[k]=v;else delete E[k];ls(EK,E)}
+function etcLoad(){if(!isForm())return;const g=gv('inG'),ym=ymOf(),E=lj(EK,{}),ta=document.getElementById('inEtc');if(!g||!ta)return;
+ if(E[g+'|'+ym]!=null)ta.value=E[g+'|'+ym];else{const o=(lj(DFK,{})||{})[g];const dym=o&&o.ts?new Date(o.ts).toISOString().slice(0,7):'';if(dym!==ym)ta.value=''}
+ const prevK=Object.keys(E).filter(k=>k.indexOf(g+'|')===0&&k.slice(g.length+1)<ym).sort().pop();let box=document.getElementById('inEtcPrev');
+ if(!box){box=document.createElement('div');box.id='inEtcPrev';box.className='small';box.style.cssText='margin:6px 0 0;padding:6px 10px;border-radius:8px;background:#f4f6f9;color:#4b5563;line-height:1.55';ta.after(box)}
+ if(!prevK){box.hidden=true;return}box.hidden=false;const pym=prevK.slice(g.length+1);
+ box.innerHTML='<b style="font-weight:600">지난 점검('+Number(pym.slice(5))+'월) 기타 특이사항</b> <button type="button" id="inEtcCopy" style="height:26px;padding:0 8px;margin-left:6px">그대로 가져오기</button><div style="white-space:pre-wrap;margin-top:3px">'+H(E[prevK])+'</div>';
+ box.querySelector('#inEtcCopy').onclick=()=>{const cur=ta.value.trim();ta.value=cur?cur+'\n'+E[prevK]:E[prevK];ta.dispatchEvent(new Event('input',{bubbles:true}))}}
+window.etcLoad=etcLoad;
+document.addEventListener('input',e=>{if(e.target&&e.target.id==='inEtc')etcSave()});
+document.addEventListener('change',e=>{const t=e.target;if(!t)return;if(t.id==='inEtc')etcSave();if(t.name==='inYm'||t.id==='inG')setTimeout(etcLoad,30)});
+const _f=window.inspFill;if(_f)window.inspFill=function(){const r=_f.apply(this,arguments);setTimeout(()=>{try{etcLoad()}catch(e){console.error(e)}},0);return r};
+const _mk=window.makeInspection;if(_mk)window.makeInspection=function(m){try{if(m!=='annex')etcSave()}catch(e){}return _mk.apply(this,arguments)};
+/* ---- 담당 그룹 추가 요청 ---- */
+const meU=()=>{try{const id=String(user().id);return users.find(x=>String(x.id)===id)}catch(e){return null}};
+const allG=()=>{const s=new Set((typeof groups!=='undefined'?groups:[]).filter(Boolean));try{(window.CLIENT_GROUPS||[]).forEach(g=>s.add(g))}catch(e){}return [...s].filter(g=>!/검체 미지정/.test(g)).sort((a,b)=>a.localeCompare(b))};
+window.grpReqAsk=function(){const m=meU();if(!m)return;const mine=new Set(m.groups||[]),wait=new Set(lj(RQ,[]).filter(x=>x.status==='wait'&&String(x.uid)===String(m.id)).flatMap(x=>x.groups));
+ const L=allG().filter(g=>!mine.has(g)&&!wait.has(g));if(!window._grpDlg)return;
+ const w=_grpDlg('담당 그룹 추가 요청',`<p class="muted small" style="margin:0 0 8px">관리자가 승인하면 내 담당에 추가돼요. 의뢰사 안에서 검체만 맡는다면 아래 '새 검체'에 적어 주세요.</p>
+  <input class="rq-q" placeholder="그룹 찾기 (예: GSK, 프리오릭스)" autocomplete="off" style="margin:0 0 6px">
+  <div class="rq-l" style="max-height:240px;overflow:auto;border:1px solid var(--line,#dfe3e9);border-radius:8px;padding:6px 8px">${L.map(g=>`<label style="display:flex;gap:8px;align-items:center;margin:2px 0;font-weight:400"><input type="checkbox" value="${H(g)}" style="width:auto;margin:0">${H(g)}</label>`).join('')||'<span class="muted small">더 고를 그룹이 없습니다.</span>'}</div>
+  <label style="margin-top:10px">새 검체 <span class="muted small" style="font-weight:400">(목록에 없는 검체 — 예: GSK-프리오릭스, 여러 개는 쉼표)</span><input class="rq-new" placeholder="의뢰사-검체" style="margin:4px 0 0"></label>`,'요청하기',w=>{
+  const gs=[...w.querySelectorAll('.rq-l input:checked')].map(i=>i.value);const nw=w.querySelector('.rq-new').value.split(/[,，]/).map(x=>x.trim()).filter(Boolean);
+  const bad=nw.filter(x=>!/^[A-Za-z0-9]+-.+/.test(x));if(bad.length){alert("새 검체는 '의뢰사-검체' 모양으로 적어 주세요 (예: GSK-프리오릭스): "+bad.join(', '));return false}
+  const all=[...new Set([...gs,...nw.map(x=>{const i=x.indexOf('-');return x.slice(0,i).toUpperCase()+'-'+x.slice(i+1).trim()})])].filter(g=>!mine.has(g));if(!all.length){alert('그룹을 하나 이상 골라 주세요.');return false}
+  const Q=lj(RQ,[]);Q.push({id:Date.now().toString(36),uid:String(m.id),groups:all,at:new Date().toISOString().slice(0,10),status:'wait'});if(!ls(RQ,Q))return false;render();alert('관리자에게 '+all.join(', ')+' 담당 추가를 요청했습니다. 승인되면 내 담당에 추가돼요.')});
+ const q=w.querySelector('.rq-q');q.oninput=()=>{const t=q.value.trim().toLowerCase();w.querySelectorAll('.rq-l label').forEach(l=>{l.hidden=!!t&&!l.textContent.toLowerCase().includes(t)})}};
+window.grpReqCancel=function(id){ls(RQ,lj(RQ,[]).filter(x=>x.id!==id));render()};
+function addSplit(g){const i=String(g).indexOf('-');if(i<0||/^BPT/i.test(g))return;const cl=g.slice(0,i),n=g.slice(i+1);const c=lj(SK,{})||{};c.clients=c.clients||{};c.off=c.off||{};
+ /* 꺼 둔 의뢰사면 예전 설정을 되살려 켬 */if(!c.clients[cl]&&c.off[cl]){c.clients[cl]=c.off[cl];delete c.off[cl]}const o=c.clients[cl]=c.clients[cl]||{};o.names=[...new Set([...(o.names||[]),n])];ls(SK,c)}
+window.grpReqDo=function(id,ok){const Q=lj(RQ,[]),r=Q.find(x=>x.id===id);if(!r||r.status!=='wait')return;const u=users.find(x=>String(x.id)===String(r.uid));
+ if(ok&&u){u.groups=[...new Set([...(u.groups||[]),...r.groups])];r.groups.forEach(addSplit);try{saveDemoAccounts()}catch(e){}try{window.splitNmReset&&splitNmReset()}catch(e){}try{window.syncGroups&&syncGroups()}catch(e){}}
+ r.status=ok?'done':'no';r.by=String(user().id);r.done=new Date().toISOString().slice(0,10);ls(RQ,Q);const d=document.getElementById('grpReqDlg');if(d)d.remove();render();if(lj(RQ,[]).some(x=>x.status==='wait'))grpReqView();alert((u?u.name:r.uid)+'님 담당 그룹 추가를 '+(ok?'승인':'반려')+'했습니다.')};
+const nameOf=id=>{const u=users.find(x=>String(x.id)===String(id));return u?u.name+' ('+u.id+')':id};
+window.grpReqView=function(){const Q=lj(RQ,[]).filter(x=>x.status==='wait');const w=document.createElement('div');w.className='account-overlay';w.id='grpReqDlg';
+ w.innerHTML=`<div class="account-dialog" role="dialog" aria-modal="true" style="max-width:640px"><h3 style="margin:0 0 10px">담당 그룹 추가 요청</h3>${Q.map(r=>`<div style="display:flex;gap:10px;align-items:center;border-top:1px solid var(--line,#dfe3e9);padding:8px 0"><div style="flex:1;min-width:0"><b>${H(nameOf(r.uid))}</b> <span class="muted small">${H(r.at)}</span><div class="small">${r.groups.map(g=>'<span class="tag" style="margin:2px 4px 0 0">'+H(g)+'</span>').join('')}</div></div><button type="button" onclick="grpReqDo('${H(r.id)}',false)">반려</button><button type="button" class="primary" onclick="grpReqDo('${H(r.id)}',true)">승인</button></div>`).join('')||'<p class="muted">기다리는 요청이 없습니다.</p>'}<div class="toolbar" style="justify-content:flex-end;margin-top:12px"><button type="button" onclick="document.getElementById('grpReqDlg').remove()">닫기</button></div></div>`;
+ document.body.appendChild(w)};
+function inject(){const p=document.getElementById('todoPanel');if(!p)return;const L=p.querySelector('.td-list');if(!L)return;L.querySelectorAll('.td-rq').forEach(e=>e.remove());let u;try{u=user()}catch(e){return}if(!u||!u.admin)return;
+ const Q=lj(RQ,[]).filter(x=>x.status==='wait');if(!Q.length)return;[...L.querySelectorAll('.td-row')].forEach(e=>{if(/지금 할 일이 없습니다/.test(e.textContent))e.remove()});
+ L.insertAdjacentHTML('afterbegin',`<div class="td-row td-rq"><span class="td-dot" style="background:#2b5bd7"></span><div class="td-t"><b>담당 그룹 추가 요청 ${Q.length}건</b><span>${H(Q.slice(0,3).map(r=>nameOf(r.uid)+': '+r.groups.join(', ')).join(' · '))}</span></div><button type="button" class="primary" onclick="grpReqView()">확인 →</button></div>`)}
+function acct(){const box=document.getElementById('myGroups');if(!box||box.querySelector('#grpReqBtn'))return;const m=meU();if(!m)return;const W=lj(RQ,[]).filter(x=>x.status==='wait'&&String(x.uid)===String(m.id));
+ const h3=box.querySelector('h3');if(h3){h3.style.display='flex';h3.style.alignItems='center';h3.style.gap='10px';h3.insertAdjacentHTML('beforeend','<button type="button" id="grpReqBtn" style="height:30px;font-size:13px;font-weight:500">+ 담당 그룹 추가 요청</button>')}
+ const b=box.querySelector('#grpReqBtn');if(b)b.onclick=grpReqAsk;
+ if(W.length)box.querySelector('.tablewrap').insertAdjacentHTML('afterend','<p class="small" style="margin:8px 0 0"><b>승인 기다리는 요청</b> '+W.map(r=>r.groups.map(g=>'<span class="tag">'+H(g)+'</span>').join(' ')+` <a href="javascript:void 0" onclick="grpReqCancel('${H(r.id)}')" class="muted" style="margin-left:4px">요청 취소</a>`).join(' · ')+'</p>')}
+const _r=window.render;window.render=function(){const x=_r.apply(this,arguments);try{if(typeof active!=='undefined'){if(active==='overview')inject();if(active==='signup')acct()}}catch(e){console.error(e)}return x};
+})();
 </script><script>/* V3.7: 메뉴 이동이 느리던 것 — 한 번 그릴 때 재고 알림 계산(clientAlertOverview)과 월평균 사용량(usageAvgAll)을 여러 번 하던 것을, 저장된 자료·로그인·재고가 그대로면 한 번만 계산해 다시 씀 */
 (function(){const sig=()=>{let u='';try{u=String(user().id)+'|'+(user().groups||[]).join(',')}catch(e){}return (window.lsAllVer||0)+'|'+u+'|'+stocks.length+'|'+new Date().toISOString().slice(0,10)};
  const memo=f=>{let k=null,v;return function(){if(arguments.length)return f.apply(this,arguments);const s=sig();if(s!==k){v=f.apply(this,arguments);k=s}return v}};
@@ -3716,6 +3804,14 @@ const lj=(k,d)=>{try{const v=window.lsJSON?lsJSON(k):JSON.parse(localStorage.get
 const H=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const cfg=()=>lj(SK,{})||{};
 const ymNow=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+/* V4.37: 취합 대표 = 관리자가 정한 사람 → 없으면 의뢰사 전체를 맡은 담당자 → 없으면 비어 있음(검체 담당자가 [내가 맡기]) */
+const repOf=cl=>{const o=((cfg().clients||{})[cl])||{};const ok=id=>users.some(u=>String(u.id)===String(id)&&u.status==='approved');if(o.rep&&ok(o.rep))return String(o.rep);const f=users.find(u=>u.status==='approved'&&!u.admin&&(u.groups||[]).includes(cl));return f?String(f.id):''};window.shRepOf=repOf;
+window.shRepMe=function(cl){const c0=lj(SK,{})||{},o0=((c0.clients||{})[cl])||{};if(o0.rep&&String(o0.rep)!==String(user().id)&&users.some(u=>String(u.id)===String(o0.rep)))return alert('이미 다른 분이 '+cl+' 취합 대표입니다.');
+ const go=one=>{const c=lj(SK,{})||{};c.clients=c.clients||{};const o=c.clients[cl]=c.clients[cl]||{};o.rep=String(user().id);if(one)o.docOne=true;else delete o.docOne;try{localStorage.setItem(SK,JSON.stringify(c))}catch(e){return alert('저장하지 못했습니다.')}
+  /* 한 장으로: 의뢰사 전체 서류를 만들 수 있게 대표 계정에 의뢰사 그룹(예: GSK)도 넣음 */if(one){const m=users.find(x=>String(x.id)===String(user().id));if(m&&!(m.groups||[]).includes(cl)){m.groups=[...(m.groups||[]),cl];try{saveDemoAccounts()}catch(e){}}}
+  try{window.syncGroups&&syncGroups()}catch(e){}render();alert(cl+' 취합 대표를 맡았습니다 — '+(one?cl+' 정기점검·관리내역을 의뢰사 한 장으로 직접 만들어요(첫 화면 \'이번 달 서류\').':'검체별 서류가 끝나면 \'오늘 할 일\'의 취합 줄에서 모아 보내요.'))};
+ if(!window._grpDlg)return go(false);
+ _grpDlg(cl+' 취합 대표 맡기','<p class="muted small" style="margin:0 0 10px">의뢰사에 서류를 어떻게 보낼지 골라 주세요. 나중에 바꾸려면 관리자에게 말씀해 주세요.</p><label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:0 0 10px"><input type="radio" name="repDoc" value="0" checked style="width:auto;margin:3px 0 0"><span><b>검체별로 따로</b><br><span class="muted small">검체마다 담당자가 정기점검·관리내역을 만들고 서명 → 내가 모아서 의뢰사에 보냄</span></span></label><label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:0"><input type="radio" name="repDoc" value="1" style="width:auto;margin:3px 0 0"><span><b>'+H(cl)+' 한 장으로</b><br><span class="muted small">내가 '+H(cl)+' 전체 정기점검·관리내역을 한 장으로 만들고 서명 — '+H(cl)+' 전체 표준품이 내 담당으로 보이고, 검체 담당자는 서류를 따로 만들지 않아요</span></span></label>','맡기',w=>{go((w.querySelector('input[name=repDoc]:checked')||{}).value==='1')})};
 const subsFor=cl=>{const c=(cfg().clients||{})[cl]||{},s=new Set();(c.names||[]).forEach(n=>{const v=window.splitNm?splitNm(n):n;if(v)s.add(cl+'-'+v)});stocks.forEach(x=>{if(x.group!==cl||!window.subsOf)return;try{if(disposalState(x)==='done')return}catch(e){}subsOf(x).forEach(g=>{if(g!==cl+'-'+UN)s.add(g)})});return [...s].sort((a,b)=>a.localeCompare(b))};
 const owners=g=>users.filter(u=>u.status==='approved'&&!u.admin&&(u.groups||[]).includes(g));
 const nameOf=id=>{const u=users.find(x=>String(x.id)===String(id));return u?u.name:String(id||'')};
@@ -3724,6 +3820,7 @@ function st(g,k,ym){const SV=!!window.__SH_SERVER,mk=lj('standardhub_v22_inspect
  if(r&&r.status==='done')return {s:'done',r};if(r&&r.status==='requested')return {s:'wait',r};return {s:mk[g+'|'+ym+'|'+k]?'made':'none',r:null}}
 const LBL={done:['완료','#1e6b3e','#e7f3ec'],wait:['실장님 확인 대기','#9a5a0a','#fcf1e2'],made:['요청 전','#2b5bd7','#eaf0fd'],none:['작성 전','#6b7280','#f2f3f7']};
 const chip=x=>{const [t,c,b]=LBL[x];return `<span style="display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;color:${c};background:${b};white-space:nowrap">${t}</span>`};
+window._docSt=st;window._docChip=chip;
 const gDone=(g,ym)=>{const a=st(g,'form',ym).s,b=st(g,'annex',ym).s;return window.__SH_SERVER?(a==='done'&&b==='done'):(a!=='none'&&b!=='none')};
 function pathOf(g,ym){for(const k of ['both','form','annex']){const rs=(window.signReqs?signReqs():[]).filter(r=>r.ym===ym&&r.g===g&&r.kind===k&&r.path);if(rs.length)return rs[rs.length-1].path}
  const N=lj('standardhub_v22_nas_paths',{});for(const u of owners(g)){const t=(N[String(u.id).toLowerCase()]||{})[g];if(t)return window.nasFromTpl?nasFromTpl(t,ym):t}return ''}
@@ -3731,11 +3828,13 @@ function copy(t){const done=()=>alert('경로를 복사했습니다.'),fb=()=>{c
 window.shCopyPath=function(el){copy(el.dataset.p)};
 /* ---- 오늘 할 일: 대표에게 ---- */
 function rows(){const u=user(),out=[],ym=ymNow(),C=cfg().clients||{},sent=lj(CK,{}),mo=Number(ym.slice(5));
- Object.keys(C).sort().forEach(cl=>{const o=C[cl]||{};if(o.docOne||!o.rep||String(o.rep)!==String(u.id))return;const gs=subsFor(cl);if(!gs.length)return;const n=gs.filter(g=>gDone(g,ym)).length,s=sent[cl+'|'+ym];
+ Object.keys(C).sort().forEach(cl=>{const o=C[cl]||{};if(o.docOne)return;const gs=subsFor(cl);if(!gs.length)return;const rp=repOf(cl);
+  /* V4.37: 대표가 없으면 그 의뢰사 검체 담당자에게 [내가 맡기] */if(!rp){if(gs.length>=2&&!u.admin&&(u.groups||[]).some(g=>String(g).indexOf(cl+'-')===0))out.push(['#d98a1c',cl+' 서류 취합 대표가 정해지지 않았어요','검체별로 서명한 서류를 모아 의뢰사에 보낼 사람이 필요해요 — 맡을 수 있으면 [내가 맡기]',"shRepMe('"+cl+"')",'내가 맡기']);return}
+  if(rp!==String(u.id))return;const n=gs.filter(g=>gDone(g,ym)).length,s=sent[cl+'|'+ym];
   out.push([s?'#2f9e5b':n===gs.length?'#2b5bd7':'#d98a1c',cl+' '+mo+'월 서류 취합 ('+(s?'의뢰사에 보냄':n===gs.length?'모두 완료 — 의뢰사에 보내 주세요':'검체 '+gs.length+'개 중 완료 '+n)+')',s?s.at+' 보냄':gs.filter(g=>!gDone(g,ym)).slice(0,4).map(g=>g.slice(cl.length+1)).join(', ')+(gs.length-n>4?' 외':'')+(n<gs.length?' — 아직 안 끝남':''),"shCollect('"+cl+"')"])});return out}
 function inject(){const p=document.getElementById('todoPanel');if(!p)return;const L=p.querySelector('.td-list');if(!L)return;L.querySelectorAll('.td-col').forEach(e=>e.remove());let rs=[];try{rs=rows()}catch(e){console.error(e)}if(!rs.length)return;
  [...L.querySelectorAll('.td-row')].forEach(e=>{if(/지금 할 일이 없습니다/.test(e.textContent))e.remove()});
- const html=rs.map(([c,t,d,js])=>`<div class="td-row td-col"><span class="td-dot" style="background:${c}"></span><div class="td-t"><b>${H(t)}</b><span>${H(d)}</span></div><button type="button" onclick="${H(js)}">취합 →</button></div>`).join('');
+ const html=rs.map(([c,t,d,js,lb])=>`<div class="td-row td-col"><span class="td-dot" style="background:${c}"></span><div class="td-t"><b>${H(t)}</b><span>${H(d)}</span></div><button type="button"${lb?' class="primary"':''} onclick="${H(js)}">${H(lb||'취합 →')}</button></div>`).join('');
  const after=[...L.querySelectorAll('.td-row')].filter(e=>/정기점검/.test((e.querySelector('b')||{}).textContent||'')).pop();if(after)after.insertAdjacentHTML('afterend',html);else L.insertAdjacentHTML('beforeend',html)}
 const _r=window.render;window.render=function(){const x=_r.apply(this,arguments);try{if(typeof active!=='undefined'&&active==='overview')inject()}catch(e){console.error(e)}return x};
 /* ---- 취합 창 ---- */
@@ -3863,7 +3962,7 @@ window.pnGuessOk=function(){const OK=(()=>{try{return JSON.parse(localStorage.ge
  try{localStorage.setItem('standardhub_v22_prod_ok',JSON.stringify(OK))}catch(e){return alert('저장하지 못했습니다.')}try{window.inspSave&&inspSave('annex')}catch(e){}try{inspFill()}catch(e){}alert('추정한 제품명을 확인했습니다. 다음부터는 묻지 않아요.')};
 function grpText(u){if(!u||u.status==='guest')return null;if(u.admin)return {s:'전체 (관리자)',all:'모든 표준품'};let L=[];try{L=window.leadDepts?leadDepts(u):[]}catch(e){}if(L.length)return {s:L.join(', ')+' 전체',all:L.join(', ')+' 전체 (실장 · 보기 전용)'};
  if(u.status!=='approved')return {s:'승인 대기',all:'관리자 승인 대기'};const real=users.find(x=>String(x.id)===String(u.id))||u;const g=(real.groups||[]).slice(),it=(real.items||[]).length;
- if(!g.length&&!it)return {s:'없음',all:'담당 그룹이 없습니다 — 관리자에게 배정을 요청해 주세요'};const all=[...g,...(it?['개별 지정 '+it+'건']:[])];return {s:all.length>3?all.slice(0,3).join(' · ')+' 외 '+(all.length-3):all.join(' · '),all:all.join(' · ')}}
+ if(!g.length&&!it){if(u.dept&&window.isViewer&&isViewer(u))return {s:'보기 전용 · '+u.dept,all:u.dept+' 표준품 보기 전용 — 담당이 생기면 내 계정에서 [담당 그룹 추가 요청]'};return {s:'없음',all:'담당 그룹이 없습니다 — 관리자에게 배정을 요청해 주세요'}}const all=[...g,...(it?['개별 지정 '+it+'건']:[])];return {s:all.length>3?all.slice(0,3).join(' · ')+' 외 '+(all.length-3):all.join(' · '),all:all.join(' · ')}}
 function hdr(){const n=document.querySelector('header .toolbar #sessionName');if(!n)return;let s=document.getElementById('hdrGroups');let u;try{u=user()}catch(e){}const g=grpText(u);
  if(!g){if(s)s.remove();return}if(!s){s=document.createElement('button');s.id='hdrGroups';s.type='button';s.style.cssText='border:0;background:none;padding:0 4px;height:auto;min-height:0;font:400 12.5px/20px inherit;color:#6b7280;cursor:pointer;box-shadow:none';s.onclick=()=>go('signup');n.after(s)}
  s.textContent='담당: '+g.s;s.title=g.all+' — 누르면 내 계정'}
@@ -4099,6 +4198,13 @@ function attachDel(tries){const l=document.getElementById('printLayer');if(!l)re
   b.onclick=()=>askConfirm({title:'뺀 행 되돌리기',message:'이 그룹('+g+')에서 뺀 행 '+ks.length+'개를 관리내역에 다시 넣을까요?\n'+ks.join(', '),ok:'다시 넣기',onOk:()=>{const M=lj(HK);ks.forEach(k=>delete M[k]);localStorage.setItem(HK,JSON.stringify(M));try{window._pvScroll=d.defaultView.scrollY}catch(e){}if(window._annexRemake)_annexRemake()}});
   row.appendChild(b)})(0)}
 const P=window.printDoc;window.printDoc=function(t,b){const r=P.apply(this,arguments);const s=String(b||'');if(/class="apage/.test(s))setTimeout(()=>attachDel(0),window._pvSilent?0:220);else if(/class="fpage/.test(s))setTimeout(()=>attachForm(0),220);return r};
+})();
+</script><script>/* V4.40: 회원가입 '담당 표준품 없음 — 보기만 (우리 실)' 체크 — 고르면 그룹 체크를 끄고 바로 보기 전용으로 신청. 승인 카드에 '보기 전용' 표시 */
+(function(){
+const _o=window.openAccountDialog;window.openAccountDialog=function(mode){const r=_o.apply(this,arguments);try{if(mode==='signup'){const g=document.querySelector('#accountContent .signup-groups');if(g&&!document.getElementById('sgView')){const l=document.createElement('label');l.id='sgView';l.style.cssText='display:flex;align-items:center;gap:8px;margin:8px 0;font-weight:400';l.innerHTML='<input type="checkbox" id="sgViewOnly" style="width:auto;margin:0"><span><b>담당 표준품 없음 — 보기만</b> <span class="muted small">우리 실(소속 실) 표준품·사용 추이·서류 진행을 보기만 해요. 실장님도 여기를 골라 주세요.</span></span>';g.before(l);
+ l.querySelector('input').onchange=e=>{const on=e.target.checked;document.querySelectorAll('#accountContent input[name=groupChoice]').forEach(i=>{if(on)i.checked=false;i.disabled=on});g.style.opacity=on?'.45':'';const sp=document.getElementById('sgSpec');if(sp)sp.hidden=on;try{window.sgSelShow&&sgSelShow()}catch(x){}}}}}catch(e){console.error(e)}return r};
+const _s=window.submitSignup;window.submitSignup=submitSignup=function(){const v=document.getElementById('sgViewOnly');if(v&&v.checked){document.querySelectorAll('#accountContent input[name=groupChoice]').forEach(i=>i.checked=false);const n=document.getElementById('requestedNewGroup');if(n)n.value='';window._sgNoGroupOk=true;try{return _s.apply(this,arguments)}finally{window._sgNoGroupOk=false}}return _s.apply(this,arguments)};
+const R=window.render;window.render=function(){R.apply(this,arguments);try{if(typeof active==='undefined'||active!=='admin')return;document.querySelectorAll('#admin .usercard').forEach(c=>{if(c.querySelector('.vw-tag'))return;const b=c.querySelector("button[onclick^=\"approve(\"]");if(!b)return;const id=(b.getAttribute('onclick').match(/approve\('([^']+)'/)||[])[1],u=users.find(x=>x.id===id);if(!u||(u.requestedGroups||[]).length||(u.requestedNewGroup||'').trim())return;const t=document.createElement('p');t.className='vw-tag small';t.style.margin='4px 0';t.innerHTML='<span class="tag">보기 전용</span> <span class="muted">담당 그룹 없이 신청 — 승인하면 '+(u.dept||'소속 실')+' 표준품을 보기만 해요</span>';(c.querySelector('.toolbar')||c).before(t)})}catch(e){}};
 })();
 </script><script>/* V4.12: 입력 창 · 미리보기의 긴 설명 글을 숨기고 제목 옆 [?]에 넣음(마우스를 올리거나 누르면 보임) — 내용은 그대로 */
 (function(){const st=document.createElement('style');document.addEventListener('click',e=>{const q=e.target&&e.target.closest&&e.target.closest('.ih-q');if(q){e.preventDefault();e.stopPropagation();q.focus()}},true);st.textContent='.ih-hid{display:none!important}.ih-q{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;border:1px solid #b5bcc7;color:#5b6270;background:#fff;font-size:11px;font-weight:500;line-height:1;margin-left:6px;cursor:help;position:relative;vertical-align:middle;flex:0 0 auto}.ih-q:hover,.ih-q:focus{border-color:#2f6fd1;color:#2f6fd1;outline:none}.ih-q .ih-tip{display:none;position:absolute;left:-8px;top:24px;z-index:300;width:min(440px,72vw);background:#20242b;color:#fff;padding:9px 11px;border-radius:8px;font-size:12.5px;line-height:1.55;white-space:normal;font-weight:400;text-align:left;box-shadow:0 6px 18px rgba(0,0,0,.18)}.ih-q:hover .ih-tip,.ih-q:focus .ih-tip{display:block}';document.head.appendChild(st);
