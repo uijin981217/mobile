@@ -7,7 +7,7 @@
   if(!Object.keys(D).length)return;
   var t=new Date();t.setHours(0,0,0,0);var b=new Date(BASE+'T00:00:00'),off=Math.round((t-b)/86400000);
   var sh=function(v){return v.replace(/\b(20\d\d)-(\d\d)-(\d\d)\b/g,function(m,y,mo,d){var x=new Date(+y,+mo-1,+d+off);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')})};
-  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.42</title><style id="sh-design">/* StandardHub design system.
+  for(var k in D)localStorage.setItem(k,off?sh(D[k]):D[k]);localStorage.setItem(K,'demo')}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>바이오의약본부 표준품 통합관리 V4.43</title><style id="sh-design">/* StandardHub design system.
    Concept: a quiet lab-notebook UI. Flat surfaces separated by hairlines; the one loud thing is
    storage-temperature coding (초저온 / 냉동 / 냉장 / 실온), because "where is it kept" is what analysts scan for. */
 :root{
@@ -483,7 +483,7 @@ html{overflow-y:scroll}
 <div class="shell">
 <div id="accountModal" class="account-overlay hidden"><div class="account-dialog"><div class="toolbar" style="justify-content:space-between"><h2 id="accountTitle" style="margin:0">로그인</h2><button onclick="closeAccountDialog()">✕ 닫기</button></div><div id="accountContent"></div></div></div><nav><button data-tab="dashboard" class="active" onclick="go('dashboard')">대시보드</button><button data-tab="inventory" onclick="go('inventory')">표준품 목록</button><button data-tab="check" onclick="go('check')">월간 재고 확인</button><button data-tab="analysis" onclick="go('analysis')">분석 결과 (BPT)</button><button data-tab="alerts" onclick="go('alerts')">재고 알림 설정</button><button data-tab="upload" onclick="go('upload')">Excel 데이터 관리</button><button data-tab="admin" onclick="go('admin')">승인 신청함</button><button data-tab="access" onclick="go('access')">내 담당 범위</button><button data-tab="signup" onclick="go('signup')">회원가입 · 로그인</button></nav>
 <section id="dashboard"></section><section id="inventory" class="hidden"></section><section id="check" class="hidden"></section><section id="analysis" class="hidden"></section><section id="alerts" class="hidden"></section><section id="purchase" class="hidden"></section><section id="upload" class="hidden"></section><section id="access" class="hidden"></section><section id="admin" class="hidden"></section><section id="signup" class="hidden"></section>
-</div><footer>바이오의약본부 표준품 통합관리 V4.42 · 공식 기준은 LIMS</footer>
+</div><footer>바이오의약본부 표준품 통합관리 V4.43 · 공식 기준은 LIMS</footer>
 <script>
 const users=[{id:'guest',name:'방문자',status:'guest',groups:[],items:[]},{id:'admin',name:'관리자',admin:true,status:'approved',groups:[],items:[]}];
 let stocks=[];
@@ -2974,11 +2974,14 @@ function adminRows(){const root=document.getElementById('admin');if(!root||!(use
   /* 역할 바꾸는 버튼들은 빼고(선택 상자로), 비밀번호·삭제는 [⋯]로 — '다시 승인'만 남김 */[...host.querySelectorAll('button')].forEach(b=>{if(!/다시 승인/.test(b.textContent))b.remove()});
   const mb=document.createElement('button');mb.type='button';mb.className='acct-more';mb.textContent='⋯';mb.title='비밀번호 변경 · 계정 삭제';mb.onclick=e=>{e.stopPropagation();acctMenu(mb,u.id)};host.appendChild(mb);host.style.flexWrap='nowrap';
   if(u.status!=='approved')return;const r=roleOf(u),noG=!(u.groups||[]).length&&!(u.items||[]).length;
-  const opts=[['staff',noG?'보기 전용':'담당자'],['mgr','책임매니저'],...(SV()||r==='lead'?[['lead','실장']]:[]),['admin','관리자']];
+  const opts=[['staff','담당자'],['mgr','책임매니저'],...(SV()||r==='lead'?[['lead','실장']]:[]),['admin','관리자']];
   tr.cells[2].innerHTML='<select class="acct-role" title="역할을 바꾸면 확인창이 떠요">'+opts.map(([v,t])=>`<option value="${v}"${v===r?' selected':''}>${t}</option>`).join('')+'</select>';
   const sel=tr.cells[2].querySelector('select');sel.onchange=()=>adminRoleSet(u.id,sel.value,sel);
-  if(r==='mgr'&&u.dept&&!/보기 전용/.test(tr.cells[4].textContent))tr.cells[4].insertAdjacentHTML('beforeend','<div class="muted small">+ '+H(u.dept)+' 보기 전용</div>')});
- const nt=[...root.querySelectorAll('p.muted')].find(p=>/관리자로 지정하면 모든 표준품을/.test(p.textContent));if(nt&&!nt.dataset.r){nt.dataset.r=1;nt.textContent="역할: 담당자(맡은 그룹) · 책임매니저(본인 업무 + 소속 실 보기) · 실장(소속 실 보기 + 확인 서명, 실마다 한 명) · 관리자(모든 표준품·계정 관리). 담당 그룹이 없는 담당자는 '보기 전용'(소속 실 보기)으로 표시돼요. 역할을 바꾸면 확인창이 떠요. '단가 보기'를 허용하면 그 담당자도 구매 단가를 보고 구매 정보를 올릴 수 있어요. 비밀번호 변경·계정 삭제는 [⋯]."}}
+  const vw=r==='staff'&&noG&&u.dept;
+  if((r==='mgr'||vw)&&u.dept&&!/보기 전용/.test(tr.cells[4].textContent))tr.cells[4].insertAdjacentHTML('beforeend','<div class="muted small">+ '+H(u.dept)+' 보기 전용</div>');
+  /* V4.43: 접근 품목 수에 우리 실 보기 전용 품목도 셈(전에는 본인 담당만 세어 0으로 보임) */
+  if(r==='mgr'||vw){try{const gs=mgrGroups(u),own=Number(tr.cells[5].textContent)||0;if(gs.length){const vn=stocks.filter(s=>!accessible(s,u)&&(gs.includes(s.group)||(window.subsOf&&subsOf(s).some(g=>gs.includes(g))))).length;tr.cells[5].innerHTML=(own?own+' <span class="muted small">+ 보기 '+vn+'</span>':vn+' <span class="muted small">(보기)</span>');tr.cells[5].title='본인 담당 '+own+' · '+u.dept+' 보기 전용 '+vn}}catch(e){}}});
+ const nt=[...root.querySelectorAll('p.muted')].find(p=>/관리자로 지정하면 모든 표준품을/.test(p.textContent));if(nt&&!nt.dataset.r){nt.dataset.r=1;nt.textContent="역할: 담당자(맡은 그룹) · 책임매니저(본인 업무 + 소속 실 보기) · 실장(소속 실 보기 + 확인 서명, 실마다 한 명) · 관리자(모든 표준품·계정 관리). 담당 그룹이 없는 담당자는 그룹 배정 칸에 '+ ○실 보기 전용'으로 표시돼요(소속 실 보기). 역할을 바꾸면 확인창이 떠요. '단가 보기'를 허용하면 그 담당자도 구매 단가를 보고 구매 정보를 올릴 수 있어요. 비밀번호 변경·계정 삭제는 [⋯]."}}
 const R=window.render;window.render=function(){R();try{const a=typeof active!=='undefined'?active:'';if(a==='overview')ovPanel();if(a==='admin')adminRows();const u=user(),d=mgrDept(u),rt=document.getElementById('roleTag');if(d&&rt)rt.textContent=(isViewer(u)?'보기 전용 · ':'책임매니저 · ')+d}catch(e){console.error(e)}};
 /* 보기 전용: Excel 업로드·재고 알림 기준·확인 항목 탭 없음 */const VT0=window.visibleTabs;visibleTabs=window.visibleTabs=function(u){const t=VT0.apply(this,arguments);try{if(isViewer(u||user()))return t.filter(x=>!/^(upload|alerts|dashboard)$/.test(x))}catch(e){}return t};
 })();
